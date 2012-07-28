@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>NSManagedObjectModel_CurrentVersionName</key>
+	<string>Repository</string>
+	<key>NSManagedObjectModel_VersionHashes</key>
+	<dict>
+		<key>Repository</key>
+		<dict>
+			<key>QLPlaceEntity</key>
+			<data>
+			YvtZ12gm8UhPPg4Zi9F6U4IxisAsiemppo/N6gv3vRA=
+			</data>
+			<key>QLPlaceEventEntity</key>
+			<data>
+			pSqCbIaiV26QjZ1bfwbahZH3xhmjJkZe05Z54OUO7nU=
+			</data>
+		</dict>
+	</dict>
+</dict>
+</plist>
