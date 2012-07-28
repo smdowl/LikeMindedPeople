@@ -35,17 +35,17 @@
 		92FBED4815C3A85F000D1AE3 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		92FBED4A15C3A85F000D1AE3 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		92FBED4C15C3A85F000D1AE3 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		92FBED5015C3A85F000D1AE3 /* LikeMindedPeople-Info.plist */ = {isa = PBXFileReference; path = "LikeMindedPeople-Info.plist"; sourceTree = "<group>"; };
+		92FBED5015C3A85F000D1AE3 /* LikeMindedPeople-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "LikeMindedPeople-Info.plist"; sourceTree = "<group>"; };
 		92FBED5215C3A85F000D1AE3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		92FBED5415C3A85F000D1AE3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		92FBED5615C3A85F000D1AE3 /* LikeMindedPeople-Prefix.pch */ = {isa = PBXFileReference; path = "LikeMindedPeople-Prefix.pch"; sourceTree = "<group>"; };
-		92FBED5715C3A85F000D1AE3 /* AppDelegate.h */ = {isa = PBXFileReference; path = AppDelegate.h; sourceTree = "<group>"; };
+		92FBED5615C3A85F000D1AE3 /* LikeMindedPeople-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "LikeMindedPeople-Prefix.pch"; sourceTree = "<group>"; };
+		92FBED5715C3A85F000D1AE3 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		92FBED5815C3A85F000D1AE3 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		92FBED5F15C3A85F000D1AE3 /* LikeMindedPeopleTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LikeMindedPeopleTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
 		92FBED6015C3A85F000D1AE3 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
-		92FBED6815C3A85F000D1AE3 /* LikeMindedPeopleTests-Info.plist */ = {isa = PBXFileReference; path = "LikeMindedPeopleTests-Info.plist"; sourceTree = "<group>"; };
+		92FBED6815C3A85F000D1AE3 /* LikeMindedPeopleTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "LikeMindedPeopleTests-Info.plist"; sourceTree = "<group>"; };
 		92FBED6A15C3A85F000D1AE3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		92FBED6C15C3A85F000D1AE3 /* LikeMindedPeopleTests.h */ = {isa = PBXFileReference; path = LikeMindedPeopleTests.h; sourceTree = "<group>"; };
+		92FBED6C15C3A85F000D1AE3 /* LikeMindedPeopleTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LikeMindedPeopleTests.h; sourceTree = "<group>"; };
 		92FBED6D15C3A85F000D1AE3 /* LikeMindedPeopleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LikeMindedPeopleTests.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
