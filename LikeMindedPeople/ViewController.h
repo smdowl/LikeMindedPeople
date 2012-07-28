@@ -15,9 +15,10 @@
     IBOutlet UITextField *txtSearch;
     IBOutlet UISlider *slider;
     IBOutlet MKMapView *mapView;
+    CLLocationManager *locationManager;
     DataModel *dm;
 }
 -(IBAction)search:(id)sender;
--(IBAction)updateRadius;
+-(IBAction)refershMap;
 -(IBAction)showPermissions;
 @end

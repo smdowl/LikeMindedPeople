@@ -15,6 +15,7 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     dm = [DataModel sharedInstance];
+    locationManager = [[CLLocationManager alloc] init];    
 
 }
 -(void)viewDidAppear:(BOOL)animated {
@@ -27,23 +28,25 @@
     }];
     
 }
--(IBAction)updateRadius:(id)sender {
-    MKCoordinateRegion region = [mapView region];
-
+-(IBAction)refershMap {
     double miles = slider.value;
     
-    double scalingFactor = ABS( (cos(2 * M_PI * mapView.centerCoordinate.latitude / 360.0) ));
+
+    CLLocation *newLocation = [locationManager location];
     
+    double scalingFactor = ABS( (cos(2 * M_PI * newLocation.coordinate.latitude / 360.0) ));
+
+
     MKCoordinateSpan span; 
     
     span.latitudeDelta = miles/69.0;
     span.longitudeDelta = miles/(scalingFactor * 69.0); 
     
+    MKCoordinateRegion region;
     region.span = span;
-    region.center = mapView.centerCoordinate;
+    region.center = newLocation.coordinate;
     
-    [mapView setRegion:region animated:YES];    
-    
+    [mapView setRegion:region animated:YES];
 }
 -(IBAction)showPermissions {
     [dm.contextCoreConnector showPermissionsFromViewController:self];
