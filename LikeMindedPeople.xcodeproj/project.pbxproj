@@ -55,6 +55,7 @@
 		925AE8DD15C49BCF008840D9 /* clubsbtn.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 925AE8D315C49BCF008840D9 /* clubsbtn.jpg */; };
 		925AE8DE15C49BCF008840D9 /* foodactive.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 925AE8D415C49BCF008840D9 /* foodactive.jpg */; };
 		925AE8DF15C49BCF008840D9 /* foodbtn.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 925AE8D515C49BCF008840D9 /* foodbtn.jpg */; };
+		925AE90615C4A077008840D9 /* lines.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 925AE90515C4A077008840D9 /* lines.jpg */; };
 		92F0038715C46A7D00BE46C5 /* DataModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 92F0038615C46A7D00BE46C5 /* DataModel.m */; };
 		92FBED5315C3A85F000D1AE3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 92FBED5115C3A85F000D1AE3 /* InfoPlist.strings */; };
 		92FBED5515C3A85F000D1AE3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 92FBED5415C3A85F000D1AE3 /* main.m */; };
@@ -133,6 +134,7 @@
 		925AE8D315C49BCF008840D9 /* clubsbtn.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = clubsbtn.jpg; sourceTree = "<group>"; };
 		925AE8D415C49BCF008840D9 /* foodactive.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = foodactive.jpg; sourceTree = "<group>"; };
 		925AE8D515C49BCF008840D9 /* foodbtn.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = foodbtn.jpg; sourceTree = "<group>"; };
+		925AE90515C4A077008840D9 /* lines.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = lines.jpg; path = ../lines.jpg; sourceTree = "<group>"; };
 		92F0038515C46A7D00BE46C5 /* DataModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataModel.h; sourceTree = "<group>"; };
 		92F0038615C46A7D00BE46C5 /* DataModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataModel.m; sourceTree = "<group>"; };
 		92FBED4415C3A85F000D1AE3 /* LikeMindedPeople.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LikeMindedPeople.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -345,6 +347,7 @@
 		925AE8AD15C476E4008840D9 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				925AE90515C4A077008840D9 /* lines.jpg */,
 				925AE8CB15C49BC8008840D9 /* bar */,
 				925AE8C915C49BA1008840D9 /* circle.png */,
 				925AE8BA15C48796008840D9 /* connect.png */,
@@ -596,6 +599,7 @@
 				925AE8DD15C49BCF008840D9 /* clubsbtn.jpg in Resources */,
 				925AE8DE15C49BCF008840D9 /* foodactive.jpg in Resources */,
 				925AE8DF15C49BCF008840D9 /* foodbtn.jpg in Resources */,
+				925AE90615C4A077008840D9 /* lines.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
