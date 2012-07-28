@@ -11,9 +11,15 @@
 #import <ContextLocation/QLContextPlaceConnector.h>
 #import <ContextProfiling/PRContextInterestsConnector.h>
 
+@class QLPlace;
 @interface DataModel : NSObject <QLContextCorePermissionsDelegate, QLContextPlaceConnectorDelegate, PRContextInterestsDelegate>
 {
 	NSArray *_placeEvents;
+	
+	NSArray *_privatePointsOfInterest;
+	
+	QLPlace *_currentLocation;
+	NSArray *_allLocations;
 }
 
 @property (nonatomic, strong) QLContextCoreConnector *contextCoreConnector;
@@ -22,5 +28,6 @@
 
 + (DataModel *)sharedInstance;
 - (void)setup;
+- (void)getInfo;
 
 @end

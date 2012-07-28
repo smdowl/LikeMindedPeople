@@ -9,9 +9,15 @@
 #import "DataModel.h"
 #import <ContextLocation/QLContentDescriptor.h>
 #import <ContextLocation/QLPlaceEvent.h>
+#import <ContextLocation/QLPlace.h>
 #import <ContextCore/QLContextConnectorPermissions.h>
 #import <ContextProfiling/PRProfile.h>
 #import <ContextCore/QLContextCoreError.h>
+
+@interface DataModel()
+- (void)_getPPOIList;
+- (void)_updateListOfPlaces;
+@end
 
 @implementation DataModel
 
@@ -85,7 +91,103 @@ static DataModel *_sharedInstance = nil;
 //          enableSDKButton.enabled = YES;
 		 }
 	 }];
+}
 
+- (void)getInfo
+{
+	[self.contextPlaceConnector allPrivatePointsOfInterestAndOnSuccess:^(NSArray *ppoi)
+	 {
+		 for (QLPlaceEvent *event in ppoi)
+		 {
+			 NSLog(@"%@", event);
+		 }
+	 } failure:^(NSError *err)
+	 {
+		 
+	 }];
+}
+
+#pragma mark -
+#pragma mark Geofence listening
+
+- (void)didGetPlaceEvent:(QLPlaceEvent *)event
+{	
+	QLPlace *currentPlace;
+	
+	// Depending on what happened, change the current locatoin
+	switch (event.eventType)
+	{
+		case QLPlaceEventTypeAt:
+			
+			// Find this place in the full list
+			for (QLPlace *place in _allLocations)
+			{
+				if (event.placeId == place.id)
+				{
+					currentPlace = place;
+					break;
+				}
+			}
+			
+			_currentLocation = currentPlace;
+			break;
+			
+		case QLPlaceEventTypeLeft:
+			_currentLocation = nil;
+			break;
+	}
+}
+
+// Remove a private place
+- (void)deletePlace:(long long)existingPlaceId
+{
+[self.contextPlaceConnector deletePlaceWithId:existingPlaceId success:^()
+{
+	// do something after place has been deleted
+}
+failure:^(NSError *error) {
+	// failed with statusCode
+}]; 
+}
+
+#pragma mark -
+#pragma mark QLContextCorePermissionsDelegate
+- (void)subscriptionPermissionDidChange:(BOOL)subscriptionPermission
+{
+    if (subscriptionPermission)
+    {
+        [self _getPPOIList];	
+		[self _updateListOfPlaces];
+    }
+    else
+    {
+		// Wipe data maybe
+    }
+}
+
+#pragma mark -
+#pragma mark Private Methods
+
+- (void)_getPPOIList
+{
+	[self.contextPlaceConnector allPrivatePointsOfInterestAndOnSuccess:^(NSArray *ppoi)
+	 {
+		 _privatePointsOfInterest = ppoi;
+		 
+		 for (QLPlace *point in ppoi)
+		 {
+			 NSLog(@"%@", point);
+		 }
+	 } failure:^(NSError *err)
+	 {
+		 
+	 }];
+}
+
+- (void)_updateListOfPlaces
+{
+	
+//	[self.contextPlaceConnector all
 }
 
 @end
