@@ -19,4 +19,5 @@
 }
 -(IBAction)search:(id)sender;
 -(IBAction)updateRadius;
+-(IBAction)showPermissions;
 @end
