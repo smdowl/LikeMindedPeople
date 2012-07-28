@@ -34,6 +34,12 @@
 		925AE83C15C44018008840D9 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 925AE83A15C44018008840D9 /* ViewController.m */; };
 		925AE83D15C44018008840D9 /* ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 925AE83B15C44018008840D9 /* ViewController.xib */; };
 		925AE86F15C45924008840D9 /* UserContext.plist in Resources */ = {isa = PBXBuildFile; fileRef = 925AE86E15C45924008840D9 /* UserContext.plist */; };
+		925AE8A815C4758A008840D9 /* GoogleLocalConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 925AE8A015C4758A008840D9 /* GoogleLocalConnection.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		925AE8A915C4758A008840D9 /* GoogleLocalObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 925AE8A215C4758A008840D9 /* GoogleLocalObject.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		925AE8AA15C4758A008840D9 /* GTMNSString+URLArguments.m in Sources */ = {isa = PBXBuildFile; fileRef = 925AE8A615C4758A008840D9 /* GTMNSString+URLArguments.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		925AE8AB15C4758A008840D9 /* README.markdown in Resources */ = {isa = PBXBuildFile; fileRef = 925AE8A715C4758A008840D9 /* README.markdown */; };
+		925AE8B015C476E4008840D9 /* bg.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 925AE8AE15C476E4008840D9 /* bg.jpg */; };
+		925AE8B115C476E4008840D9 /* circle.png in Resources */ = {isa = PBXBuildFile; fileRef = 925AE8AF15C476E4008840D9 /* circle.png */; };
 		92F0038715C46A7D00BE46C5 /* DataModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 92F0038615C46A7D00BE46C5 /* DataModel.m */; };
 		92FBED5315C3A85F000D1AE3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 92FBED5115C3A85F000D1AE3 /* InfoPlist.strings */; };
 		92FBED5515C3A85F000D1AE3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 92FBED5415C3A85F000D1AE3 /* main.m */; };
@@ -85,6 +91,17 @@
 		925AE83A15C44018008840D9 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		925AE83B15C44018008840D9 /* ViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ViewController.xib; sourceTree = "<group>"; };
 		925AE86E15C45924008840D9 /* UserContext.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UserContext.plist; sourceTree = "<group>"; };
+		925AE89F15C4758A008840D9 /* GoogleLocalConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoogleLocalConnection.h; sourceTree = "<group>"; };
+		925AE8A015C4758A008840D9 /* GoogleLocalConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleLocalConnection.m; sourceTree = "<group>"; };
+		925AE8A115C4758A008840D9 /* GoogleLocalObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoogleLocalObject.h; sourceTree = "<group>"; };
+		925AE8A215C4758A008840D9 /* GoogleLocalObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleLocalObject.m; sourceTree = "<group>"; };
+		925AE8A315C4758A008840D9 /* GTMDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMDefines.h; sourceTree = "<group>"; };
+		925AE8A415C4758A008840D9 /* GTMGarbageCollection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GTMGarbageCollection.h; sourceTree = "<group>"; };
+		925AE8A515C4758A008840D9 /* GTMNSString+URLArguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "GTMNSString+URLArguments.h"; sourceTree = "<group>"; };
+		925AE8A615C4758A008840D9 /* GTMNSString+URLArguments.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "GTMNSString+URLArguments.m"; sourceTree = "<group>"; };
+		925AE8A715C4758A008840D9 /* README.markdown */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.markdown; sourceTree = "<group>"; };
+		925AE8AE15C476E4008840D9 /* bg.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = bg.jpg; sourceTree = "<group>"; };
+		925AE8AF15C476E4008840D9 /* circle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = circle.png; sourceTree = "<group>"; };
 		92F0038515C46A7D00BE46C5 /* DataModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataModel.h; sourceTree = "<group>"; };
 		92F0038615C46A7D00BE46C5 /* DataModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataModel.m; sourceTree = "<group>"; };
 		92FBED4415C3A85F000D1AE3 /* LikeMindedPeople.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LikeMindedPeople.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -278,6 +295,31 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		925AE89E15C4758A008840D9 /* LocalGoogle */ = {
+			isa = PBXGroup;
+			children = (
+				925AE89F15C4758A008840D9 /* GoogleLocalConnection.h */,
+				925AE8A015C4758A008840D9 /* GoogleLocalConnection.m */,
+				925AE8A115C4758A008840D9 /* GoogleLocalObject.h */,
+				925AE8A215C4758A008840D9 /* GoogleLocalObject.m */,
+				925AE8A315C4758A008840D9 /* GTMDefines.h */,
+				925AE8A415C4758A008840D9 /* GTMGarbageCollection.h */,
+				925AE8A515C4758A008840D9 /* GTMNSString+URLArguments.h */,
+				925AE8A615C4758A008840D9 /* GTMNSString+URLArguments.m */,
+				925AE8A715C4758A008840D9 /* README.markdown */,
+			);
+			path = LocalGoogle;
+			sourceTree = "<group>";
+		};
+		925AE8AD15C476E4008840D9 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				925AE8AE15C476E4008840D9 /* bg.jpg */,
+				925AE8AF15C476E4008840D9 /* circle.png */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		92FBED3915C3A85F000D1AE3 = {
 			isa = PBXGroup;
 			children = (
@@ -316,6 +358,7 @@
 		92FBED4E15C3A85F000D1AE3 /* LikeMindedPeople */ = {
 			isa = PBXGroup;
 			children = (
+				925AE89E15C4758A008840D9 /* LocalGoogle */,
 				D31363A915C494510071BED3 /* facebook-ios-sdk */,
 				D31363BC15C494590071BED3 /* facebook-hack */,
 				92FBED5715C3A85F000D1AE3 /* AppDelegate.h */,
@@ -333,6 +376,7 @@
 		92FBED4F15C3A85F000D1AE3 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				925AE8AD15C476E4008840D9 /* Resources */,
 				925AE86E15C45924008840D9 /* UserContext.plist */,
 				92FBED5015C3A85F000D1AE3 /* LikeMindedPeople-Info.plist */,
 				92FBED5115C3A85F000D1AE3 /* InfoPlist.strings */,
@@ -480,6 +524,9 @@
 				925AE83D15C44018008840D9 /* ViewController.xib in Resources */,
 				925AE86F15C45924008840D9 /* UserContext.plist in Resources */,
 				D31363B915C494510071BED3 /* FBDialog.bundle in Resources */,
+				925AE8AB15C4758A008840D9 /* README.markdown in Resources */,
+				925AE8B015C476E4008840D9 /* bg.jpg in Resources */,
+				925AE8B115C476E4008840D9 /* circle.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -520,6 +567,9 @@
 				92F0038715C46A7D00BE46C5 /* DataModel.m in Sources */,
 				D31363BF15C4947E0071BED3 /* Facebook+iCatalog.m in Sources */,
 				D31363C215C494870071BED3 /* NSObject+DTRuntime.m in Sources */,
+				925AE8A815C4758A008840D9 /* GoogleLocalConnection.m in Sources */,
+				925AE8A915C4758A008840D9 /* GoogleLocalObject.m in Sources */,
+				925AE8AA15C4758A008840D9 /* GTMNSString+URLArguments.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -609,6 +659,7 @@
 		92FBED7215C3A85F000D1AE3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer: Tyler Weitzman (D744DNH5CF)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/Common.embeddedframework\"",
@@ -633,6 +684,7 @@
 					"\"$(SRCROOT)/LikeMindedPeople/facebook-ios-sdk\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "CDDDB245-04DC-4F90-A1AD-7ECB2D9C6766";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
