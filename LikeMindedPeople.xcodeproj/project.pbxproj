@@ -30,6 +30,9 @@
 		925AE80315C43213008840D9 /* rules.txt in Resources */ = {isa = PBXBuildFile; fileRef = 925AE7E715C43212008840D9 /* rules.txt */; };
 		925AE80415C43213008840D9 /* NetworkServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7E915C43212008840D9 /* NetworkServices.framework */; };
 		925AE80615C43244008840D9 /* UserContext.plist in Resources */ = {isa = PBXBuildFile; fileRef = 925AE80515C43244008840D9 /* UserContext.plist */; };
+		925AE80C15C43F7D008840D9 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE80B15C43F7D008840D9 /* MapKit.framework */; };
+		925AE83C15C44018008840D9 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 925AE83A15C44018008840D9 /* ViewController.m */; };
+		925AE83D15C44018008840D9 /* ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 925AE83B15C44018008840D9 /* ViewController.xib */; };
 		92FBED5315C3A85F000D1AE3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 92FBED5115C3A85F000D1AE3 /* InfoPlist.strings */; };
 		92FBED5515C3A85F000D1AE3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 92FBED5415C3A85F000D1AE3 /* main.m */; };
 		92FBED5915C3A85F000D1AE3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 92FBED5815C3A85F000D1AE3 /* AppDelegate.m */; };
@@ -71,6 +74,10 @@
 		925AE7E715C43212008840D9 /* rules.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rules.txt; sourceTree = "<group>"; };
 		925AE7E915C43212008840D9 /* NetworkServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = NetworkServices.framework; sourceTree = "<group>"; };
 		925AE80515C43244008840D9 /* UserContext.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UserContext.plist; sourceTree = "<group>"; };
+		925AE80B15C43F7D008840D9 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		925AE83915C44018008840D9 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		925AE83A15C44018008840D9 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		925AE83B15C44018008840D9 /* ViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ViewController.xib; sourceTree = "<group>"; };
 		92FBED4415C3A85F000D1AE3 /* LikeMindedPeople.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LikeMindedPeople.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		92FBED5015C3A85F000D1AE3 /* LikeMindedPeople-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "LikeMindedPeople-Info.plist"; sourceTree = "<group>"; };
 		92FBED5215C3A85F000D1AE3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -102,6 +109,7 @@
 				925AE7F815C43212008840D9 /* ContextLocation.framework in Frameworks */,
 				925AE80215C43213008840D9 /* ContextProfiling.framework in Frameworks */,
 				925AE80415C43213008840D9 /* NetworkServices.framework in Frameworks */,
+				925AE80C15C43F7D008840D9 /* MapKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -263,6 +271,7 @@
 		92FBED4715C3A85F000D1AE3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				925AE80B15C43F7D008840D9 /* MapKit.framework */,
 				925AE7C115C43212008840D9 /* context-beta-ios-sdk */,
 				925AE7AC15C430F2008840D9 /* UIKit.framework */,
 				925AE7AD15C430F2008840D9 /* Foundation.framework */,
@@ -280,6 +289,9 @@
 			children = (
 				92FBED5715C3A85F000D1AE3 /* AppDelegate.h */,
 				92FBED5815C3A85F000D1AE3 /* AppDelegate.m */,
+				925AE83915C44018008840D9 /* ViewController.h */,
+				925AE83A15C44018008840D9 /* ViewController.m */,
+				925AE83B15C44018008840D9 /* ViewController.xib */,
 				92FBED4F15C3A85F000D1AE3 /* Supporting Files */,
 			);
 			path = LikeMindedPeople;
@@ -398,6 +410,7 @@
 				925AE80115C43213008840D9 /* VersionInfo.plist in Resources */,
 				925AE80315C43213008840D9 /* rules.txt in Resources */,
 				925AE80615C43244008840D9 /* UserContext.plist in Resources */,
+				925AE83D15C44018008840D9 /* ViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -434,6 +447,7 @@
 			files = (
 				92FBED5515C3A85F000D1AE3 /* main.m in Sources */,
 				92FBED5915C3A85F000D1AE3 /* AppDelegate.m in Sources */,
+				925AE83C15C44018008840D9 /* ViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
