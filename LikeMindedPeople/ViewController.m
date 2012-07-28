@@ -8,18 +8,28 @@
 
 #import "ViewController.h"
 
-@interface ViewController ()
-
-@end
-
 @implementation ViewController
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    dm = [DataModel sharedInstance];
+//    [dm.contextCoreConnector checkStatusAndOnEnabled:nil disabled:^(NSError *err) {
+        [dm.contextCoreConnector enableFromViewController:self success:nil failure:^(NSError *err) {
+            //show blank view
+        }];
+//    }];
 }
-
+-(IBAction)updateRadius:(id)sender {
+    MKCoordinateRegion region = [mapView region];
+    
+}
+-(IBAction)search:(id)sender {
+    [dm.contextCoreConnector enableFromViewController:self success:nil failure:^(NSError *err) {
+        //show blank view
+    }];  
+}
 - (void)viewDidUnload
 {
     [super viewDidUnload];
