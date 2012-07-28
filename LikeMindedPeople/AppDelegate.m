@@ -7,12 +7,26 @@
 //
 
 #import "AppDelegate.h"
+#import "FBConnect.h"
+#import "Facebook+iCatalog.h"
+#import "NSObject+DTRuntime.h"
+
 
 @implementation AppDelegate
 
 @synthesize viewController;
 
 @synthesize window = _window;
+@synthesize facebook;
+
+
++ (void)initialize
+{
+    // disable Facebook SSO
+    // This is a hack that is supposed to avoid going to Safari to authenticate via Facebook.
+    // It doesn't seem to be helping, but I'll leave it here in case I want to revisit it.
+    //[Facebook swizzleMethod:@selector(authorize:) withMethod:@selector(authorize_noSSO:)];
+}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
@@ -22,8 +36,71 @@
     self.viewController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:nil];
     self.window.rootViewController = self.viewController;    
     [self.window makeKeyAndVisible];
+    
+    
+    // FB Integration fb123987074412482
+    facebook = [[Facebook alloc] initWithAppId:@"123987074412482" andDelegate:self];
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if ([defaults objectForKey:@"FBAccessTokenKey"]
+        && [defaults objectForKey:@"FBExpirationDateKey"]) {
+        facebook.accessToken = [defaults objectForKey:@"FBAccessTokenKey"];
+        facebook.expirationDate = [defaults objectForKey:@"FBExpirationDateKey"];
+    }
+    
+    if (![facebook isSessionValid]) {
+        NSLog(@"Start facebook authorize");
+        [facebook authorize:nil];
+    }
+    
     return YES;
 }
+
+#pragma mark -- FB integration
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
+  sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+    NSLog(@"openURL");
+    return [facebook handleOpenURL:url];
+}
+
+- (void)fbDidLogin {
+    NSLog(@"fbDidLogin");
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject:[facebook accessToken] forKey:@"FBAccessTokenKey"];
+    [defaults setObject:[facebook expirationDate] forKey:@"FBExpirationDateKey"];
+    [defaults synchronize];
+}
+
+- (void)fbDidNotLogin:(BOOL)cancelled
+{
+    NSLog(@"fbDidNotLogin");
+}
+
+- (void)fbDidLogout
+{
+    // Remove saved authorization information if it exists
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if ([defaults objectForKey:@"FBAccessTokenKey"]) {
+        [defaults removeObjectForKey:@"FBAccessTokenKey"];
+        [defaults removeObjectForKey:@"FBExpirationDateKey"];
+        [defaults synchronize];
+    }
+}
+
+- (void)fbExpiresAt
+{
+    
+}
+
+- (void)fbDidExtendToken:(NSString *)accessToken expiresAt:(NSDate *)expiresAt
+{
+    
+}
+- (void) fbSessionInvalidated
+{
+    
+}
+
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {

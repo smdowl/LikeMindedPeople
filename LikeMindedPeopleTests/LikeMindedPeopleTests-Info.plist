@@ -2,6 +2,22 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.personal.text.LikeMindedPeople</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb123987074412482
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject:[facebook accessToken] forKey:@&quot;FBAccessTokenKey&quot;];
+    [defaults setObject:[facebook expirationDate] forKey:@&quot;FBExpirationDateKey&quot;];
+    [defaults synchronize];
+fb123987074412482</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>
