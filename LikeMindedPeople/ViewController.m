@@ -10,7 +10,7 @@
 #import "GoogleLocalObject.h" 
 #import "GTMNSString+URLArguments.h"
 @implementation ViewController
-
+@synthesize fbLogin, fbButton;
 - (void)viewDidLoad
 {
     [super viewDidLoad];

@@ -18,6 +18,7 @@
 
 @synthesize window = _window;
 @synthesize facebook;
+@synthesize loginViewController;
 
 
 + (void)initialize
@@ -34,7 +35,10 @@
     // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];
     self.viewController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:nil];
-    self.window.rootViewController = self.viewController;    
+    self.loginViewController = [[LoginViewController alloc] initWithNibName:@"LoginViewController" bundle:nil];    
+
+//    [facebook authorize:nil];
+    self.window.rootViewController = viewController;
     [self.window makeKeyAndVisible];
     
     
@@ -50,12 +54,17 @@
     
     if (![facebook isSessionValid]) {
         NSLog(@"Start facebook authorize");
-        [facebook authorize:nil];
+        self.window.rootViewController = loginViewController;
+//        [self.viewController presentModalViewController:loginViewController animated:NO];
+//        [facebook authorize:nil];
     }
     
     return YES;
 }
-
+-(void)fbAuth {
+    
+    [facebook authorize:nil];
+}
 #pragma mark -- FB integration
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
@@ -69,6 +78,8 @@
     [defaults setObject:[facebook accessToken] forKey:@"FBAccessTokenKey"];
     [defaults setObject:[facebook expirationDate] forKey:@"FBExpirationDateKey"];
     [defaults synchronize];
+    self.window.rootViewController = viewController;
+    
 }
 
 - (void)fbDidNotLogin:(BOOL)cancelled
@@ -85,6 +96,7 @@
         [defaults removeObjectForKey:@"FBExpirationDateKey"];
         [defaults synchronize];
     }
+    [self.viewController presentModalViewController:self.viewController.fbLogin animated:NO];
 }
 
 - (void)fbExpiresAt
