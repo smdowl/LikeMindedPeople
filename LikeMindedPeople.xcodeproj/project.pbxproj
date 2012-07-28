@@ -1,0 +1,426 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		92FBED4915C3A85F000D1AE3 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92FBED4815C3A85F000D1AE3 /* UIKit.framework */; };
+		92FBED4B15C3A85F000D1AE3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92FBED4A15C3A85F000D1AE3 /* Foundation.framework */; };
+		92FBED4D15C3A85F000D1AE3 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92FBED4C15C3A85F000D1AE3 /* CoreGraphics.framework */; };
+		92FBED5315C3A85F000D1AE3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 92FBED5115C3A85F000D1AE3 /* InfoPlist.strings */; };
+		92FBED5515C3A85F000D1AE3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 92FBED5415C3A85F000D1AE3 /* main.m */; };
+		92FBED5915C3A85F000D1AE3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 92FBED5815C3A85F000D1AE3 /* AppDelegate.m */; };
+		92FBED6115C3A85F000D1AE3 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92FBED6015C3A85F000D1AE3 /* SenTestingKit.framework */; };
+		92FBED6215C3A85F000D1AE3 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92FBED4815C3A85F000D1AE3 /* UIKit.framework */; };
+		92FBED6315C3A85F000D1AE3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92FBED4A15C3A85F000D1AE3 /* Foundation.framework */; };
+		92FBED6B15C3A85F000D1AE3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 92FBED6915C3A85F000D1AE3 /* InfoPlist.strings */; };
+		92FBED6E15C3A85F000D1AE3 /* LikeMindedPeopleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 92FBED6D15C3A85F000D1AE3 /* LikeMindedPeopleTests.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		92FBED6415C3A85F000D1AE3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 92FBED3B15C3A85F000D1AE3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 92FBED4315C3A85F000D1AE3;
+			remoteInfo = LikeMindedPeople;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		92FBED4415C3A85F000D1AE3 /* LikeMindedPeople.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LikeMindedPeople.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		92FBED4815C3A85F000D1AE3 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		92FBED4A15C3A85F000D1AE3 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		92FBED4C15C3A85F000D1AE3 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		92FBED5015C3A85F000D1AE3 /* LikeMindedPeople-Info.plist */ = {isa = PBXFileReference; path = "LikeMindedPeople-Info.plist"; sourceTree = "<group>"; };
+		92FBED5215C3A85F000D1AE3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		92FBED5415C3A85F000D1AE3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		92FBED5615C3A85F000D1AE3 /* LikeMindedPeople-Prefix.pch */ = {isa = PBXFileReference; path = "LikeMindedPeople-Prefix.pch"; sourceTree = "<group>"; };
+		92FBED5715C3A85F000D1AE3 /* AppDelegate.h */ = {isa = PBXFileReference; path = AppDelegate.h; sourceTree = "<group>"; };
+		92FBED5815C3A85F000D1AE3 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		92FBED5F15C3A85F000D1AE3 /* LikeMindedPeopleTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LikeMindedPeopleTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		92FBED6015C3A85F000D1AE3 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
+		92FBED6815C3A85F000D1AE3 /* LikeMindedPeopleTests-Info.plist */ = {isa = PBXFileReference; path = "LikeMindedPeopleTests-Info.plist"; sourceTree = "<group>"; };
+		92FBED6A15C3A85F000D1AE3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		92FBED6C15C3A85F000D1AE3 /* LikeMindedPeopleTests.h */ = {isa = PBXFileReference; path = LikeMindedPeopleTests.h; sourceTree = "<group>"; };
+		92FBED6D15C3A85F000D1AE3 /* LikeMindedPeopleTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LikeMindedPeopleTests.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		92FBED4115C3A85F000D1AE3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				92FBED4915C3A85F000D1AE3 /* UIKit.framework in Frameworks */,
+				92FBED4B15C3A85F000D1AE3 /* Foundation.framework in Frameworks */,
+				92FBED4D15C3A85F000D1AE3 /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		92FBED5B15C3A85F000D1AE3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				92FBED6115C3A85F000D1AE3 /* SenTestingKit.framework in Frameworks */,
+				92FBED6215C3A85F000D1AE3 /* UIKit.framework in Frameworks */,
+				92FBED6315C3A85F000D1AE3 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		92FBED3915C3A85F000D1AE3 = {
+			isa = PBXGroup;
+			children = (
+				92FBED4E15C3A85F000D1AE3 /* LikeMindedPeople */,
+				92FBED6615C3A85F000D1AE3 /* LikeMindedPeopleTests */,
+				92FBED4715C3A85F000D1AE3 /* Frameworks */,
+				92FBED4515C3A85F000D1AE3 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		92FBED4515C3A85F000D1AE3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				92FBED4415C3A85F000D1AE3 /* LikeMindedPeople.app */,
+				92FBED5F15C3A85F000D1AE3 /* LikeMindedPeopleTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		92FBED4715C3A85F000D1AE3 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				92FBED4815C3A85F000D1AE3 /* UIKit.framework */,
+				92FBED4A15C3A85F000D1AE3 /* Foundation.framework */,
+				92FBED4C15C3A85F000D1AE3 /* CoreGraphics.framework */,
+				92FBED6015C3A85F000D1AE3 /* SenTestingKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		92FBED4E15C3A85F000D1AE3 /* LikeMindedPeople */ = {
+			isa = PBXGroup;
+			children = (
+				92FBED5715C3A85F000D1AE3 /* AppDelegate.h */,
+				92FBED5815C3A85F000D1AE3 /* AppDelegate.m */,
+				92FBED4F15C3A85F000D1AE3 /* Supporting Files */,
+			);
+			path = LikeMindedPeople;
+			sourceTree = "<group>";
+		};
+		92FBED4F15C3A85F000D1AE3 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				92FBED5015C3A85F000D1AE3 /* LikeMindedPeople-Info.plist */,
+				92FBED5115C3A85F000D1AE3 /* InfoPlist.strings */,
+				92FBED5415C3A85F000D1AE3 /* main.m */,
+				92FBED5615C3A85F000D1AE3 /* LikeMindedPeople-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		92FBED6615C3A85F000D1AE3 /* LikeMindedPeopleTests */ = {
+			isa = PBXGroup;
+			children = (
+				92FBED6C15C3A85F000D1AE3 /* LikeMindedPeopleTests.h */,
+				92FBED6D15C3A85F000D1AE3 /* LikeMindedPeopleTests.m */,
+				92FBED6715C3A85F000D1AE3 /* Supporting Files */,
+			);
+			path = LikeMindedPeopleTests;
+			sourceTree = "<group>";
+		};
+		92FBED6715C3A85F000D1AE3 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				92FBED6815C3A85F000D1AE3 /* LikeMindedPeopleTests-Info.plist */,
+				92FBED6915C3A85F000D1AE3 /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		92FBED4315C3A85F000D1AE3 /* LikeMindedPeople */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 92FBED7115C3A85F000D1AE3 /* Build configuration list for PBXNativeTarget "LikeMindedPeople" */;
+			buildPhases = (
+				92FBED4015C3A85F000D1AE3 /* Sources */,
+				92FBED4115C3A85F000D1AE3 /* Frameworks */,
+				92FBED4215C3A85F000D1AE3 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = LikeMindedPeople;
+			productName = LikeMindedPeople;
+			productReference = 92FBED4415C3A85F000D1AE3 /* LikeMindedPeople.app */;
+			productType = "com.apple.product-type.application";
+		};
+		92FBED5E15C3A85F000D1AE3 /* LikeMindedPeopleTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 92FBED7415C3A85F000D1AE3 /* Build configuration list for PBXNativeTarget "LikeMindedPeopleTests" */;
+			buildPhases = (
+				92FBED5A15C3A85F000D1AE3 /* Sources */,
+				92FBED5B15C3A85F000D1AE3 /* Frameworks */,
+				92FBED5C15C3A85F000D1AE3 /* Resources */,
+				92FBED5D15C3A85F000D1AE3 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				92FBED6515C3A85F000D1AE3 /* PBXTargetDependency */,
+			);
+			name = LikeMindedPeopleTests;
+			productName = LikeMindedPeopleTests;
+			productReference = 92FBED5F15C3A85F000D1AE3 /* LikeMindedPeopleTests.octest */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		92FBED3B15C3A85F000D1AE3 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0430;
+			};
+			buildConfigurationList = 92FBED3E15C3A85F000D1AE3 /* Build configuration list for PBXProject "LikeMindedPeople" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 92FBED3915C3A85F000D1AE3;
+			productRefGroup = 92FBED4515C3A85F000D1AE3 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				92FBED4315C3A85F000D1AE3 /* LikeMindedPeople */,
+				92FBED5E15C3A85F000D1AE3 /* LikeMindedPeopleTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		92FBED4215C3A85F000D1AE3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				92FBED5315C3A85F000D1AE3 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		92FBED5C15C3A85F000D1AE3 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				92FBED6B15C3A85F000D1AE3 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		92FBED5D15C3A85F000D1AE3 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		92FBED4015C3A85F000D1AE3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				92FBED5515C3A85F000D1AE3 /* main.m in Sources */,
+				92FBED5915C3A85F000D1AE3 /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		92FBED5A15C3A85F000D1AE3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				92FBED6E15C3A85F000D1AE3 /* LikeMindedPeopleTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		92FBED6515C3A85F000D1AE3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 92FBED4315C3A85F000D1AE3 /* LikeMindedPeople */;
+			targetProxy = 92FBED6415C3A85F000D1AE3 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		92FBED5115C3A85F000D1AE3 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				92FBED5215C3A85F000D1AE3 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		92FBED6915C3A85F000D1AE3 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				92FBED6A15C3A85F000D1AE3 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		92FBED6F15C3A85F000D1AE3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		92FBED7015C3A85F000D1AE3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		92FBED7215C3A85F000D1AE3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "LikeMindedPeople/LikeMindedPeople-Prefix.pch";
+				INFOPLIST_FILE = "LikeMindedPeople/LikeMindedPeople-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		92FBED7315C3A85F000D1AE3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "LikeMindedPeople/LikeMindedPeople-Prefix.pch";
+				INFOPLIST_FILE = "LikeMindedPeople/LikeMindedPeople-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		92FBED7515C3A85F000D1AE3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/LikeMindedPeople.app/LikeMindedPeople";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "LikeMindedPeople/LikeMindedPeople-Prefix.pch";
+				INFOPLIST_FILE = "LikeMindedPeopleTests/LikeMindedPeopleTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Debug;
+		};
+		92FBED7615C3A85F000D1AE3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/LikeMindedPeople.app/LikeMindedPeople";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(DEVELOPER_LIBRARY_DIR)/Frameworks",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "LikeMindedPeople/LikeMindedPeople-Prefix.pch";
+				INFOPLIST_FILE = "LikeMindedPeopleTests/LikeMindedPeopleTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUNDLE_LOADER)";
+				WRAPPER_EXTENSION = octest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		92FBED3E15C3A85F000D1AE3 /* Build configuration list for PBXProject "LikeMindedPeople" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				92FBED6F15C3A85F000D1AE3 /* Debug */,
+				92FBED7015C3A85F000D1AE3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		92FBED7115C3A85F000D1AE3 /* Build configuration list for PBXNativeTarget "LikeMindedPeople" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				92FBED7215C3A85F000D1AE3 /* Debug */,
+				92FBED7315C3A85F000D1AE3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		92FBED7415C3A85F000D1AE3 /* Build configuration list for PBXNativeTarget "LikeMindedPeopleTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				92FBED7515C3A85F000D1AE3 /* Debug */,
+				92FBED7615C3A85F000D1AE3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 92FBED3B15C3A85F000D1AE3 /* Project object */;
+}
