@@ -10,13 +10,18 @@
 #import <MapKit/MapKit.h>
 #import "DataModel.h"
 #import <CoreLocation/CoreLocation.h>
+#import "GoogleLocalConnection.h"
+@class GoogleLocalObject;
 @class DataModel;
-@interface ViewController : UIViewController {
+@interface ViewController : UIViewController<GoogleLocalConnectionDelegate> {
     IBOutlet UITextField *txtSearch;
     IBOutlet UISlider *slider;
     IBOutlet MKMapView *mapView;
     CLLocationManager *locationManager;
+    GoogleLocalConnection *googleLocalConnection;    
+    CLLocation *loc;
     DataModel *dm;
+    int z;
 }
 -(IBAction)search:(id)sender;
 -(IBAction)refershMap;
