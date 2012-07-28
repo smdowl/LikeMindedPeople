@@ -7,41 +7,32 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		925AE79015C39171008840D9 /* Common.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE76815C39170008840D9 /* Common.framework */; };
-		925AE79115C39171008840D9 /* ContextCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE76B15C39170008840D9 /* ContextCore.framework */; };
-		925AE79215C39171008840D9 /* ContextIR.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE76E15C39170008840D9 /* ContextIR.framework */; };
-		925AE79315C39171008840D9 /* AdvertisementViewController.nib in Resources */ = {isa = PBXBuildFile; fileRef = 925AE77015C39170008840D9 /* AdvertisementViewController.nib */; };
-		925AE79415C39171008840D9 /* bracket@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 925AE77115C39170008840D9 /* bracket@2x.png */; };
-		925AE79515C39171008840D9 /* crosshair.png in Resources */ = {isa = PBXBuildFile; fileRef = 925AE77215C39171008840D9 /* crosshair.png */; };
-		925AE79615C39171008840D9 /* crosshair1.png in Resources */ = {isa = PBXBuildFile; fileRef = 925AE77315C39171008840D9 /* crosshair1.png */; };
-		925AE79715C39171008840D9 /* crosshair1@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 925AE77415C39171008840D9 /* crosshair1@2x.png */; };
-		925AE79815C39171008840D9 /* crosshair2.png in Resources */ = {isa = PBXBuildFile; fileRef = 925AE77515C39171008840D9 /* crosshair2.png */; };
-		925AE79915C39171008840D9 /* crosshair2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 925AE77615C39171008840D9 /* crosshair2@2x.png */; };
-		925AE79A15C39171008840D9 /* crosshair@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 925AE77715C39171008840D9 /* crosshair@2x.png */; };
-		925AE79B15C39171008840D9 /* glowbracket.png in Resources */ = {isa = PBXBuildFile; fileRef = 925AE77815C39171008840D9 /* glowbracket.png */; };
-		925AE79C15C39171008840D9 /* glowbracket@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 925AE77915C39171008840D9 /* glowbracket@2x.png */; };
-		925AE79D15C39171008840D9 /* ContextLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE77B15C39171008840D9 /* ContextLocation.framework */; };
-		925AE79E15C39171008840D9 /* ContentModel.mom in Resources */ = {isa = PBXBuildFile; fileRef = 925AE77E15C39171008840D9 /* ContentModel.mom */; };
-		925AE79F15C39171008840D9 /* ContentModel.omo in Resources */ = {isa = PBXBuildFile; fileRef = 925AE77F15C39171008840D9 /* ContentModel.omo */; };
-		925AE7A015C39171008840D9 /* VersionInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 925AE78015C39171008840D9 /* VersionInfo.plist */; };
-		925AE7A115C39171008840D9 /* PlaceOfRelevanceModel.mom in Resources */ = {isa = PBXBuildFile; fileRef = 925AE78215C39171008840D9 /* PlaceOfRelevanceModel.mom */; };
-		925AE7A215C39171008840D9 /* PlaceOfRelevanceModel.omo in Resources */ = {isa = PBXBuildFile; fileRef = 925AE78315C39171008840D9 /* PlaceOfRelevanceModel.omo */; };
-		925AE7A315C39171008840D9 /* VersionInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 925AE78415C39171008840D9 /* VersionInfo.plist */; };
-		925AE7A415C39171008840D9 /* Repository.mom in Resources */ = {isa = PBXBuildFile; fileRef = 925AE78615C39171008840D9 /* Repository.mom */; };
-		925AE7A515C39171008840D9 /* Repository.omo in Resources */ = {isa = PBXBuildFile; fileRef = 925AE78715C39171008840D9 /* Repository.omo */; };
-		925AE7A615C39171008840D9 /* VersionInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 925AE78815C39171008840D9 /* VersionInfo.plist */; };
-		925AE7A715C39171008840D9 /* ContextProfiling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE78A15C39171008840D9 /* ContextProfiling.framework */; };
-		925AE7A815C39171008840D9 /* rules.txt in Resources */ = {isa = PBXBuildFile; fileRef = 925AE78C15C39171008840D9 /* rules.txt */; };
-		925AE7A915C39171008840D9 /* NetworkServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE78E15C39171008840D9 /* NetworkServices.framework */; };
-		92FBED4915C3A85F000D1AE3 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92FBED4815C3A85F000D1AE3 /* UIKit.framework */; };
-		92FBED4B15C3A85F000D1AE3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92FBED4A15C3A85F000D1AE3 /* Foundation.framework */; };
-		92FBED4D15C3A85F000D1AE3 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92FBED4C15C3A85F000D1AE3 /* CoreGraphics.framework */; };
+		925AE7B315C430F2008840D9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7AC15C430F2008840D9 /* UIKit.framework */; };
+		925AE7B415C430F2008840D9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7AD15C430F2008840D9 /* Foundation.framework */; };
+		925AE7B515C430F2008840D9 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7AE15C430F2008840D9 /* CoreGraphics.framework */; };
+		925AE7B615C430F2008840D9 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7AF15C430F2008840D9 /* CoreLocation.framework */; };
+		925AE7B715C430F2008840D9 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7B015C430F2008840D9 /* MapKit.framework */; };
+		925AE7B815C430F2008840D9 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7B115C430F2008840D9 /* CoreData.framework */; };
+		925AE7B915C430F2008840D9 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7B215C430F2008840D9 /* Security.framework */; };
+		925AE7EB15C43212008840D9 /* Common.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7C315C43212008840D9 /* Common.framework */; };
+		925AE7EC15C43212008840D9 /* ContextCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7C615C43212008840D9 /* ContextCore.framework */; };
+		925AE7F815C43212008840D9 /* ContextLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7D615C43212008840D9 /* ContextLocation.framework */; };
+		925AE7F915C43213008840D9 /* ContentModel.mom in Resources */ = {isa = PBXBuildFile; fileRef = 925AE7D915C43212008840D9 /* ContentModel.mom */; };
+		925AE7FA15C43213008840D9 /* ContentModel.omo in Resources */ = {isa = PBXBuildFile; fileRef = 925AE7DA15C43212008840D9 /* ContentModel.omo */; };
+		925AE7FB15C43213008840D9 /* VersionInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 925AE7DB15C43212008840D9 /* VersionInfo.plist */; };
+		925AE7FC15C43213008840D9 /* PlaceOfRelevanceModel.mom in Resources */ = {isa = PBXBuildFile; fileRef = 925AE7DD15C43212008840D9 /* PlaceOfRelevanceModel.mom */; };
+		925AE7FD15C43213008840D9 /* PlaceOfRelevanceModel.omo in Resources */ = {isa = PBXBuildFile; fileRef = 925AE7DE15C43212008840D9 /* PlaceOfRelevanceModel.omo */; };
+		925AE7FE15C43213008840D9 /* VersionInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 925AE7DF15C43212008840D9 /* VersionInfo.plist */; };
+		925AE7FF15C43213008840D9 /* Repository.mom in Resources */ = {isa = PBXBuildFile; fileRef = 925AE7E115C43212008840D9 /* Repository.mom */; };
+		925AE80015C43213008840D9 /* Repository.omo in Resources */ = {isa = PBXBuildFile; fileRef = 925AE7E215C43212008840D9 /* Repository.omo */; };
+		925AE80115C43213008840D9 /* VersionInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 925AE7E315C43212008840D9 /* VersionInfo.plist */; };
+		925AE80215C43213008840D9 /* ContextProfiling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7E515C43212008840D9 /* ContextProfiling.framework */; };
+		925AE80315C43213008840D9 /* rules.txt in Resources */ = {isa = PBXBuildFile; fileRef = 925AE7E715C43212008840D9 /* rules.txt */; };
+		925AE80415C43213008840D9 /* NetworkServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7E915C43212008840D9 /* NetworkServices.framework */; };
+		925AE80615C43244008840D9 /* UserContext.plist in Resources */ = {isa = PBXBuildFile; fileRef = 925AE80515C43244008840D9 /* UserContext.plist */; };
 		92FBED5315C3A85F000D1AE3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 92FBED5115C3A85F000D1AE3 /* InfoPlist.strings */; };
 		92FBED5515C3A85F000D1AE3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 92FBED5415C3A85F000D1AE3 /* main.m */; };
 		92FBED5915C3A85F000D1AE3 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 92FBED5815C3A85F000D1AE3 /* AppDelegate.m */; };
-		92FBED6115C3A85F000D1AE3 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92FBED6015C3A85F000D1AE3 /* SenTestingKit.framework */; };
-		92FBED6215C3A85F000D1AE3 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92FBED4815C3A85F000D1AE3 /* UIKit.framework */; };
-		92FBED6315C3A85F000D1AE3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 92FBED4A15C3A85F000D1AE3 /* Foundation.framework */; };
 		92FBED6B15C3A85F000D1AE3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 92FBED6915C3A85F000D1AE3 /* InfoPlist.strings */; };
 		92FBED6E15C3A85F000D1AE3 /* LikeMindedPeopleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 92FBED6D15C3A85F000D1AE3 /* LikeMindedPeopleTests.m */; };
 /* End PBXBuildFile section */
@@ -57,36 +48,30 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		925AE76815C39170008840D9 /* Common.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Common.framework; sourceTree = "<group>"; };
-		925AE76B15C39170008840D9 /* ContextCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ContextCore.framework; sourceTree = "<group>"; };
-		925AE76E15C39170008840D9 /* ContextIR.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ContextIR.framework; sourceTree = "<group>"; };
-		925AE77015C39170008840D9 /* AdvertisementViewController.nib */ = {isa = PBXFileReference; lastKnownFileType = file; path = AdvertisementViewController.nib; sourceTree = "<group>"; };
-		925AE77115C39170008840D9 /* bracket@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bracket@2x.png"; sourceTree = "<group>"; };
-		925AE77215C39171008840D9 /* crosshair.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = crosshair.png; sourceTree = "<group>"; };
-		925AE77315C39171008840D9 /* crosshair1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = crosshair1.png; sourceTree = "<group>"; };
-		925AE77415C39171008840D9 /* crosshair1@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "crosshair1@2x.png"; sourceTree = "<group>"; };
-		925AE77515C39171008840D9 /* crosshair2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = crosshair2.png; sourceTree = "<group>"; };
-		925AE77615C39171008840D9 /* crosshair2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "crosshair2@2x.png"; sourceTree = "<group>"; };
-		925AE77715C39171008840D9 /* crosshair@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "crosshair@2x.png"; sourceTree = "<group>"; };
-		925AE77815C39171008840D9 /* glowbracket.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = glowbracket.png; sourceTree = "<group>"; };
-		925AE77915C39171008840D9 /* glowbracket@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "glowbracket@2x.png"; sourceTree = "<group>"; };
-		925AE77B15C39171008840D9 /* ContextLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ContextLocation.framework; sourceTree = "<group>"; };
-		925AE77E15C39171008840D9 /* ContentModel.mom */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = ContentModel.mom; sourceTree = "<group>"; };
-		925AE77F15C39171008840D9 /* ContentModel.omo */ = {isa = PBXFileReference; lastKnownFileType = file; path = ContentModel.omo; sourceTree = "<group>"; };
-		925AE78015C39171008840D9 /* VersionInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = VersionInfo.plist; sourceTree = "<group>"; };
-		925AE78215C39171008840D9 /* PlaceOfRelevanceModel.mom */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = PlaceOfRelevanceModel.mom; sourceTree = "<group>"; };
-		925AE78315C39171008840D9 /* PlaceOfRelevanceModel.omo */ = {isa = PBXFileReference; lastKnownFileType = file; path = PlaceOfRelevanceModel.omo; sourceTree = "<group>"; };
-		925AE78415C39171008840D9 /* VersionInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = VersionInfo.plist; sourceTree = "<group>"; };
-		925AE78615C39171008840D9 /* Repository.mom */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = Repository.mom; sourceTree = "<group>"; };
-		925AE78715C39171008840D9 /* Repository.omo */ = {isa = PBXFileReference; lastKnownFileType = file; path = Repository.omo; sourceTree = "<group>"; };
-		925AE78815C39171008840D9 /* VersionInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = VersionInfo.plist; sourceTree = "<group>"; };
-		925AE78A15C39171008840D9 /* ContextProfiling.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ContextProfiling.framework; sourceTree = "<group>"; };
-		925AE78C15C39171008840D9 /* rules.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rules.txt; sourceTree = "<group>"; };
-		925AE78E15C39171008840D9 /* NetworkServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = NetworkServices.framework; sourceTree = "<group>"; };
+		925AE7AC15C430F2008840D9 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		925AE7AD15C430F2008840D9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		925AE7AE15C430F2008840D9 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		925AE7AF15C430F2008840D9 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		925AE7B015C430F2008840D9 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
+		925AE7B115C430F2008840D9 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		925AE7B215C430F2008840D9 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		925AE7C315C43212008840D9 /* Common.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Common.framework; sourceTree = "<group>"; };
+		925AE7C615C43212008840D9 /* ContextCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ContextCore.framework; sourceTree = "<group>"; };
+		925AE7D615C43212008840D9 /* ContextLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ContextLocation.framework; sourceTree = "<group>"; };
+		925AE7D915C43212008840D9 /* ContentModel.mom */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = ContentModel.mom; sourceTree = "<group>"; };
+		925AE7DA15C43212008840D9 /* ContentModel.omo */ = {isa = PBXFileReference; lastKnownFileType = file; path = ContentModel.omo; sourceTree = "<group>"; };
+		925AE7DB15C43212008840D9 /* VersionInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = VersionInfo.plist; sourceTree = "<group>"; };
+		925AE7DD15C43212008840D9 /* PlaceOfRelevanceModel.mom */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = PlaceOfRelevanceModel.mom; sourceTree = "<group>"; };
+		925AE7DE15C43212008840D9 /* PlaceOfRelevanceModel.omo */ = {isa = PBXFileReference; lastKnownFileType = file; path = PlaceOfRelevanceModel.omo; sourceTree = "<group>"; };
+		925AE7DF15C43212008840D9 /* VersionInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = VersionInfo.plist; sourceTree = "<group>"; };
+		925AE7E115C43212008840D9 /* Repository.mom */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = Repository.mom; sourceTree = "<group>"; };
+		925AE7E215C43212008840D9 /* Repository.omo */ = {isa = PBXFileReference; lastKnownFileType = file; path = Repository.omo; sourceTree = "<group>"; };
+		925AE7E315C43212008840D9 /* VersionInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = VersionInfo.plist; sourceTree = "<group>"; };
+		925AE7E515C43212008840D9 /* ContextProfiling.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ContextProfiling.framework; sourceTree = "<group>"; };
+		925AE7E715C43212008840D9 /* rules.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rules.txt; sourceTree = "<group>"; };
+		925AE7E915C43212008840D9 /* NetworkServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = NetworkServices.framework; sourceTree = "<group>"; };
+		925AE80515C43244008840D9 /* UserContext.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UserContext.plist; sourceTree = "<group>"; };
 		92FBED4415C3A85F000D1AE3 /* LikeMindedPeople.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LikeMindedPeople.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		92FBED4815C3A85F000D1AE3 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		92FBED4A15C3A85F000D1AE3 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		92FBED4C15C3A85F000D1AE3 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
 		92FBED5015C3A85F000D1AE3 /* LikeMindedPeople-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "LikeMindedPeople-Info.plist"; sourceTree = "<group>"; };
 		92FBED5215C3A85F000D1AE3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		92FBED5415C3A85F000D1AE3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -94,7 +79,6 @@
 		92FBED5715C3A85F000D1AE3 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		92FBED5815C3A85F000D1AE3 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		92FBED5F15C3A85F000D1AE3 /* LikeMindedPeopleTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LikeMindedPeopleTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
-		92FBED6015C3A85F000D1AE3 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		92FBED6815C3A85F000D1AE3 /* LikeMindedPeopleTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "LikeMindedPeopleTests-Info.plist"; sourceTree = "<group>"; };
 		92FBED6A15C3A85F000D1AE3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		92FBED6C15C3A85F000D1AE3 /* LikeMindedPeopleTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LikeMindedPeopleTests.h; sourceTree = "<group>"; };
@@ -106,15 +90,18 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				92FBED4915C3A85F000D1AE3 /* UIKit.framework in Frameworks */,
-				92FBED4B15C3A85F000D1AE3 /* Foundation.framework in Frameworks */,
-				92FBED4D15C3A85F000D1AE3 /* CoreGraphics.framework in Frameworks */,
-				925AE79015C39171008840D9 /* Common.framework in Frameworks */,
-				925AE79115C39171008840D9 /* ContextCore.framework in Frameworks */,
-				925AE79215C39171008840D9 /* ContextIR.framework in Frameworks */,
-				925AE79D15C39171008840D9 /* ContextLocation.framework in Frameworks */,
-				925AE7A715C39171008840D9 /* ContextProfiling.framework in Frameworks */,
-				925AE7A915C39171008840D9 /* NetworkServices.framework in Frameworks */,
+				925AE7B315C430F2008840D9 /* UIKit.framework in Frameworks */,
+				925AE7B415C430F2008840D9 /* Foundation.framework in Frameworks */,
+				925AE7B515C430F2008840D9 /* CoreGraphics.framework in Frameworks */,
+				925AE7B615C430F2008840D9 /* CoreLocation.framework in Frameworks */,
+				925AE7B715C430F2008840D9 /* MapKit.framework in Frameworks */,
+				925AE7B815C430F2008840D9 /* CoreData.framework in Frameworks */,
+				925AE7B915C430F2008840D9 /* Security.framework in Frameworks */,
+				925AE7EB15C43212008840D9 /* Common.framework in Frameworks */,
+				925AE7EC15C43212008840D9 /* ContextCore.framework in Frameworks */,
+				925AE7F815C43212008840D9 /* ContextLocation.framework in Frameworks */,
+				925AE80215C43213008840D9 /* ContextProfiling.framework in Frameworks */,
+				925AE80415C43213008840D9 /* NetworkServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -122,149 +109,132 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				92FBED6115C3A85F000D1AE3 /* SenTestingKit.framework in Frameworks */,
-				92FBED6215C3A85F000D1AE3 /* UIKit.framework in Frameworks */,
-				92FBED6315C3A85F000D1AE3 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		925AE76715C39170008840D9 /* Common.embeddedframework */ = {
+		925AE7C115C43212008840D9 /* context-beta-ios-sdk */ = {
 			isa = PBXGroup;
 			children = (
-				925AE76815C39170008840D9 /* Common.framework */,
-				925AE76915C39170008840D9 /* Resources */,
+				925AE7C215C43212008840D9 /* Common.embeddedframework */,
+				925AE7C515C43212008840D9 /* ContextCore.embeddedframework */,
+				925AE7D515C43212008840D9 /* ContextLocation.embeddedframework */,
+				925AE7E415C43212008840D9 /* ContextProfiling.embeddedframework */,
+				925AE7E815C43212008840D9 /* NetworkServices.embeddedframework */,
+			);
+			path = "context-beta-ios-sdk";
+			sourceTree = "<group>";
+		};
+		925AE7C215C43212008840D9 /* Common.embeddedframework */ = {
+			isa = PBXGroup;
+			children = (
+				925AE7C315C43212008840D9 /* Common.framework */,
+				925AE7C415C43212008840D9 /* Resources */,
 			);
 			path = Common.embeddedframework;
 			sourceTree = "<group>";
 		};
-		925AE76915C39170008840D9 /* Resources */ = {
+		925AE7C415C43212008840D9 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		925AE76A15C39170008840D9 /* ContextCore.embeddedframework */ = {
+		925AE7C515C43212008840D9 /* ContextCore.embeddedframework */ = {
 			isa = PBXGroup;
 			children = (
-				925AE76B15C39170008840D9 /* ContextCore.framework */,
-				925AE76C15C39170008840D9 /* Resources */,
+				925AE7C615C43212008840D9 /* ContextCore.framework */,
+				925AE7C715C43212008840D9 /* Resources */,
 			);
 			path = ContextCore.embeddedframework;
 			sourceTree = "<group>";
 		};
-		925AE76C15C39170008840D9 /* Resources */ = {
+		925AE7C715C43212008840D9 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
 			);
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		925AE76D15C39170008840D9 /* ContextIR.embeddedframework */ = {
+		925AE7D515C43212008840D9 /* ContextLocation.embeddedframework */ = {
 			isa = PBXGroup;
 			children = (
-				925AE76E15C39170008840D9 /* ContextIR.framework */,
-				925AE76F15C39170008840D9 /* Resources */,
-			);
-			path = ContextIR.embeddedframework;
-			sourceTree = "<group>";
-		};
-		925AE76F15C39170008840D9 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				925AE77015C39170008840D9 /* AdvertisementViewController.nib */,
-				925AE77115C39170008840D9 /* bracket@2x.png */,
-				925AE77215C39171008840D9 /* crosshair.png */,
-				925AE77315C39171008840D9 /* crosshair1.png */,
-				925AE77415C39171008840D9 /* crosshair1@2x.png */,
-				925AE77515C39171008840D9 /* crosshair2.png */,
-				925AE77615C39171008840D9 /* crosshair2@2x.png */,
-				925AE77715C39171008840D9 /* crosshair@2x.png */,
-				925AE77815C39171008840D9 /* glowbracket.png */,
-				925AE77915C39171008840D9 /* glowbracket@2x.png */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
-		925AE77A15C39171008840D9 /* ContextLocation.embeddedframework */ = {
-			isa = PBXGroup;
-			children = (
-				925AE77B15C39171008840D9 /* ContextLocation.framework */,
-				925AE77C15C39171008840D9 /* Resources */,
+				925AE7D615C43212008840D9 /* ContextLocation.framework */,
+				925AE7D715C43212008840D9 /* Resources */,
 			);
 			path = ContextLocation.embeddedframework;
 			sourceTree = "<group>";
 		};
-		925AE77C15C39171008840D9 /* Resources */ = {
+		925AE7D715C43212008840D9 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				925AE77D15C39171008840D9 /* ContentModel.momd */,
-				925AE78115C39171008840D9 /* PlaceOfRelevanceModel.momd */,
-				925AE78515C39171008840D9 /* Repository.momd */,
+				925AE7D815C43212008840D9 /* ContentModel.momd */,
+				925AE7DC15C43212008840D9 /* PlaceOfRelevanceModel.momd */,
+				925AE7E015C43212008840D9 /* Repository.momd */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		925AE77D15C39171008840D9 /* ContentModel.momd */ = {
+		925AE7D815C43212008840D9 /* ContentModel.momd */ = {
 			isa = PBXGroup;
 			children = (
-				925AE77E15C39171008840D9 /* ContentModel.mom */,
-				925AE77F15C39171008840D9 /* ContentModel.omo */,
-				925AE78015C39171008840D9 /* VersionInfo.plist */,
+				925AE7D915C43212008840D9 /* ContentModel.mom */,
+				925AE7DA15C43212008840D9 /* ContentModel.omo */,
+				925AE7DB15C43212008840D9 /* VersionInfo.plist */,
 			);
 			path = ContentModel.momd;
 			sourceTree = "<group>";
 		};
-		925AE78115C39171008840D9 /* PlaceOfRelevanceModel.momd */ = {
+		925AE7DC15C43212008840D9 /* PlaceOfRelevanceModel.momd */ = {
 			isa = PBXGroup;
 			children = (
-				925AE78215C39171008840D9 /* PlaceOfRelevanceModel.mom */,
-				925AE78315C39171008840D9 /* PlaceOfRelevanceModel.omo */,
-				925AE78415C39171008840D9 /* VersionInfo.plist */,
+				925AE7DD15C43212008840D9 /* PlaceOfRelevanceModel.mom */,
+				925AE7DE15C43212008840D9 /* PlaceOfRelevanceModel.omo */,
+				925AE7DF15C43212008840D9 /* VersionInfo.plist */,
 			);
 			path = PlaceOfRelevanceModel.momd;
 			sourceTree = "<group>";
 		};
-		925AE78515C39171008840D9 /* Repository.momd */ = {
+		925AE7E015C43212008840D9 /* Repository.momd */ = {
 			isa = PBXGroup;
 			children = (
-				925AE78615C39171008840D9 /* Repository.mom */,
-				925AE78715C39171008840D9 /* Repository.omo */,
-				925AE78815C39171008840D9 /* VersionInfo.plist */,
+				925AE7E115C43212008840D9 /* Repository.mom */,
+				925AE7E215C43212008840D9 /* Repository.omo */,
+				925AE7E315C43212008840D9 /* VersionInfo.plist */,
 			);
 			path = Repository.momd;
 			sourceTree = "<group>";
 		};
-		925AE78915C39171008840D9 /* ContextProfiling.embeddedframework */ = {
+		925AE7E415C43212008840D9 /* ContextProfiling.embeddedframework */ = {
 			isa = PBXGroup;
 			children = (
-				925AE78A15C39171008840D9 /* ContextProfiling.framework */,
-				925AE78B15C39171008840D9 /* Resources */,
+				925AE7E515C43212008840D9 /* ContextProfiling.framework */,
+				925AE7E615C43212008840D9 /* Resources */,
 			);
 			path = ContextProfiling.embeddedframework;
 			sourceTree = "<group>";
 		};
-		925AE78B15C39171008840D9 /* Resources */ = {
+		925AE7E615C43212008840D9 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				925AE78C15C39171008840D9 /* rules.txt */,
+				925AE7E715C43212008840D9 /* rules.txt */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
 		};
-		925AE78D15C39171008840D9 /* NetworkServices.embeddedframework */ = {
+		925AE7E815C43212008840D9 /* NetworkServices.embeddedframework */ = {
 			isa = PBXGroup;
 			children = (
-				925AE78E15C39171008840D9 /* NetworkServices.framework */,
-				925AE78F15C39171008840D9 /* Resources */,
+				925AE7E915C43212008840D9 /* NetworkServices.framework */,
+				925AE7EA15C43212008840D9 /* Resources */,
 			);
 			path = NetworkServices.embeddedframework;
 			sourceTree = "<group>";
 		};
-		925AE78F15C39171008840D9 /* Resources */ = {
+		925AE7EA15C43212008840D9 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
 			);
@@ -293,16 +263,14 @@
 		92FBED4715C3A85F000D1AE3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				925AE76715C39170008840D9 /* Common.embeddedframework */,
-				925AE76A15C39170008840D9 /* ContextCore.embeddedframework */,
-				925AE76D15C39170008840D9 /* ContextIR.embeddedframework */,
-				925AE77A15C39171008840D9 /* ContextLocation.embeddedframework */,
-				925AE78915C39171008840D9 /* ContextProfiling.embeddedframework */,
-				925AE78D15C39171008840D9 /* NetworkServices.embeddedframework */,
-				92FBED4815C3A85F000D1AE3 /* UIKit.framework */,
-				92FBED4A15C3A85F000D1AE3 /* Foundation.framework */,
-				92FBED4C15C3A85F000D1AE3 /* CoreGraphics.framework */,
-				92FBED6015C3A85F000D1AE3 /* SenTestingKit.framework */,
+				925AE7C115C43212008840D9 /* context-beta-ios-sdk */,
+				925AE7AC15C430F2008840D9 /* UIKit.framework */,
+				925AE7AD15C430F2008840D9 /* Foundation.framework */,
+				925AE7AE15C430F2008840D9 /* CoreGraphics.framework */,
+				925AE7AF15C430F2008840D9 /* CoreLocation.framework */,
+				925AE7B015C430F2008840D9 /* MapKit.framework */,
+				925AE7B115C430F2008840D9 /* CoreData.framework */,
+				925AE7B215C430F2008840D9 /* Security.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -341,6 +309,7 @@
 		92FBED6715C3A85F000D1AE3 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				925AE80515C43244008840D9 /* UserContext.plist */,
 				92FBED6815C3A85F000D1AE3 /* LikeMindedPeopleTests-Info.plist */,
 				92FBED6915C3A85F000D1AE3 /* InfoPlist.strings */,
 			);
@@ -418,26 +387,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				92FBED5315C3A85F000D1AE3 /* InfoPlist.strings in Resources */,
-				925AE79315C39171008840D9 /* AdvertisementViewController.nib in Resources */,
-				925AE79415C39171008840D9 /* bracket@2x.png in Resources */,
-				925AE79515C39171008840D9 /* crosshair.png in Resources */,
-				925AE79615C39171008840D9 /* crosshair1.png in Resources */,
-				925AE79715C39171008840D9 /* crosshair1@2x.png in Resources */,
-				925AE79815C39171008840D9 /* crosshair2.png in Resources */,
-				925AE79915C39171008840D9 /* crosshair2@2x.png in Resources */,
-				925AE79A15C39171008840D9 /* crosshair@2x.png in Resources */,
-				925AE79B15C39171008840D9 /* glowbracket.png in Resources */,
-				925AE79C15C39171008840D9 /* glowbracket@2x.png in Resources */,
-				925AE79E15C39171008840D9 /* ContentModel.mom in Resources */,
-				925AE79F15C39171008840D9 /* ContentModel.omo in Resources */,
-				925AE7A015C39171008840D9 /* VersionInfo.plist in Resources */,
-				925AE7A115C39171008840D9 /* PlaceOfRelevanceModel.mom in Resources */,
-				925AE7A215C39171008840D9 /* PlaceOfRelevanceModel.omo in Resources */,
-				925AE7A315C39171008840D9 /* VersionInfo.plist in Resources */,
-				925AE7A415C39171008840D9 /* Repository.mom in Resources */,
-				925AE7A515C39171008840D9 /* Repository.omo in Resources */,
-				925AE7A615C39171008840D9 /* VersionInfo.plist in Resources */,
-				925AE7A815C39171008840D9 /* rules.txt in Resources */,
+				925AE7F915C43213008840D9 /* ContentModel.mom in Resources */,
+				925AE7FA15C43213008840D9 /* ContentModel.omo in Resources */,
+				925AE7FB15C43213008840D9 /* VersionInfo.plist in Resources */,
+				925AE7FC15C43213008840D9 /* PlaceOfRelevanceModel.mom in Resources */,
+				925AE7FD15C43213008840D9 /* PlaceOfRelevanceModel.omo in Resources */,
+				925AE7FE15C43213008840D9 /* VersionInfo.plist in Resources */,
+				925AE7FF15C43213008840D9 /* Repository.mom in Resources */,
+				925AE80015C43213008840D9 /* Repository.omo in Resources */,
+				925AE80115C43213008840D9 /* VersionInfo.plist in Resources */,
+				925AE80315C43213008840D9 /* rules.txt in Resources */,
+				925AE80615C43244008840D9 /* UserContext.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -571,6 +531,13 @@
 					"\"$(SRCROOT)/ContextLocation.embeddedframework\"",
 					"\"$(SRCROOT)/ContextProfiling.embeddedframework\"",
 					"\"$(SRCROOT)/NetworkServices.embeddedframework\"",
+					"\"$(SRCROOT)/../Codes/Qualcomm/gimbal/GimbalIOSSDK/context-beta-ios-sdk/ContextProfiling.embeddedframework\"",
+					"\"$(SRCROOT)/context-beta-ios-sdk/Common.embeddedframework\"",
+					"\"$(SRCROOT)/context-beta-ios-sdk/ContextCore.embeddedframework\"",
+					"\"$(SRCROOT)/context-beta-ios-sdk/ContextIR.embeddedframework\"",
+					"\"$(SRCROOT)/context-beta-ios-sdk/ContextLocation.embeddedframework\"",
+					"\"$(SRCROOT)/context-beta-ios-sdk/ContextProfiling.embeddedframework\"",
+					"\"$(SRCROOT)/context-beta-ios-sdk/NetworkServices.embeddedframework\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "LikeMindedPeople/LikeMindedPeople-Prefix.pch";
@@ -591,6 +558,13 @@
 					"\"$(SRCROOT)/ContextLocation.embeddedframework\"",
 					"\"$(SRCROOT)/ContextProfiling.embeddedframework\"",
 					"\"$(SRCROOT)/NetworkServices.embeddedframework\"",
+					"\"$(SRCROOT)/../Codes/Qualcomm/gimbal/GimbalIOSSDK/context-beta-ios-sdk/ContextProfiling.embeddedframework\"",
+					"\"$(SRCROOT)/context-beta-ios-sdk/Common.embeddedframework\"",
+					"\"$(SRCROOT)/context-beta-ios-sdk/ContextCore.embeddedframework\"",
+					"\"$(SRCROOT)/context-beta-ios-sdk/ContextIR.embeddedframework\"",
+					"\"$(SRCROOT)/context-beta-ios-sdk/ContextLocation.embeddedframework\"",
+					"\"$(SRCROOT)/context-beta-ios-sdk/ContextProfiling.embeddedframework\"",
+					"\"$(SRCROOT)/context-beta-ios-sdk/NetworkServices.embeddedframework\"",
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "LikeMindedPeople/LikeMindedPeople-Prefix.pch";
