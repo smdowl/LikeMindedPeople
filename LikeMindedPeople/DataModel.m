@@ -14,6 +14,7 @@
 #import <ContextCore/QLContextConnectorPermissions.h>
 #import <ContextProfiling/PRProfile.h>
 #import <ContextCore/QLContextCoreError.h>
+#import "ServiceAdapter.h"
 
 @interface DataModel()
 - (void)_getPPOIList;
@@ -180,10 +181,15 @@ failure:^(NSError *error) {
 	 */
 	NSLog(@"%@ %@", profile, [profile.attrs.allValues objectAtIndex:0]);
 	
+//	[ServiceAdapter uploadPointsOfInterest:<#(NSArray *)#> forUser:<#(NSString *)#> success:<#^(id)success#>
+	
 	// Add the new pois to the database
 	[self _getPPOIList];
 	
 	// TODO: Upload to server 
+	
+//	[ServiceAdapter uploadPointsOfInterest:<#(NSArray *)#> forUser:<#(NSString *)#> success:<#^(id)success#>
+	
 	/*
 	 * Upload to server _ppoi
 	 */ 
@@ -193,11 +199,11 @@ failure:^(NSError *error) {
 	CLLocation *location = [manager location];
 	
 	// TODO: Get list of geofences from the server
-	NSArray *geofences = nil;
-	
-	[self _removeAllPrivateFences];
-	
-	[self _setPrivateFences:geofences];
+	[ServiceAdapter getGeofencesForUser:_userId atLocation:location success:^(NSArray *geofences)
+						  {
+							  [self _removeAllPrivateFences];
+							  [self _setPrivateFences:geofences];
+						  }];
 }
 
 #pragma mark -

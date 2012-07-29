@@ -76,4 +76,20 @@
     
 }
 
++ (void)uploadUserProfile:(NSArray *)profile forUser:(NSString *)userId success:(void (^)(id))success
+{
+	success(nil);
+}
+
++ (void)uploadPointsOfInterest:(NSArray *)pointsOfInterest forUser:(NSString *)userId success:(void (^)(id))success
+{
+	// array of QLPlace
+	success(nil);
+}
+
++ (void)getGeofencesForUser:(NSString *)userId atLocation:(CLLocation *)location success:(void (^)(NSArray *))success
+{
+	success(nil);
+}
+
 @end

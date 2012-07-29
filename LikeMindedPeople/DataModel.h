@@ -14,6 +14,8 @@
 @class QLPlace;
 @interface DataModel : NSObject <QLContextCorePermissionsDelegate, QLContextPlaceConnectorDelegate, PRContextInterestsDelegate>
 {
+	NSString *_userId;
+	
 	NSArray *_placeEvents;
 	
 	NSArray *_privatePointsOfInterest;
