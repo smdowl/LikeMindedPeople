@@ -22,6 +22,7 @@
     locationManager = [[CLLocationManager alloc] init];    
     googleLocalConnection = [[GoogleLocalConnection alloc] initWithDelegate:self];
     UIButton *all = (UIButton*)[self.view viewWithTag:1];
+    
     all.enabled = FALSE;
     selectedCategory=1;
     mapView.delegate = self;
@@ -242,25 +243,88 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return [pins count];
 }
-
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    GoogleLocalObject *av= [pins 
+                            objectAtIndex: [indexPath row]];
+    GeofenceLocation *gl = [dm getInfoForPin:[av coordinate]];
+    
+    int percent = [gl rating];
+    int users = [gl peopleCount];
+	NSString *badge = [NSString stringWithFormat:@"%d%@",percent*100,@"%"];    
+    NSString *inter = @"Sports, Food, Movies";
+    
+    [self setDetailView:[av title] withDesc:[av description] andMatch:badge andUsers:[NSString stringWithFormat:@"%d",users] andInterests:inter];
+    [self.view addSubview:detailView];
+    [detailView setFrame:CGRectMake(320, 270, 320, 190)];
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationCurve:UIViewAnimationCurveLinear];
+    [UIView setAnimationDelay:0.5];
+    detailView.frame = CGRectOffset(detailView.frame, -320, 0);
+    [UIView commitAnimations];
+    
+    
+}
+-(IBAction)back {
+    [UIView beginAnimations:nil context:nil];
+    [UIView setAnimationCurve:UIViewAnimationCurveLinear];
+    [UIView setAnimationDelay:0.5];
+    detailView.frame = CGRectOffset(detailView.frame, 320, 0);
+    [UIView commitAnimations];    
+//    [detailView removeFromSuperview];
+}
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     static NSString *CellIdentifier = @"Cell";
     
-    UITableViewCell *cell = [tableView 
-                             dequeueReusableCellWithIdentifier:CellIdentifier];
-    if (cell == nil) {
-        cell = [[UITableViewCell alloc]
-                initWithStyle:UITableViewCellStyleDefault
-                reuseIdentifier:CellIdentifier];
+    
+    TDBadgedCell *cell = [[TDBadgedCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
+    GoogleLocalObject *av= [pins 
+                            objectAtIndex: [indexPath row]];
+    
+	cell.detailTextLabel.text = [av description];
+	
+	cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+//    double percent = 0.79;
+    GeofenceLocation *gl = [dm getInfoForPin:[av coordinate]];
+    double percent = [gl rating];
+    
+	NSString *badge = [NSString stringWithFormat:@"%.0f%@",percent*100,@"%"];    
+
+    cell.badgeString = badge;
+	/*
+	if (indexPath.row == 1)
+		cell.badgeColor = [UIColor colorWithRed:0.792 green:0.197 blue:0.219 alpha:1.000];
+	
+	if (indexPath.row == 2)
+    {
+		cell.badgeColor = [UIColor colorWithRed:0.197 green:0.592 blue:0.219 alpha:1.000];
+        cell.badge.radius = 9;
     }
     
-    // Configure the cell.
-    GoogleLocalObject *av= [pins 
-                        objectAtIndex: [indexPath row]];
+    if(indexPath.row == 3)
+    {
+        cell.showShadow = YES;
+    }*/
+    cell.badgeColor = [UIColor colorWithRed:percent green:0 blue:0 alpha:1.0];
+    
+
     cell.textLabel.text = [av title]; 
-
+    cell.textLabel.textColor = [UIColor colorWithRed:89/255 green:89/255 blue:89/255 alpha:1.0];
+    cell.textLabel.font = [UIFont fontWithName:@"Helvetica" size:12];    
     return cell;
-}
 
+}
+-(void)setDetailView:(NSString*)title withDesc:(NSString*)desc andMatch:(NSString*)match andUsers:(NSString*)count andInterests:(NSString*)interests {
+    UILabel *lblTitle = (UILabel*)[detailView viewWithTag:1];
+    UITextView *lblDesc = (UITextView*)[detailView viewWithTag:2];
+    UILabel *lblMatch = (UILabel*)[detailView viewWithTag:3];
+    UILabel *lblCount = (UILabel*)[detailView viewWithTag:4];
+    UILabel *lblInterests = (UILabel*)[detailView viewWithTag:5];
+    [lblTitle setText:title];
+    [lblDesc setText:desc];
+    [lblMatch setText:match];
+    [lblCount setText:count];
+    [lblInterests setText:interests];
+    
+}
 
 @end
