@@ -13,11 +13,13 @@
     NSMutableData *responseData;
 }
 
++ (void)testService;
 
 + (void)getAllUsersWithSuccess:(void (^)(id))success;
 
 + (void)callServiceWithPath:(NSString *)path
                  httpMethod:(NSString *)method
+           postPrefixString:(NSString *)prefix
             dataObj:(id)dataObj
             success:(void (^)(id))success;
 

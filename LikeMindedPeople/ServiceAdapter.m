@@ -8,14 +8,76 @@
 
 #import "ServiceAdapter.h"
 #import "AFJSONRequestOperation.h"
+
 #import <ContextLocation/QLPlace.h>
 #import <ContextLocation/QLGeofenceCircle.h>
+#import <CoreLocation/CoreLocation.h>
+
 
 
 @implementation ServiceAdapter
 
+
+// Just for testing
++ (void)testService
+{
+    NSLog(@"----------- TEST SERVICE --------");
+    
+    NSMutableDictionary *attr1 = [[NSMutableDictionary alloc] initWithObjectsAndKeys:@"Age", @"key", @"25-34", @"attributeCategories", @"0.7", @"likelihood", nil];
+    NSMutableDictionary *attr2 = [[NSMutableDictionary alloc] initWithObjectsAndKeys:@"Gender", @"key", @"Male", @"attributeCategories", @"0.9", @"likelihood", nil];
+    
+    NSMutableArray *profile = [[NSMutableArray alloc] initWithObjects:attr1,attr2, nil];
+    
+    NSString *userId = @"78782190374";
+    
+    [ServiceAdapter uploadUserProfile:profile forUser:userId success:^(id resp) {
+        NSLog(@"testService: uploadUserProfile, resp:%@", resp);
+
+        CLLocation *currentPoint = [[CLLocation alloc] initWithLatitude:150 longitude:100];
+        [ServiceAdapter updateCurrentLocationForUser:userId location:currentPoint success:^(id resp) {
+            NSLog(@"testService: updateCurrentLocation, resp=%@", resp);
+            
+            NSMutableArray *places = [[NSMutableArray alloc] init];
+            QLPlace *place = [[QLPlace alloc] init];
+            QLGeoFenceCircle *circle = [[QLGeoFenceCircle alloc] init];
+            circle.latitude = 37.776074;
+            circle.longitude = -122.394304;
+            circle.radius = 10;
+            place.geoFence = circle;
+            place.name = @"poi1";
+            [places addObject:place];
+            
+            place = [[QLPlace alloc] init];
+            circle = [[QLGeoFenceCircle alloc] init];
+            circle.latitude = 22;
+            circle.longitude = 100;
+            circle.radius = 10;
+            place.geoFence = circle;
+            place.name = @"poi2";
+            [places addObject:place];
+            
+            [ServiceAdapter uploadPointsOfInterest:places forUser:userId success:^(id resp) {
+                NSLog(@"testService: uploadPointsOfInterest, resp=%@", resp);
+                
+            }];
+        }];
+        
+
+    }];
+
+
+    
+    
+    //[ServiceAdapter getAllUsersWithSuccess:^(id resp) {
+    //    NSLog(@"testService: getAllUsersWithSuccess, resp:%@", resp);
+    //}];
+
+    
+}
+
 + (void)callServiceWithPath:(NSString *)path
                  httpMethod:(NSString *)method
+           postPrefixString:(NSString *)prefix
             dataObj:(id)dataObj
             success:(void (^)(id))success
 {
@@ -30,19 +92,21 @@
     }
     
     // Construct URL
-    NSArray *urlComponentArray = [[NSArray alloc] initWithObjects:@"http://3j4s.localtunnel.com", @"/", path, nil];
+    NSArray *urlComponentArray = [[NSArray alloc] initWithObjects:@"http://4ach.localtunnel.com", @"/", path, nil];
     NSURL *url = [NSURL URLWithString:[urlComponentArray componentsJoinedByString:@""]];
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
     
     // Construct post data
     [request setHTTPMethod:method];
-    if ([method isEqualToString:@"POST"]) {
+    if ([method isEqualToString:@"POST"] || [method isEqualToString:@"PUT"]) {
 
-        NSString *dataStr = [NSString stringWithFormat:@"%@",[[NSString alloc] initWithData:json encoding:NSUTF8StringEncoding]];
+        NSString *dataStr = [NSString stringWithFormat:@"%@%@",prefix,[[NSString alloc] initWithData:json encoding:NSUTF8StringEncoding]];
     
         // Do URL encoding
         // see: http://stackoverflow.com/questions/6822473/correct-bridging-for-arc for ARC/bridge handling
         // http://www.raywenderlich.com/5773/beginning-arc-in-ios-5-tutorial-part-2
+
+        
         NSString *encodedStr = CFBridgingRelease(CFURLCreateStringByAddingPercentEscapes(
                                                                                      NULL,
                                                                                      (__bridge CFStringRef)dataStr,
@@ -51,7 +115,8 @@
                                                                                      CFStringConvertNSStringEncodingToEncoding(NSUTF8StringEncoding)));
     
         // Set the HTTP Body
-        [request setHTTPBody:[encodedStr dataUsingEncoding:NSUTF8StringEncoding]];
+        [request setHTTPBody:[dataStr dataUsingEncoding:NSUTF8StringEncoding]];
+        NSLog(@"ServiceAdapter.callService: Body=%@, NotEncoded=%@", encodedStr, dataStr);
     }
     
     NSLog(@"ServiceAdapter.callService: Making request=%@", request);
@@ -73,7 +138,7 @@
 + (void)getAllUsersWithSuccess:(void (^)(id))success
 {
     NSMutableDictionary *d = [[NSMutableDictionary alloc] init];
-    [ServiceAdapter callServiceWithPath:@"users.json" httpMethod:@"GET" dataObj:d success:success];
+    [ServiceAdapter callServiceWithPath:@"users.json" httpMethod:@"GET" postPrefixString: @"" dataObj:d success:success];
 }
 
 
@@ -81,23 +146,63 @@
 + (void)uploadUserProfile:(NSArray *)profile forUser:(NSString *)userId success:(void (^)(id))success
 {
     NSMutableDictionary *d = [[NSMutableDictionary alloc] init];
-    [d setObject:userId forKey:@"uid"];
+    
+    NSMutableDictionary *userStuff = [[NSMutableDictionary alloc] initWithObjectsAndKeys:@"German", @"name", @"Larrain", @"last_name", userId, @"fb_id", nil];
+    
+    [d setObject:userStuff forKey:@"user"];
     [d setObject:profile forKey:@"profile"];
 
-    // TODO: Uncomment when servers are ready
-    //[ServiceAdapter callServiceWithPath:@"/user/upload_profile" httpMethod:@"POST" dataObj:d success:success];
+    [ServiceAdapter callServiceWithPath:@"users.json" httpMethod:@"POST" postPrefixString:@"user_profile=" dataObj:d success:success];
 
-	success(nil);
+	//success(nil);
 }
+
++ (void)updateCurrentLocationForUser:(NSString *)userId location:(CLLocation *)location success:(void (^)(id))success
+{
+	NSMutableDictionary *d = [[NSMutableDictionary alloc] init];
+    
+    NSMutableDictionary *dloc = [[NSMutableDictionary alloc] init];
+    
+    [dloc setObject:[NSString stringWithFormat:@"%f",location.coordinate.latitude] forKey:@"lattitude"];
+    [dloc setObject:[NSString stringWithFormat:@"%f",location.coordinate.longitude] forKey:@"longitude"];
+    [dloc setObject:@"10" forKey:@"radius"];
+    [d setObject:dloc forKey:@"location"];
+    
+    [d setObject:userId forKey:@"fb_id"];
+    // TODO: Get radius somehow
+    
+    
+    [ServiceAdapter callServiceWithPath:[NSString stringWithFormat:@"update_location/%@.json",userId] httpMethod:@"POST" postPrefixString:@"location=" dataObj:dloc success:success];
+
+    //success(nil);
+}
+                                                                                                 
 
 // pointsOfInterest: array of QLPlace
 + (void)uploadPointsOfInterest:(NSArray *)pointsOfInterest forUser:(NSString *)userId success:(void (^)(id))success
 {
-	NSMutableDictionary *d = [[NSMutableDictionary alloc] init];
-    [d setObject:userId forKey:@"uid"];
-    [d setObject:pointsOfInterest forKey:@"interest"];
+	NSMutableDictionary *ds = [[NSMutableDictionary alloc] init];
+    //[d setObject:userId forKey:@"uid"];
     
-    //[ServiceAdapter callServiceWithPath:@"/user/uploadPointsOfInterest" httpMethod:@"POST" dataObj:d success:success];
+    NSMutableArray *pois = [[NSMutableArray alloc] init];
+    
+    [pointsOfInterest enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        QLPlace *p = (QLPlace *)obj;
+
+        QLGeoFenceCircle *c = (QLGeoFenceCircle *)p.geoFence;
+        
+        NSMutableDictionary *d = [[NSMutableDictionary alloc] init];
+        [d setObject:[NSString stringWithFormat:@"%f",c.latitude] forKey:@"latitude"];
+        [d setObject:[NSString stringWithFormat:@"%f",c.longitude] forKey:@"longitude"];
+        [d setObject:[NSString stringWithFormat:@"%f",c.radius] forKey:@"radius"];
+        [d setObject:[NSString stringWithFormat:@"%d",idx+1] forKey:@"rank"];
+
+        [pois addObject:d];
+    }];
+
+    [ds setObject:pois forKey:@"pois"];
+    
+    [ServiceAdapter callServiceWithPath:[NSString stringWithFormat:@"users/%@.json",userId] httpMethod:@"POST" postPrefixString:@"pois=" dataObj:ds success:success];
     
 	success(nil);
 }
@@ -105,8 +210,15 @@
 + (void)getGeofencesForUser:(NSString *)userId atLocation:(CLLocation *)location success:(void (^)(NSArray *))success
 {
     NSMutableDictionary *d = [[NSMutableDictionary alloc] init];
-    [d setObject:userId forKey:@"uid"];
-    [d setObject:location forKey:@"location"];
+    //[d setObject:userId forKey:@"uid"];
+    [d setObject:[NSString stringWithFormat:@"%f",location.coordinate.latitude] forKey:@"lattitude"];
+    [d setObject:[NSString stringWithFormat:@"%f",location.coordinate.longitude] forKey:@"longitude"];
+    // TODO: Get radius somehow
+    [d setObject:@"10" forKey:@"radius"];
+
+    // TODO: Uncomment when servers come online
+    //[ServiceAdapter callServiceWithPath:@"filter_locations.json" httpMethod:@"POST" postPrefixString:@"location_filter=" dataObj:d success:success];
+    
     
 	NSMutableArray *places = [NSMutableArray array];
 	QLPlace *place = [[QLPlace alloc] init];
@@ -117,11 +229,11 @@
 	place.geoFence = circle;
 	place.name = @"tempLocation3";
 	[places addObject:place];
-	
-    // TODO: Uncomment when servers come online
-    //[ServiceAdapter callServiceWithPath:@"/user/geofences" httpMethod:@"GET" dataObj:d success:success];
-    
 	success(places);
+
+	
+    
+    
 }
 
 @end
