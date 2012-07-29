@@ -224,11 +224,6 @@
     }];  
 }
 
-- (IBAction)test
-{
-	[dm test];
-}
-
 - (void)viewDidUnload
 {
     [super viewDidUnload];

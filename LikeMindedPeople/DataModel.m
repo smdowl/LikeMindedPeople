@@ -85,7 +85,6 @@ static DataModel *_sharedInstance = nil;
 
 - (void)setup
 {
-	_userId = @"userId";
 	_privateFences = nil;
 	_currentLocation = [NSMutableArray array];
 		
@@ -113,7 +112,12 @@ static DataModel *_sharedInstance = nil;
 			 //          enableSDKButton.enabled = YES;
 		 }
 	 }];
+}
 
+- (void)setUserId:(NSString *)userId
+{
+	_userId = userId;
+	
 	[self runStartUpSequence];
 }
 
