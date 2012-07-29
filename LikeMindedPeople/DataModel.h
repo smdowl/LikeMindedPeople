@@ -47,6 +47,6 @@
 + (DataModel *)sharedInstance;
 - (void)getInfo;
 - (void)runStartUpSequence;
-- (GeofenceLocation *)getInfoForPin:(CLLocation *)pin;
+- (GeofenceLocation *)getInfoForPin:(CLLocationCoordinate2D)pin;
 
 @end

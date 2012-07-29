@@ -34,16 +34,16 @@
 	return circle.radius;	
 }
 
-- (BOOL)containsPin:(CLLocation *)pin
+- (BOOL)containsPin:(CLLocationCoordinate2D)pin
 {
 	QLGeoFenceCircle *circle = (QLGeoFenceCircle *)_place.geoFence;
 	
-	CLLocationCoordinate2D coord;
-	coord.longitude = circle.longitude;
-	coord.latitude = circle.latitude;
+	CLLocationCoordinate2D regionCenter;
+	regionCenter.longitude = circle.longitude;
+	regionCenter.latitude = circle.latitude;
 	
-	CLRegion *region = [[CLRegion alloc] initCircularRegionWithCenter:coord radius:circle.radius identifier:nil];
-	return [region containsCoordinate:pin.coordinate];
+	CLRegion *region = [[CLRegion alloc] initCircularRegionWithCenter:regionCenter radius:circle.radius identifier:nil];
+	return [region containsCoordinate:pin];
 }
 
 @end
