@@ -224,10 +224,7 @@
     }];  
 }
 
-- (IBAction)test
-{
-	[dm test];
-}
+
 
 - (void)viewDidUnload
 {
