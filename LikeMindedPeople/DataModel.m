@@ -151,17 +151,6 @@ static DataModel *_sharedInstance = nil;
 	// TODO: Server, set current location
 }
 
-// Remove a private place
-- (void)deletePlace:(long long)existingPlaceId
-{
-	[self.contextPlaceConnector deletePlaceWithId:existingPlaceId success:^()
-	{
-		// do something after place has been deleted
-	}
-										  failure:^(NSError *error) {
-											  // failed with statusCode
-										  }]; 
-}
 
 #pragma mark - QLContextCorePermissionsDelegate methods
 
@@ -181,25 +170,25 @@ static DataModel *_sharedInstance = nil;
 	PRProfile *profile = self.contextInterestsConnector.interests;
 	NSLog(@"%@ %@", profile, [profile.attrs.allValues objectAtIndex:0]);
 	
-	[self _flattenProfile:profile];
-	//	[ServiceAdapter uploadPointsOfInterest:<#(NSArray *)#> forUser:<#(NSString *)#> success:<#^(id)success#>
+	NSArray *profileArray = [self _flattenProfile:profile];
+	[ServiceAdapter uploadPointsOfInterest:profileArray forUser:_userId success:^(id result)
+	 {
+		 
+	 }];
 	
 	// Add the new pois to the database
 	[self _getPPOIList];
 	
-	// TODO: Upload to server 
+	[ServiceAdapter uploadPointsOfInterest:_privatePointsOfInterest forUser:_userId success:^(id result)
+	 {
+		 
+	 }];
 	
-	//	[ServiceAdapter uploadPointsOfInterest:<#(NSArray *)#> forUser:<#(NSString *)#> success:<#^(id)success#>
-	
-	/*
-	 * Upload to server _ppoi
-	 */ 
 	
 	// Get the current location to filter the results from the server
 	CLLocationManager *manager = [[CLLocationManager alloc] init];
 	CLLocation *location = [manager location];
 	
-	// TODO: Get list of geofences from the server
 	[ServiceAdapter getGeofencesForUser:_userId atLocation:location success:^(NSArray *geofences)
 	 {
 		 [self _removeAllPrivateFences];
@@ -286,7 +275,7 @@ static DataModel *_sharedInstance = nil;
 	}
 }
 
-- (NSArray *)flattenProfile:(PRProfile *)profile
+- (NSArray *)_flattenProfile:(PRProfile *)profile
 {
 	NSMutableArray *profileArray = [NSMutableArray array];
 	for (PRProfileAttribute *attr in profile.attrs)

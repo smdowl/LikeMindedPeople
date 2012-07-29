@@ -108,6 +108,8 @@
     [d setObject:userId forKey:@"uid"];
     [d setObject:location forKey:@"location"];
     
+	
+	
     // TODO: Uncomment when servers come online
     //[ServiceAdapter callServiceWithPath:@"/user/geofences" httpMethod:@"GET" dataObj:d success:success];
     

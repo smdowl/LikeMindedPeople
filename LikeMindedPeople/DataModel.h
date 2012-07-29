@@ -34,7 +34,6 @@
 + (DataModel *)sharedInstance;
 - (void)setup;
 - (void)getInfo;
-- (void)test;
 - (void)runStartUpSequence;
 
 @end
