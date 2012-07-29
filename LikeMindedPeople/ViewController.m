@@ -21,7 +21,8 @@
     UIButton *all = (UIButton*)[self.view viewWithTag:1];
     all.enabled = FALSE;
     selectedCategory=1;
-
+    mapView.delegate = self;
+    circleView.hidden = YES;
 }
 -(IBAction)category:(id)sender {
     UIButton *btn = (UIButton*)sender;
@@ -30,9 +31,63 @@
     btn.enabled = FALSE;
     selectedCategory = btn.tag;
 }
-- (void)textFieldDidEndEditing:(UITextField *)textField {
-[googleLocalConnection getGoogleObjectsWithQuery:textField.text andMapRegion:[mapView region] andNumberOfResults:4 addressesOnly:YES andReferer:@"http://mysuperiorsitechangethis.com"];
+-(IBAction)fullScreen:(id)sender {
+//    UIView *whiteScreen = [[UIView alloc] initWithFrame:self.view.frame];
+//    [whiteScreen setBackgroundColor:[UIColor whiteColor]];
+//     [whiteScreen setTag:999];
+//    [self.view bringSubviewToFront:circleView];
+    [UIView beginAnimations:nil context:nil];
+//    [UIView setAnimationDuration:1.5];
+//    [UIView setAnimationCurve:UIViewAnimationCurveEaseOut];
+    [UIView setAnimationDuration:0.5];
+//    [UIView setAnimationCurve:UIView];    
+//    CGRect rect = CGRectMake(-50, -50, 400, 550);
+//    [circleView setFrame:CGRectMake(-100,-100,520,650)];
+    mapView.frame = CGRectMake(7,-200,304,708);
+    btnFull.alpha = 0;
+    btnMin.alpha = 1;
+    [UIView commitAnimations];
+//    btnFull.hidden = YES;
+     
+}
+-(IBAction)minimize:(id)sender {
+    //    UIView *whiteScreen = [[UIView alloc] initWithFrame:self.view.frame];
+    //    [whiteScreen setBackgroundColor:[UIColor whiteColor]];
+    //     [whiteScreen setTag:999];
+    //    [self.view bringSubviewToFront:circleView];
+    [UIView beginAnimations:nil context:nil];
+    //    [UIView setAnimationDuration:1.5];
+    //    [UIView setAnimationCurve:UIViewAnimationCurveEaseOut];
+    [UIView setAnimationDuration:0.5];
+    [UIView setAnimationCurve:UIViewAnimationCurveEaseOut];    
+//    CGRect rect = CGRectMake(5,46,308,225);
+//    [circleView setFrame:CGRectZero];
+    mapView.frame = CGRectMake(7,46,304,216);
+    btnFull.alpha = 1;
+    btnMin.alpha = 0;
+    [UIView commitAnimations];
+    //    btnFull.hidden = YES;
+}
+- (void)mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)view {
 
+    NSString *a = [view.annotation title];
+    for (int i =0; i < [pins count]; i++) {
+        NSString *b = [[pins objectAtIndex:i] title];
+        if([a isEqualToString:b]) {
+            [tbl selectRowAtIndexPath:[NSIndexPath indexPathForRow:i inSection:0] animated:YES scrollPosition:UITableViewScrollPositionMiddle];
+        }
+    }
+//    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:[view.annotation title] message:[view.annotation description] delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles: nil];
+//    [alert show];
+//    MKCoordinateRegion reg = [mapView region];
+//    reg.center = [view.annotation coordinate];
+//    [mapView setRegion:reg];
+}
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    // called when 'return' key pressed. return NO to ignore.
+[textField resignFirstResponder];
+    [googleLocalConnection getGoogleObjectsWithQuery:textField.text andMapRegion:[mapView region] andNumberOfResults:200 addressesOnly:YES andReferer:@"http://WWW.CHANGETHISTOYOURSITENAME.COM"];
+    return YES;
 }
 - (void) googleLocalConnection:(GoogleLocalConnection *)conn didFinishLoadingWithGoogleLocalObjects:(NSMutableArray *)objects andViewPort:(MKCoordinateRegion)region
 {
@@ -44,11 +99,14 @@
         id userAnnotation=mapView.userLocation;
         [mapView removeAnnotations:mapView.annotations];
         [mapView addAnnotations:objects];
+        pins = objects;
         if(userAnnotation!=nil)
-            [mapView addAnnotation:userAnnotation];
+			[mapView addAnnotation:userAnnotation];
         [mapView setRegion:region];
+        [tbl reloadData];
     }
 }
+
 - (void) googleLocalConnection:(GoogleLocalConnection *)conn didFailWithError:(NSError *)error
 {
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error finding place - Try again" message:[error localizedDescription] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
@@ -83,7 +141,12 @@
     [mapView setRegion:region animated:YES];    
 }
 -(IBAction)refershMap {
-    double miles = slider.value;
+    double miles = 20-slider.value+0.25;
+    NSString *m=@"1 Mile";
+    if(miles!=1) {
+        m = [NSString stringWithFormat:@"%.0f Miles",miles];
+    }
+    txtMiles.text = m;
 //    miles = 10 - miles;
 
 //    CLLocation *loc = [locationManager location];
@@ -125,7 +188,31 @@
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
+    return (UIInterfaceOrientationIsPortrait(interfaceOrientation));
+    //return (interfaceOrientation != UIInterfaceOrientationPortraitUpsideDown);
 }
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return [pins count];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    static NSString *CellIdentifier = @"Cell";
+    
+    UITableViewCell *cell = [tableView 
+                             dequeueReusableCellWithIdentifier:CellIdentifier];
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc]
+                initWithStyle:UITableViewCellStyleDefault
+                reuseIdentifier:CellIdentifier];
+    }
+    
+    // Configure the cell.
+    GoogleLocalObject *av= [pins 
+                        objectAtIndex: [indexPath row]];
+    cell.textLabel.text = [av title]; 
+    return cell;
+}
+
 
 @end
