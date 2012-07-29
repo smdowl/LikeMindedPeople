@@ -188,7 +188,14 @@ static DataModel *_sharedInstance = nil;
 				
 			case QLPlaceEventTypeLeft:
 				[_currentLocation removeObjectAtIndex:0];
-				currentPlace = [_currentLocation objectAtIndex:0];
+				if ([_currentLocation count])
+				{
+					currentPlace = [_currentLocation objectAtIndex:0];
+				}
+				else
+				{
+					currentPlace = nil;
+				}
 				break;
 		}
 	}
@@ -223,11 +230,13 @@ static DataModel *_sharedInstance = nil;
 	// Add the new pois to the database
 	[self _getPPOIList];
 	
-	[ServiceAdapter uploadPointsOfInterest:_personalPointsOfInterest forUser:_userId success:^(id result)
-	 {
-		 
-	 }];
-	
+	if (_personalPointsOfInterest)
+	{
+		[ServiceAdapter uploadPointsOfInterest:_personalPointsOfInterest forUser:_userId success:^(id result)
+		 {
+			 
+		 }];
+	}
 	
 	// Get the current location to filter the results from the server
 	CLLocationManager *manager = [[CLLocationManager alloc] init];

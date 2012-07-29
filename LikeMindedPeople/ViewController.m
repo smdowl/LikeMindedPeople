@@ -9,6 +9,8 @@
 #import "ViewController.h"
 #import "GoogleLocalObject.h" 
 #import "GTMNSString+URLArguments.h"
+#import <ContextLocation/QLPlace.h>
+
 @implementation ViewController
 @synthesize fbLogin, fbButton;
 - (void)viewDidLoad
@@ -202,7 +204,6 @@
     CLLocation *newLocation = mapView.userLocation.location;
     
     double scalingFactor = ABS( (cos(2 * M_PI * newLocation.coordinate.latitude / 360.0) ));
-
 
     MKCoordinateSpan span; 
     
