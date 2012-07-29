@@ -8,11 +8,15 @@
 
 #import <Foundation/Foundation.h>
 
-@interface ServiceAdapter : NSObject
+@interface ServiceAdapter : NSObject {
+    NSMutableData *responseData;
+}
 
-+ (void)callService:(NSString *)service
-               path:(NSString *)path
-            jsonObj:(id)jsonObj
+
++ (void)getAllUsersWithSuccess:(void (^)(id))success;
+
++ (void)callServiceWithPath:(NSString *)path
+                 httpMethod:(NSString *)method
+            dataObj:(id)dataObj
             success:(void (^)(id))success;
-
 @end
