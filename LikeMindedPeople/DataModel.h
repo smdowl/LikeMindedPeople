@@ -14,13 +14,17 @@
 @class QLPlace;
 @interface DataModel : NSObject <QLContextCorePermissionsDelegate, QLContextPlaceConnectorDelegate, PRContextInterestsDelegate>
 {
+	NSString *_userId;
+	
 	NSArray *_placeEvents;
 	
 	NSArray *_privatePointsOfInterest;
 	
 	// An array basically being used as a stack, pushing and popping from index 0
 	NSMutableArray *_currentLocation;
-	NSArray *_allLocations;
+//	NSArray *_allLocations;
+	
+	NSMutableArray *_privateFences;
 }
 
 @property (nonatomic, strong) QLContextCoreConnector *contextCoreConnector;
