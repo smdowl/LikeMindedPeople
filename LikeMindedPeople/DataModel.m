@@ -7,7 +7,7 @@
 //
 
 #import "DataModel.h"
-#import <CoreLocation/CLLocationManager.h>
+#import <CoreLocation/CoreLocation.h>
 #import <ContextLocation/QLContentDescriptor.h>
 #import <ContextLocation/QLPlaceEvent.h>
 #import <ContextLocation/QLPlace.h>
@@ -147,15 +147,18 @@ static DataModel *_sharedInstance = nil;
 		return nil;
 }
 
-- (GeofenceLocation *)getScoreForPin:(CLLocation *)pin
+- (GeofenceLocation *)getInfoForPin:(CLLocation *)pin
 {
+	// Try to find the description that matches
 	for (GeofenceLocation *location in _geofenceSearchLocations)
 	{
-//		if ([location containsPoint:pin])
-//		{
-//			
-//		}
+		if ([location containsPin:pin])
+			return location;
 	}
+	
+	// Otherwise return nil which is interpreted as zero
+	
+	return nil;
 }
 
 #pragma mark -
