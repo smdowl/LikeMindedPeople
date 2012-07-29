@@ -7,6 +7,7 @@
 //
 
 #import "DataModel.h"
+#import <CoreLocation/CLLocationManager.h>
 #import <ContextLocation/QLContentDescriptor.h>
 #import <ContextLocation/QLPlaceEvent.h>
 #import <ContextLocation/QLPlace.h>
@@ -17,7 +18,8 @@
 @interface DataModel()
 - (void)_getPPOIList;
 - (void)_updateListOfPlaces;
-
+- (void)_removeAllPrivateFences;
+- (void)_setPrivateFences:(NSArray *)geofences;
 @end
 
 @implementation DataModel
@@ -123,7 +125,7 @@ static DataModel *_sharedInstance = nil;
 		case QLPlaceEventTypeAt:
 			
 			// Find this place in the full list
-			for (QLPlace *place in _allLocations)
+			for (QLPlace *place in _privateFences)
 			{
 				if (event.placeId == place.id)
 				{
@@ -138,8 +140,11 @@ static DataModel *_sharedInstance = nil;
 			
 		case QLPlaceEventTypeLeft:
 			[_currentLocation removeObjectAtIndex:0];
+			currentPlace = [_currentLocation objectAtIndex:0];
 			break;
 	}
+	
+	// TODO: Server, set current location
 }
 
 // Remove a private place
@@ -171,15 +176,28 @@ failure:^(NSError *error) {
 	// Update the current profile
 	PRProfile *profile = self.contextInterestsConnector.interests;
 	/*
-	 *	Send this to server
+	 *	TODO: Send this to server
 	 */
+	NSLog(@"%@ %@", profile, [profile.attrs.allValues objectAtIndex:0]);
 	
 	// Add the new pois to the database
+	[self _getPPOIList];
 	
+	// TODO: Upload to server 
+	/*
+	 * Upload to server _ppoi
+	 */ 
 	
 	// Get the current location to filter the results from the server
+	CLLocationManager *manager = [[CLLocationManager alloc] init];
+	CLLocation *location = [manager location];
 	
-	// Get that list
+	// TODO: Get list of geofences from the server
+	NSArray *geofences = nil;
+	
+	[self _removeAllPrivateFences];
+	
+	[self _setPrivateFences:geofences];
 }
 
 #pragma mark -
@@ -219,6 +237,35 @@ failure:^(NSError *error) {
 - (void)test
 {
 	
+}
+
+- (void)_removeAllPrivateFences
+{
+	for (QLPlace *geofence in _privateFences)
+	{
+		[self.contextPlaceConnector deletePlaceWithId:geofence.id
+											  success:^(void){} failure:^(NSError *err){}];
+	}
+	
+	_privateFences = nil;
+}
+
+- (void)_setPrivateFences:(NSArray *)geofences
+{
+	if (_privateFences == nil)
+	{
+		_privateFences = [NSMutableArray array];
+	}
+	
+	for (QLPlace *geofence in geofences)
+	{
+		[self.contextPlaceConnector createPlace:geofence 
+										success:^(QLPlace *newFence)
+		 {
+			 [_privateFences addObject:geofence];
+		 } failure:^(NSError *err){}];
+		
+	}
 }
 
 - (void)_updateListOfPlaces

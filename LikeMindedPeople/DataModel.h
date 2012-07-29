@@ -20,7 +20,9 @@
 	
 	// An array basically being used as a stack, pushing and popping from index 0
 	NSMutableArray *_currentLocation;
-	NSArray *_allLocations;
+//	NSArray *_allLocations;
+	
+	NSMutableArray *_privateFences;
 }
 
 @property (nonatomic, strong) QLContextCoreConnector *contextCoreConnector;
