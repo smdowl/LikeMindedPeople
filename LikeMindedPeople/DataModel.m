@@ -7,7 +7,7 @@
 //
 
 #import "DataModel.h"
-#import <CoreLocation/CLLocationManager.h>
+#import <CoreLocation/CoreLocation.h>
 #import <ContextLocation/QLContentDescriptor.h>
 #import <ContextLocation/QLPlaceEvent.h>
 #import <ContextLocation/QLPlace.h>
@@ -17,6 +17,7 @@
 #import <ContextProfiling/PRAttributeCategory.h>
 #import <ContextCore/QLContextCoreError.h>
 #import "ServiceAdapter.h"
+#import "GeofenceLocation.h"
 
 @interface DataModel()
 - (void)setup;
@@ -118,7 +119,6 @@ static DataModel *_sharedInstance = nil;
 {
 	_userId = userId;
 	
-//	[self runStartUpSequence];
     [self performSelector:@selector(runStartUpSequence) withObject:nil afterDelay:0.1];
 }
 
@@ -145,6 +145,20 @@ static DataModel *_sharedInstance = nil;
 		return [_currentLocation objectAtIndex:0];
 	else
 		return nil;
+}
+
+- (GeofenceLocation *)getInfoForPin:(CLLocation *)pin
+{
+	// Try to find the description that matches
+	for (GeofenceLocation *location in _geofenceSearchLocations)
+	{
+		if ([location containsPin:pin])
+			return location;
+	}
+	
+	// Otherwise return nil which is interpreted as zero
+	
+	return nil;
 }
 
 #pragma mark -
@@ -223,7 +237,7 @@ static DataModel *_sharedInstance = nil;
 //	NSLog(@"%@ %@", profile, [profile.attrs.allValues objectAtIndex:0]);
 	
 	NSArray *profileArray = [self _flattenProfile:profile];
-	[ServiceAdapter uploadPointsOfInterest:profileArray forUser:_userId success:^(id result)
+	[ServiceAdapter uploadUserProfile:profileArray forUser:_userId success:^(id result)
 	 {
 		 
 	 }];
@@ -246,7 +260,15 @@ static DataModel *_sharedInstance = nil;
 	if(location) {
 	[ServiceAdapter getGeofencesForUser:_userId atLocation:location success:^(NSArray *geofences)
 	 {
-		 [self _replacePrivateGeofencesWithFences:geofences];
+		 _geofenceSearchLocations = geofences;
+		 NSMutableArray *places = [NSMutableArray array];
+		 for (GeofenceLocation *location in geofences)
+		 {
+			 NSLog(@"%@", location);
+			 [places addObject:location.place];
+		 }
+		 
+		 [self _replacePrivateGeofencesWithFences:places];
 	 }];
     }
 }

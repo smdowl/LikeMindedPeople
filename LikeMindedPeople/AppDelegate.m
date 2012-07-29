@@ -10,6 +10,7 @@
 #import "FBConnect.h"
 #import "Facebook+iCatalog.h"
 #import "NSObject+DTRuntime.h"
+#import "ServiceAdapter.h"
 
 
 @implementation AppDelegate
@@ -41,6 +42,9 @@
 //    [facebook authorize:nil];
     self.window.rootViewController = viewController;
     [self.window makeKeyAndVisible];
+    
+    // Just for testing the service adapter through NSLogs
+    //  [ServiceAdapter testService];
     
     
     // FB Integration fb123987074412482

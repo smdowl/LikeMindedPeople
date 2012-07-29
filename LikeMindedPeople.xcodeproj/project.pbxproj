@@ -55,6 +55,7 @@
 		925AE8DE15C49BCF008840D9 /* foodactive.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 925AE8D415C49BCF008840D9 /* foodactive.jpg */; };
 		925AE8DF15C49BCF008840D9 /* foodbtn.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 925AE8D515C49BCF008840D9 /* foodbtn.jpg */; };
 		925AE90615C4A077008840D9 /* lines.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 925AE90515C4A077008840D9 /* lines.jpg */; };
+		92D8511915C5BEAD00579B05 /* GeofenceLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 92D8511815C5BEAD00579B05 /* GeofenceLocation.m */; };
 		92EBF2FA15C58D6E0085C47E /* fullscreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EBF2F815C58D6E0085C47E /* fullscreen.png */; };
 		92EBF2FB15C58D6E0085C47E /* minimize.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EBF2F915C58D6E0085C47E /* minimize.png */; };
 		92EBF2FE15C5932D0085C47E /* savefield.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EBF2FD15C5932D0085C47E /* savefield.png */; };
@@ -164,6 +165,8 @@
 		925AE8D415C49BCF008840D9 /* foodactive.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = foodactive.jpg; sourceTree = "<group>"; };
 		925AE8D515C49BCF008840D9 /* foodbtn.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = foodbtn.jpg; sourceTree = "<group>"; };
 		925AE90515C4A077008840D9 /* lines.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = lines.jpg; path = ../lines.jpg; sourceTree = "<group>"; };
+		92D8511715C5BEAD00579B05 /* GeofenceLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeofenceLocation.h; sourceTree = "<group>"; };
+		92D8511815C5BEAD00579B05 /* GeofenceLocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeofenceLocation.m; sourceTree = "<group>"; };
 		92EBF2F815C58D6E0085C47E /* fullscreen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fullscreen.png; sourceTree = "<group>"; };
 		92EBF2F915C58D6E0085C47E /* minimize.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = minimize.png; sourceTree = "<group>"; };
 		92EBF2FD15C5932D0085C47E /* savefield.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = savefield.png; sourceTree = "<group>"; };
@@ -555,6 +558,8 @@
 				925AE83B15C44018008840D9 /* ViewController.xib */,
 				92F0038515C46A7D00BE46C5 /* DataModel.h */,
 				92F0038615C46A7D00BE46C5 /* DataModel.m */,
+				92D8511715C5BEAD00579B05 /* GeofenceLocation.h */,
+				92D8511815C5BEAD00579B05 /* GeofenceLocation.m */,
 				92FBED4F15C3A85F000D1AE3 /* Supporting Files */,
 			);
 			path = LikeMindedPeople;
@@ -817,6 +822,7 @@
 				D313641815C4E7300071BED3 /* AFURLConnectionOperation.m in Sources */,
 				D313641915C4E7300071BED3 /* AFXMLRequestOperation.m in Sources */,
 				D313641A15C4E7300071BED3 /* UIImageView+AFNetworking.m in Sources */,
+				92D8511915C5BEAD00579B05 /* GeofenceLocation.m in Sources */,
 				92EBF31F15C593FB0085C47E /* NSObject+SBJson.m in Sources */,
 				92EBF32015C593FB0085C47E /* SBJsonParser.m in Sources */,
 				92EBF32115C593FB0085C47E /* SBJsonStreamParser.m in Sources */,

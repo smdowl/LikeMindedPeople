@@ -10,6 +10,8 @@
 #import <ContextCore/QLContextCoreConnector.h>
 #import <ContextLocation/QLContextPlaceConnector.h>
 #import <ContextProfiling/PRContextInterestsConnector.h>
+#import <CoreLocation/CoreLocation.h>
+#import "GeofenceLocation.h"
 
 @class QLPlace;
 @interface DataModel : NSObject <QLContextCorePermissionsDelegate, QLContextPlaceConnectorDelegate, PRContextInterestsDelegate>
@@ -23,6 +25,8 @@
 	// An array basically being used as a stack, pushing and popping from index 0
 	NSMutableArray *_currentLocation;
 //	NSArray *_allLocations;
+	
+	NSArray *_geofenceSearchLocations;
 	
 	NSMutableArray *_privateFences;
 	
@@ -43,5 +47,6 @@
 + (DataModel *)sharedInstance;
 - (void)getInfo;
 - (void)runStartUpSequence;
+- (GeofenceLocation *)getInfoForPin:(CLLocation *)pin;
 
 @end
