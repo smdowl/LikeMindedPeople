@@ -18,7 +18,8 @@
 	
 	NSArray *_privatePointsOfInterest;
 	
-	QLPlace *_currentLocation;
+	// An array basically being used as a stack, pushing and popping from index 0
+	NSMutableArray *_currentLocation;
 	NSArray *_allLocations;
 }
 
@@ -29,5 +30,7 @@
 + (DataModel *)sharedInstance;
 - (void)setup;
 - (void)getInfo;
+- (void)test;
+- (void)runStartUpSequence;
 
 @end

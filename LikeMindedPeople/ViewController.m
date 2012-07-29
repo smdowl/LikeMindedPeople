@@ -10,7 +10,7 @@
 #import "GoogleLocalObject.h" 
 #import "GTMNSString+URLArguments.h"
 @implementation ViewController
-
+@synthesize fbLogin, fbButton;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -18,7 +18,17 @@
     dm = [DataModel sharedInstance];
     locationManager = [[CLLocationManager alloc] init];    
     googleLocalConnection = [[GoogleLocalConnection alloc] initWithDelegate:self];
+    UIButton *all = (UIButton*)[self.view viewWithTag:1];
+    all.enabled = FALSE;
+    selectedCategory=1;
 
+}
+-(IBAction)category:(id)sender {
+    UIButton *btn = (UIButton*)sender;
+    UIButton *oldBtn = (UIButton*)[self.view viewWithTag:selectedCategory];
+    oldBtn.enabled = TRUE;
+    btn.enabled = FALSE;
+    selectedCategory = btn.tag;
 }
 - (void)textFieldDidEndEditing:(UITextField *)textField {
 [googleLocalConnection getGoogleObjectsWithQuery:textField.text andMapRegion:[mapView region] andNumberOfResults:4 addressesOnly:YES andReferer:@"http://mysuperiorsitechangethis.com"];
@@ -101,6 +111,12 @@
         //show blank view
     }];  
 }
+
+- (IBAction)test
+{
+	[dm test];
+}
+
 - (void)viewDidUnload
 {
     [super viewDidUnload];

@@ -17,13 +17,18 @@
     IBOutlet UITextField *txtSearch;
     IBOutlet UISlider *slider;
     IBOutlet MKMapView *mapView;
+    IBOutlet UIButton *fbButton;
+    IBOutlet UIViewController *fbLogin;
     CLLocationManager *locationManager;
     GoogleLocalConnection *googleLocalConnection;    
     CLLocation *loc;
     DataModel *dm;
-    int z;
+    int selectedCategory;
 }
+@property (nonatomic, strong) IBOutlet UIViewController *fbLogin;
+@property IBOutlet UIButton *fbButton;
 -(IBAction)search:(id)sender;
 -(IBAction)refershMap;
 -(IBAction)showPermissions;
+-(IBAction)category:(id)sender;
 @end
