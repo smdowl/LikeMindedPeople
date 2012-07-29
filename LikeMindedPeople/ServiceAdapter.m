@@ -10,16 +10,8 @@
 #import "AFJSONRequestOperation.h"
 
 
+
 @implementation ServiceAdapter
-
-
-+ (void)getAllUsersWithSuccess:(void (^)(id))success
-{
-        
-    NSMutableDictionary *d = [[NSMutableDictionary alloc] init];
-    [ServiceAdapter callServiceWithPath:@"users.json" httpMethod:@"GET" dataObj:d success:success];
-}
-
 
 + (void)callServiceWithPath:(NSString *)path
                  httpMethod:(NSString *)method
@@ -76,19 +68,49 @@
     
 }
 
+// Just used for testing
++ (void)getAllUsersWithSuccess:(void (^)(id))success
+{
+    
+    NSMutableDictionary *d = [[NSMutableDictionary alloc] init];
+    [ServiceAdapter callServiceWithPath:@"users.json" httpMethod:@"GET" dataObj:d success:success];
+}
+
+
+
 + (void)uploadUserProfile:(NSArray *)profile forUser:(NSString *)userId success:(void (^)(id))success
 {
+    NSMutableDictionary *d = [[NSMutableDictionary alloc] init];
+    [d setObject:userId forKey:@"uid"];
+    [d setObject:profile forKey:@"profile"];
+
+    // TODO: Uncomment when servers are ready
+    //[ServiceAdapter callServiceWithPath:@"/user/upload_profile" httpMethod:@"POST" dataObj:d success:success];
+
 	success(nil);
 }
 
+// pointsOfInterest: array of QLPlace
 + (void)uploadPointsOfInterest:(NSArray *)pointsOfInterest forUser:(NSString *)userId success:(void (^)(id))success
 {
-	// array of QLPlace
+	NSMutableDictionary *d = [[NSMutableDictionary alloc] init];
+    [d setObject:userId forKey:@"uid"];
+    [d setObject:pointsOfInterest forKey:@"interest"];
+    
+    //[ServiceAdapter callServiceWithPath:@"/user/uploadPointsOfInterest" httpMethod:@"POST" dataObj:d success:success];
+    
 	success(nil);
 }
 
 + (void)getGeofencesForUser:(NSString *)userId atLocation:(CLLocation *)location success:(void (^)(NSArray *))success
 {
+    NSMutableDictionary *d = [[NSMutableDictionary alloc] init];
+    [d setObject:userId forKey:@"uid"];
+    [d setObject:location forKey:@"location"];
+    
+    // TODO: Uncomment when servers come online
+    //[ServiceAdapter callServiceWithPath:@"/user/geofences" httpMethod:@"GET" dataObj:d success:success];
+    
 	success(nil);
 }
 
