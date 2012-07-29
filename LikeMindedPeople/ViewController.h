@@ -11,8 +11,10 @@
 #import "DataModel.h"
 #import <CoreLocation/CoreLocation.h>
 #import "GoogleLocalConnection.h"
+#import "TDBadgedCell.h"
 @class GoogleLocalObject;
 @class DataModel;
+@class TDBadgedCell;
 @interface ViewController : UIViewController<GoogleLocalConnectionDelegate, MKMapViewDelegate, UITableViewDelegate,UITableViewDataSource, UIGestureRecognizerDelegate> {
     IBOutlet UITextField *txtSearch;
     IBOutlet UISlider *slider;
@@ -30,6 +32,7 @@
     NSMutableArray *pins;
     IBOutlet UIButton *btnFull;
     IBOutlet UIButton *btnMin;
+    IBOutlet UIView *detailView;
     BOOL full;
 }
 @property (nonatomic, strong) IBOutlet UIViewController *fbLogin;
@@ -40,6 +43,8 @@
 -(IBAction)category:(id)sender;
 -(IBAction)fullScreen:(id)sender;
 -(IBAction)minimize:(id)sender;
+-(IBAction)back;
 - (void)handleGesture;
 - (void)handleGesture:(UIGestureRecognizer *)gestureRecognizer;
+-(void)setDetailView:(NSString*)title withDesc:(NSString*)desc andMatch:(NSString*)match andUsers:(NSString*)count andInterests:(NSString*)interests;
 @end
