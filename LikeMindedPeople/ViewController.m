@@ -169,8 +169,8 @@
 
     [dm.contextCoreConnector checkStatusAndOnEnabled:^(QLContextConnectorPermissions *qp) {
         
-    }disabled:^(NSError *err) {
-    [dm.contextCoreConnector enableFromViewController:self success:nil failure:nil];
+    } disabled:^(NSError *err) {
+		[dm.contextCoreConnector enableFromViewController:self success:nil failure:nil];
     }];
     double miles = 1;
     //    miles = 10 - miles;

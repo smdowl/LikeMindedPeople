@@ -925,7 +925,8 @@
 		92FBED7215C3A85F000D1AE3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "iPhone Developer: Tyler Weitzman (D744DNH5CF)";
+				CODE_SIGN_IDENTITY = "Shaun Dowling";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Shaun Dowling (T55NFAFBA2)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/Common.embeddedframework\"",
@@ -950,7 +951,8 @@
 					"\"$(SRCROOT)/LikeMindedPeople/facebook-ios-sdk\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "F131E598-11E6-4A10-A221-677126899FD2";
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -958,6 +960,7 @@
 		92FBED7315C3A85F000D1AE3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Shaun Dowling (T55NFAFBA2)";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/Common.embeddedframework\"",
@@ -982,6 +985,7 @@
 					"\"$(SRCROOT)/LikeMindedPeople/facebook-ios-sdk\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

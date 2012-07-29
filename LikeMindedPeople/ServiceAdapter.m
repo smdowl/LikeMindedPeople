@@ -223,7 +223,7 @@
     [d setObject:@"Now" forKey:@"moment"];
     
     // Make "YES" for testing, "NO" to use servers.
-    if (!YES) {
+    if (!NO) {
         [ServiceAdapter callServiceWithPath:[NSString stringWithFormat:@"filter_locations/%@.json",userId] httpMethod:@"POST" postPrefixString:@"location_filter=" dataObj:d success:success];
     } else {
     
