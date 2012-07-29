@@ -219,7 +219,7 @@
     [d setObject:[NSString stringWithFormat:@"%f",location.coordinate.latitude] forKey:@"lattitude"];
     [d setObject:[NSString stringWithFormat:@"%f",location.coordinate.longitude] forKey:@"longitude"];
     // Filter in miles
-    [d setObject:@"1000000000" forKey:@"filter"];
+    [d setObject:@"1000" forKey:@"filter"];
     [d setObject:@"Now" forKey:@"moment"];
     
     // Make "YES" for testing, "NO" to use servers.
