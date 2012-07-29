@@ -37,23 +37,25 @@
     oldBtn.enabled = TRUE;
     btn.enabled = FALSE;
     selectedCategory = btn.tag;
-    
+    UITextField *searchText = (UITextField*)[searchView viewWithTag:80];
     switch (selectedCategory) {
         case 1:
-            //all
-//            [self lookup:@""];
+            [searchText becomeFirstResponder];
             break;
         case 2:
             //bars
             [self lookup:@"bar"];
             break;
         case 3:
+            [self lookup:@"coffee shops"];
             //cafe
             break;
         case 4:
+            [self lookup:@"clubs"];
             //clubs
             break;
         case 5:
+            [self lookup:@"food"];
             //food
             break;
         default:
