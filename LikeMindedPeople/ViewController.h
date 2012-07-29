@@ -26,4 +26,5 @@
 -(IBAction)search:(id)sender;
 -(IBAction)refershMap;
 -(IBAction)showPermissions;
+-(IBAction)test;
 @end

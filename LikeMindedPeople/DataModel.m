@@ -17,6 +17,7 @@
 @interface DataModel()
 - (void)_getPPOIList;
 - (void)_updateListOfPlaces;
+
 @end
 
 @implementation DataModel
@@ -46,7 +47,7 @@ static DataModel *_sharedInstance = nil;
 			
 			_sharedInstance.contextInterestsConnector = [[PRContextInterestsConnector alloc] init];
 			_sharedInstance.contextInterestsConnector.delegate = _sharedInstance;
-			
+						
 			[_sharedInstance setup];
 		}
 		
@@ -69,6 +70,8 @@ static DataModel *_sharedInstance = nil;
 
 - (void)setup
 {
+	_currentLocation = [NSMutableArray array];
+	
     [self.contextCoreConnector checkStatusAndOnEnabled:^(QLContextConnectorPermissions *contextConnectorPermissions) 
 	 {
 		 [self.contextPlaceConnector requestLatestPlaceEventsAndOnSuccess:^(NSArray *placeEvents) 
@@ -129,11 +132,12 @@ static DataModel *_sharedInstance = nil;
 				}
 			}
 			
-			_currentLocation = currentPlace;
+			[_currentLocation insertObject:currentPlace atIndex:0];
+			
 			break;
 			
 		case QLPlaceEventTypeLeft:
-			_currentLocation = nil;
+			[_currentLocation removeObjectAtIndex:0];
 			break;
 	}
 }
@@ -148,6 +152,34 @@ static DataModel *_sharedInstance = nil;
 failure:^(NSError *error) {
 	// failed with statusCode
 }]; 
+}
+
+#pragma mark - QLContextCorePermissionsDelegate methods
+
+- (void)interestsDidChange:(PRProfile *)interests
+{
+	NSLog(@"User profile did change: %@", [interests description]);
+}
+
+- (void)interestsPermissionDidChange:(BOOL)interestsPermission
+{
+    NSLog(@"Interests permission did change to: %d", interestsPermission);
+}
+
+- (void)runStartUpSequence
+{
+	// Update the current profile
+	PRProfile *profile = self.contextInterestsConnector.interests;
+	/*
+	 *	Send this to server
+	 */
+	
+	// Add the new pois to the database
+	
+	
+	// Get the current location to filter the results from the server
+	
+	// Get that list
 }
 
 #pragma mark -
@@ -182,6 +214,11 @@ failure:^(NSError *error) {
 	 {
 		 
 	 }];
+}
+
+- (void)test
+{
+	
 }
 
 - (void)_updateListOfPlaces
