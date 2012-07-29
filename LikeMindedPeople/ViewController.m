@@ -22,6 +22,7 @@
     locationManager = [[CLLocationManager alloc] init];    
     googleLocalConnection = [[GoogleLocalConnection alloc] initWithDelegate:self];
     UIButton *all = (UIButton*)[self.view viewWithTag:1];
+    
     all.enabled = FALSE;
     selectedCategory=1;
     mapView.delegate = self;
@@ -245,8 +246,10 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     GoogleLocalObject *av= [pins 
                             objectAtIndex: [indexPath row]];
-    int percent = 0.79;
-    int users = 5;
+    GeofenceLocation *gl = [dm getInfoForPin:[av coordinate]];
+    
+    int percent = [gl rating];
+    int users = [gl peopleCount];
 	NSString *badge = [NSString stringWithFormat:@"%d%@",percent*100,@"%"];    
     NSString *inter = @"Sports, Food, Movies";
     
@@ -276,10 +279,14 @@
     TDBadgedCell *cell = [[TDBadgedCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:CellIdentifier];
     GoogleLocalObject *av= [pins 
                             objectAtIndex: [indexPath row]];
+    
 	cell.detailTextLabel.text = [av description];
 	
 	cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    double percent = 0.79;
+//    double percent = 0.79;
+    GeofenceLocation *gl = [dm getInfoForPin:[av coordinate]];
+    double percent = [gl rating];
+    
 	NSString *badge = [NSString stringWithFormat:@"%.0f%@",percent*100,@"%"];    
 
     cell.badgeString = badge;
