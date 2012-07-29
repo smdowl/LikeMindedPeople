@@ -17,6 +17,7 @@
 #import <ContextProfiling/PRAttributeCategory.h>
 #import <ContextCore/QLContextCoreError.h>
 #import "ServiceAdapter.h"
+#import "GeofenceLocation.h"
 
 @interface DataModel()
 - (void)setup;
@@ -85,7 +86,6 @@ static DataModel *_sharedInstance = nil;
 
 - (void)setup
 {
-	_userId = @"userId";
 	_privateFences = nil;
 	_currentLocation = [NSMutableArray array];
 		
@@ -113,8 +113,13 @@ static DataModel *_sharedInstance = nil;
 			 //          enableSDKButton.enabled = YES;
 		 }
 	 }];
+}
 
-	[self runStartUpSequence];
+- (void)setUserId:(NSString *)userId
+{
+	_userId = userId;
+	
+    [self performSelector:@selector(runStartUpSequence) withObject:nil afterDelay:0.1];
 }
 
 - (void)getInfo
@@ -140,6 +145,17 @@ static DataModel *_sharedInstance = nil;
 		return [_currentLocation objectAtIndex:0];
 	else
 		return nil;
+}
+
+- (GeofenceLocation *)getScoreForPin:(CLLocation *)pin
+{
+	for (GeofenceLocation *location in _geofenceSearchLocations)
+	{
+//		if ([location containsPoint:pin])
+//		{
+//			
+//		}
+	}
 }
 
 #pragma mark -
@@ -184,7 +200,14 @@ static DataModel *_sharedInstance = nil;
 				
 			case QLPlaceEventTypeLeft:
 				[_currentLocation removeObjectAtIndex:0];
-				currentPlace = [_currentLocation objectAtIndex:0];
+				if ([_currentLocation count])
+				{
+					currentPlace = [_currentLocation objectAtIndex:0];
+				}
+				else
+				{
+					currentPlace = nil;
+				}
 				break;
 		}
 	}
@@ -211,7 +234,7 @@ static DataModel *_sharedInstance = nil;
 //	NSLog(@"%@ %@", profile, [profile.attrs.allValues objectAtIndex:0]);
 	
 	NSArray *profileArray = [self _flattenProfile:profile];
-	[ServiceAdapter uploadPointsOfInterest:profileArray forUser:_userId success:^(id result)
+	[ServiceAdapter uploadUserProfile:profileArray forUser:_userId success:^(id result)
 	 {
 		 
 	 }];
@@ -219,20 +242,32 @@ static DataModel *_sharedInstance = nil;
 	// Add the new pois to the database
 	[self _getPPOIList];
 	
-	[ServiceAdapter uploadPointsOfInterest:_personalPointsOfInterest forUser:_userId success:^(id result)
-	 {
-		 
-	 }];
-	
+	if (_personalPointsOfInterest)
+	{
+		[ServiceAdapter uploadPointsOfInterest:_personalPointsOfInterest forUser:_userId success:^(id result)
+		 {
+			 
+		 }];
+	}
+
 	
 	// Get the current location to filter the results from the server
 	CLLocationManager *manager = [[CLLocationManager alloc] init];
 	CLLocation *location = [manager location];
-	
+	if(location) {
 	[ServiceAdapter getGeofencesForUser:_userId atLocation:location success:^(NSArray *geofences)
 	 {
-		 [self _replacePrivateGeofencesWithFences:geofences];
+		 _geofenceSearchLocations = geofences;
+		 NSMutableArray *places = [NSMutableArray array];
+		 for (GeofenceLocation *location in geofences)
+		 {
+			 NSLog(@"%@", location);
+			 [places addObject:location.place];
+		 }
+		 
+		 [self _replacePrivateGeofencesWithFences:places];
 	 }];
+    }
 }
 
 #pragma mark -

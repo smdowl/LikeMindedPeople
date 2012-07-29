@@ -24,6 +24,8 @@
 	NSMutableArray *_currentLocation;
 //	NSArray *_allLocations;
 	
+	NSArray *_geofenceSearchLocations;
+	
 	NSMutableArray *_privateFences;
 	
 	int _failures;

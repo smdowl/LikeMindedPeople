@@ -14,6 +14,7 @@
 #import <CoreLocation/CoreLocation.h>
 
 
+#import "GeofenceLocation.h"
 
 @implementation ServiceAdapter
 
@@ -59,6 +60,10 @@
             [ServiceAdapter uploadPointsOfInterest:places forUser:userId success:^(id resp) {
                 NSLog(@"testService: uploadPointsOfInterest, resp=%@", resp);
                 
+                
+                [ServiceAdapter getGeofencesForUser:userId atLocation:currentPoint success:^(id resp) {
+                    NSLog(@"testService: getGeofencesForUser: %@", resp);
+                }];
             }];
         }];
         
@@ -213,27 +218,36 @@
     //[d setObject:userId forKey:@"uid"];
     [d setObject:[NSString stringWithFormat:@"%f",location.coordinate.latitude] forKey:@"lattitude"];
     [d setObject:[NSString stringWithFormat:@"%f",location.coordinate.longitude] forKey:@"longitude"];
-    // TODO: Get radius somehow
-    [d setObject:@"10" forKey:@"radius"];
-
-    // TODO: Uncomment when servers come online
-    //[ServiceAdapter callServiceWithPath:@"filter_locations.json" httpMethod:@"POST" postPrefixString:@"location_filter=" dataObj:d success:success];
+    // Filter in miles
+    [d setObject:@"100000000000" forKey:@"filter"];
+    [d setObject:@"Now" forKey:@"moment"];
     
+    // Make "YES" for testing, "NO" to use servers.
+    if (!YES) {
+        [ServiceAdapter callServiceWithPath:[NSString stringWithFormat:@"filter_locations/%@.json",userId] httpMethod:@"POST" postPrefixString:@"location_filter=" dataObj:d success:success];
+    } else {
     
-	NSMutableArray *places = [NSMutableArray array];
-	QLPlace *place = [[QLPlace alloc] init];
-	QLGeoFenceCircle *circle = [[QLGeoFenceCircle alloc] init];
-	circle.latitude = 37.776074;
-	circle.longitude = -122.394304;
-	circle.radius = 50;
-	place.geoFence = circle;
-	place.name = @"tempLocation3";
-	[places addObject:place];
-	success(places);
-
+        NSMutableArray *places = [NSMutableArray array];
 	
-    
-    
+        GeofenceLocation *newLocation = [[GeofenceLocation alloc] init];
+	
+        QLPlace *place = [[QLPlace alloc] init];
+        QLGeoFenceCircle *circle = [[QLGeoFenceCircle alloc] init];
+        circle.latitude = 37.776074;
+        circle.longitude = -122.394304;
+        circle.radius = 50;
+        place.geoFence = circle;
+        place.name = @"tempLocation3";
+
+        newLocation.place = place;
+	
+        newLocation.peopleCount = 5;
+        newLocation.rating = 0.7;
+	
+        [places addObject:newLocation];
+	
+        success(places);
+    }
 }
 
 @end

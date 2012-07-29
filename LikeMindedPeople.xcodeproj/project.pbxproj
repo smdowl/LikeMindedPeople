@@ -55,6 +55,23 @@
 		925AE8DE15C49BCF008840D9 /* foodactive.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 925AE8D415C49BCF008840D9 /* foodactive.jpg */; };
 		925AE8DF15C49BCF008840D9 /* foodbtn.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 925AE8D515C49BCF008840D9 /* foodbtn.jpg */; };
 		925AE90615C4A077008840D9 /* lines.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 925AE90515C4A077008840D9 /* lines.jpg */; };
+		92D8511915C5BEAD00579B05 /* GeofenceLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 92D8511815C5BEAD00579B05 /* GeofenceLocation.m */; };
+		92EBF2FA15C58D6E0085C47E /* fullscreen.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EBF2F815C58D6E0085C47E /* fullscreen.png */; };
+		92EBF2FB15C58D6E0085C47E /* minimize.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EBF2F915C58D6E0085C47E /* minimize.png */; };
+		92EBF2FE15C5932D0085C47E /* savefield.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EBF2FD15C5932D0085C47E /* savefield.png */; };
+		92EBF31F15C593FB0085C47E /* NSObject+SBJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 92EBF30515C593FB0085C47E /* NSObject+SBJson.m */; };
+		92EBF32015C593FB0085C47E /* SBJsonParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 92EBF30815C593FB0085C47E /* SBJsonParser.m */; };
+		92EBF32115C593FB0085C47E /* SBJsonStreamParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 92EBF30A15C593FB0085C47E /* SBJsonStreamParser.m */; };
+		92EBF32215C593FB0085C47E /* SBJsonStreamParserAccumulator.m in Sources */ = {isa = PBXBuildFile; fileRef = 92EBF30C15C593FB0085C47E /* SBJsonStreamParserAccumulator.m */; };
+		92EBF32315C593FB0085C47E /* SBJsonStreamParserAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 92EBF30E15C593FB0085C47E /* SBJsonStreamParserAdapter.m */; };
+		92EBF32415C593FB0085C47E /* SBJsonStreamParserState.m in Sources */ = {isa = PBXBuildFile; fileRef = 92EBF31015C593FB0085C47E /* SBJsonStreamParserState.m */; };
+		92EBF32515C593FB0085C47E /* SBJsonStreamWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 92EBF31215C593FB0085C47E /* SBJsonStreamWriter.m */; };
+		92EBF32615C593FB0085C47E /* SBJsonStreamWriterAccumulator.m in Sources */ = {isa = PBXBuildFile; fileRef = 92EBF31415C593FB0085C47E /* SBJsonStreamWriterAccumulator.m */; };
+		92EBF32715C593FB0085C47E /* SBJsonStreamWriterState.m in Sources */ = {isa = PBXBuildFile; fileRef = 92EBF31615C593FB0085C47E /* SBJsonStreamWriterState.m */; };
+		92EBF32815C593FB0085C47E /* SBJsonTokeniser.m in Sources */ = {isa = PBXBuildFile; fileRef = 92EBF31815C593FB0085C47E /* SBJsonTokeniser.m */; };
+		92EBF32915C593FB0085C47E /* SBJsonUTF8Stream.m in Sources */ = {isa = PBXBuildFile; fileRef = 92EBF31A15C593FB0085C47E /* SBJsonUTF8Stream.m */; };
+		92EBF32A15C593FB0085C47E /* SBJsonWriter.m in Sources */ = {isa = PBXBuildFile; fileRef = 92EBF31C15C593FB0085C47E /* SBJsonWriter.m */; };
+		92EBF32D15C5958E0085C47E /* pin.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 92EBF32C15C5958E0085C47E /* pin.jpg */; };
 		92F0038715C46A7D00BE46C5 /* DataModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 92F0038615C46A7D00BE46C5 /* DataModel.m */; };
 		92FBED5315C3A85F000D1AE3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 92FBED5115C3A85F000D1AE3 /* InfoPlist.strings */; };
 		92FBED5515C3A85F000D1AE3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 92FBED5415C3A85F000D1AE3 /* main.m */; };
@@ -145,6 +162,37 @@
 		925AE8D415C49BCF008840D9 /* foodactive.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = foodactive.jpg; sourceTree = "<group>"; };
 		925AE8D515C49BCF008840D9 /* foodbtn.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = foodbtn.jpg; sourceTree = "<group>"; };
 		925AE90515C4A077008840D9 /* lines.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = lines.jpg; path = ../lines.jpg; sourceTree = "<group>"; };
+		92D8511715C5BEAD00579B05 /* GeofenceLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeofenceLocation.h; sourceTree = "<group>"; };
+		92D8511815C5BEAD00579B05 /* GeofenceLocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeofenceLocation.m; sourceTree = "<group>"; };
+		92EBF2F815C58D6E0085C47E /* fullscreen.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fullscreen.png; sourceTree = "<group>"; };
+		92EBF2F915C58D6E0085C47E /* minimize.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = minimize.png; sourceTree = "<group>"; };
+		92EBF2FD15C5932D0085C47E /* savefield.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = savefield.png; sourceTree = "<group>"; };
+		92EBF30415C593FB0085C47E /* NSObject+SBJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+SBJson.h"; sourceTree = "<group>"; };
+		92EBF30515C593FB0085C47E /* NSObject+SBJson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+SBJson.m"; sourceTree = "<group>"; };
+		92EBF30615C593FB0085C47E /* SBJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJson.h; sourceTree = "<group>"; };
+		92EBF30715C593FB0085C47E /* SBJsonParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonParser.h; sourceTree = "<group>"; };
+		92EBF30815C593FB0085C47E /* SBJsonParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonParser.m; sourceTree = "<group>"; };
+		92EBF30915C593FB0085C47E /* SBJsonStreamParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonStreamParser.h; sourceTree = "<group>"; };
+		92EBF30A15C593FB0085C47E /* SBJsonStreamParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonStreamParser.m; sourceTree = "<group>"; };
+		92EBF30B15C593FB0085C47E /* SBJsonStreamParserAccumulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonStreamParserAccumulator.h; sourceTree = "<group>"; };
+		92EBF30C15C593FB0085C47E /* SBJsonStreamParserAccumulator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonStreamParserAccumulator.m; sourceTree = "<group>"; };
+		92EBF30D15C593FB0085C47E /* SBJsonStreamParserAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonStreamParserAdapter.h; sourceTree = "<group>"; };
+		92EBF30E15C593FB0085C47E /* SBJsonStreamParserAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonStreamParserAdapter.m; sourceTree = "<group>"; };
+		92EBF30F15C593FB0085C47E /* SBJsonStreamParserState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonStreamParserState.h; sourceTree = "<group>"; };
+		92EBF31015C593FB0085C47E /* SBJsonStreamParserState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonStreamParserState.m; sourceTree = "<group>"; };
+		92EBF31115C593FB0085C47E /* SBJsonStreamWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonStreamWriter.h; sourceTree = "<group>"; };
+		92EBF31215C593FB0085C47E /* SBJsonStreamWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonStreamWriter.m; sourceTree = "<group>"; };
+		92EBF31315C593FB0085C47E /* SBJsonStreamWriterAccumulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonStreamWriterAccumulator.h; sourceTree = "<group>"; };
+		92EBF31415C593FB0085C47E /* SBJsonStreamWriterAccumulator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonStreamWriterAccumulator.m; sourceTree = "<group>"; };
+		92EBF31515C593FB0085C47E /* SBJsonStreamWriterState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonStreamWriterState.h; sourceTree = "<group>"; };
+		92EBF31615C593FB0085C47E /* SBJsonStreamWriterState.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonStreamWriterState.m; sourceTree = "<group>"; };
+		92EBF31715C593FB0085C47E /* SBJsonTokeniser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonTokeniser.h; sourceTree = "<group>"; };
+		92EBF31815C593FB0085C47E /* SBJsonTokeniser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonTokeniser.m; sourceTree = "<group>"; };
+		92EBF31915C593FB0085C47E /* SBJsonUTF8Stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonUTF8Stream.h; sourceTree = "<group>"; };
+		92EBF31A15C593FB0085C47E /* SBJsonUTF8Stream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonUTF8Stream.m; sourceTree = "<group>"; };
+		92EBF31B15C593FB0085C47E /* SBJsonWriter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SBJsonWriter.h; sourceTree = "<group>"; };
+		92EBF31C15C593FB0085C47E /* SBJsonWriter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SBJsonWriter.m; sourceTree = "<group>"; };
+		92EBF32C15C5958E0085C47E /* pin.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = pin.jpg; sourceTree = "<group>"; };
 		92F0038515C46A7D00BE46C5 /* DataModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataModel.h; sourceTree = "<group>"; };
 		92F0038615C46A7D00BE46C5 /* DataModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataModel.m; sourceTree = "<group>"; };
 		92FBED4415C3A85F000D1AE3 /* LikeMindedPeople.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LikeMindedPeople.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -379,6 +427,10 @@
 		925AE8AD15C476E4008840D9 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				92EBF32C15C5958E0085C47E /* pin.jpg */,
+				92EBF2FD15C5932D0085C47E /* savefield.png */,
+				92EBF2F815C58D6E0085C47E /* fullscreen.png */,
+				92EBF2F915C58D6E0085C47E /* minimize.png */,
 				925AE90515C4A077008840D9 /* lines.jpg */,
 				925AE8CB15C49BC8008840D9 /* bar */,
 				925AE8C915C49BA1008840D9 /* circle.png */,
@@ -405,6 +457,38 @@
 				925AE8D515C49BCF008840D9 /* foodbtn.jpg */,
 			);
 			name = bar;
+			sourceTree = "<group>";
+		};
+		92EBF30315C593FB0085C47E /* JSON */ = {
+			isa = PBXGroup;
+			children = (
+				92EBF30415C593FB0085C47E /* NSObject+SBJson.h */,
+				92EBF30515C593FB0085C47E /* NSObject+SBJson.m */,
+				92EBF30615C593FB0085C47E /* SBJson.h */,
+				92EBF30715C593FB0085C47E /* SBJsonParser.h */,
+				92EBF30815C593FB0085C47E /* SBJsonParser.m */,
+				92EBF30915C593FB0085C47E /* SBJsonStreamParser.h */,
+				92EBF30A15C593FB0085C47E /* SBJsonStreamParser.m */,
+				92EBF30B15C593FB0085C47E /* SBJsonStreamParserAccumulator.h */,
+				92EBF30C15C593FB0085C47E /* SBJsonStreamParserAccumulator.m */,
+				92EBF30D15C593FB0085C47E /* SBJsonStreamParserAdapter.h */,
+				92EBF30E15C593FB0085C47E /* SBJsonStreamParserAdapter.m */,
+				92EBF30F15C593FB0085C47E /* SBJsonStreamParserState.h */,
+				92EBF31015C593FB0085C47E /* SBJsonStreamParserState.m */,
+				92EBF31115C593FB0085C47E /* SBJsonStreamWriter.h */,
+				92EBF31215C593FB0085C47E /* SBJsonStreamWriter.m */,
+				92EBF31315C593FB0085C47E /* SBJsonStreamWriterAccumulator.h */,
+				92EBF31415C593FB0085C47E /* SBJsonStreamWriterAccumulator.m */,
+				92EBF31515C593FB0085C47E /* SBJsonStreamWriterState.h */,
+				92EBF31615C593FB0085C47E /* SBJsonStreamWriterState.m */,
+				92EBF31715C593FB0085C47E /* SBJsonTokeniser.h */,
+				92EBF31815C593FB0085C47E /* SBJsonTokeniser.m */,
+				92EBF31915C593FB0085C47E /* SBJsonUTF8Stream.h */,
+				92EBF31A15C593FB0085C47E /* SBJsonUTF8Stream.m */,
+				92EBF31B15C593FB0085C47E /* SBJsonWriter.h */,
+				92EBF31C15C593FB0085C47E /* SBJsonWriter.m */,
+			);
+			path = JSON;
 			sourceTree = "<group>";
 		};
 		92FBED3915C3A85F000D1AE3 = {
@@ -445,6 +529,7 @@
 		92FBED4E15C3A85F000D1AE3 /* LikeMindedPeople */ = {
 			isa = PBXGroup;
 			children = (
+				92EBF30315C593FB0085C47E /* JSON */,
 				D31363FB15C4E72F0071BED3 /* AFNetworking */,
 				D31363F715C4E6DE0071BED3 /* ServiceAdapter.h */,
 				D31363F815C4E6DE0071BED3 /* ServiceAdapter.m */,
@@ -461,6 +546,8 @@
 				925AE83B15C44018008840D9 /* ViewController.xib */,
 				92F0038515C46A7D00BE46C5 /* DataModel.h */,
 				92F0038615C46A7D00BE46C5 /* DataModel.m */,
+				92D8511715C5BEAD00579B05 /* GeofenceLocation.h */,
+				92D8511815C5BEAD00579B05 /* GeofenceLocation.m */,
 				92FBED4F15C3A85F000D1AE3 /* Supporting Files */,
 			);
 			path = LikeMindedPeople;
@@ -663,6 +750,10 @@
 				925AE8DE15C49BCF008840D9 /* foodactive.jpg in Resources */,
 				925AE8DF15C49BCF008840D9 /* foodbtn.jpg in Resources */,
 				925AE90615C4A077008840D9 /* lines.jpg in Resources */,
+				92EBF2FA15C58D6E0085C47E /* fullscreen.png in Resources */,
+				92EBF2FB15C58D6E0085C47E /* minimize.png in Resources */,
+				92EBF2FE15C5932D0085C47E /* savefield.png in Resources */,
+				92EBF32D15C5958E0085C47E /* pin.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -718,6 +809,19 @@
 				D313641815C4E7300071BED3 /* AFURLConnectionOperation.m in Sources */,
 				D313641915C4E7300071BED3 /* AFXMLRequestOperation.m in Sources */,
 				D313641A15C4E7300071BED3 /* UIImageView+AFNetworking.m in Sources */,
+				92D8511915C5BEAD00579B05 /* GeofenceLocation.m in Sources */,
+				92EBF31F15C593FB0085C47E /* NSObject+SBJson.m in Sources */,
+				92EBF32015C593FB0085C47E /* SBJsonParser.m in Sources */,
+				92EBF32115C593FB0085C47E /* SBJsonStreamParser.m in Sources */,
+				92EBF32215C593FB0085C47E /* SBJsonStreamParserAccumulator.m in Sources */,
+				92EBF32315C593FB0085C47E /* SBJsonStreamParserAdapter.m in Sources */,
+				92EBF32415C593FB0085C47E /* SBJsonStreamParserState.m in Sources */,
+				92EBF32515C593FB0085C47E /* SBJsonStreamWriter.m in Sources */,
+				92EBF32615C593FB0085C47E /* SBJsonStreamWriterAccumulator.m in Sources */,
+				92EBF32715C593FB0085C47E /* SBJsonStreamWriterState.m in Sources */,
+				92EBF32815C593FB0085C47E /* SBJsonTokeniser.m in Sources */,
+				92EBF32915C593FB0085C47E /* SBJsonUTF8Stream.m in Sources */,
+				92EBF32A15C593FB0085C47E /* SBJsonWriter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

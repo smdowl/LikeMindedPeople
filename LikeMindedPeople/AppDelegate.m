@@ -44,7 +44,7 @@
     [self.window makeKeyAndVisible];
     
     // Just for testing the service adapter through NSLogs
-    [ServiceAdapter testService];
+    //  [ServiceAdapter testService];
     
     
     // FB Integration fb123987074412482
@@ -63,7 +63,8 @@
 //        [self.viewController presentModalViewController:loginViewController animated:NO];
 //        [facebook authorize:nil];
     }
-    
+    [facebook requestWithGraphPath:@"me" andDelegate:self];
+
     return YES;
 }
 -(void)fbAuth {
@@ -126,11 +127,10 @@
     NSString *facebookId = [result objectForKey:@"id"];
     NSString *userName = [result objectForKey:@"name"];
     NSString *userEmail = [result objectForKey:@"email"];
-    
     NSLog(@"facebookID = %@, userName = %@, userEmail = %@", facebookId, userName, userEmail);
     //do whatever you need to do with this info next
     //(ie. save to db, pass to user singleton, whatever)
-    
+    [[DataModel sharedInstance] setUserId:facebookId];
 }
 
 
