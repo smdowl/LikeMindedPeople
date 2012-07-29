@@ -34,7 +34,7 @@
     [ServiceAdapter uploadUserProfile:profile forUser:userId success:^(id resp) {
         NSLog(@"testService: uploadUserProfile, resp:%@", resp);
 
-        CLLocation *currentPoint = [[CLLocation alloc] initWithLatitude:150 longitude:100];
+        CLLocation *currentPoint = [[CLLocation alloc] initWithLatitude:23 longitude:121];
         [ServiceAdapter updateCurrentLocationForUser:userId location:currentPoint success:^(id resp) {
             NSLog(@"testService: updateCurrentLocation, resp=%@", resp);
             
@@ -51,7 +51,7 @@
             place = [[QLPlace alloc] init];
             circle = [[QLGeoFenceCircle alloc] init];
             circle.latitude = 22;
-            circle.longitude = 100;
+            circle.longitude = 120;
             circle.radius = 10;
             place.geoFence = circle;
             place.name = @"poi2";
@@ -121,7 +121,7 @@
     
         // Set the HTTP Body
         [request setHTTPBody:[dataStr dataUsingEncoding:NSUTF8StringEncoding]];
-        NSLog(@"ServiceAdapter.callService: Body=%@, NotEncoded=%@", encodedStr, dataStr);
+        NSLog(@"ServiceAdapter.callService: body=%@", dataStr);
     }
     
     NSLog(@"ServiceAdapter.callService: Making request=%@", request);
@@ -219,11 +219,11 @@
     [d setObject:[NSString stringWithFormat:@"%f",location.coordinate.latitude] forKey:@"lattitude"];
     [d setObject:[NSString stringWithFormat:@"%f",location.coordinate.longitude] forKey:@"longitude"];
     // Filter in miles
-    [d setObject:@"1000" forKey:@"filter"];
+    [d setObject:@"10000" forKey:@"filter"];
     [d setObject:@"Now" forKey:@"moment"];
     
     // Make "YES" for testing, "NO" to use servers.
-    if (!NO) {
+    if (!YES) {
         [ServiceAdapter callServiceWithPath:[NSString stringWithFormat:@"filter_locations/%@.json",userId] httpMethod:@"POST" postPrefixString:@"location_filter=" dataObj:d success:success];
     } else {
     

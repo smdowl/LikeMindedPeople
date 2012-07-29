@@ -41,8 +41,9 @@
 	CLLocationCoordinate2D regionCenter;
 	regionCenter.longitude = circle.longitude;
 	regionCenter.latitude = circle.latitude;
-	
-	CLRegion *region = [[CLRegion alloc] initCircularRegionWithCenter:regionCenter radius:circle.radius identifier:nil];
+		
+	CLRegion *region = [[CLRegion alloc] initCircularRegionWithCenter:regionCenter radius:circle.radius identifier:@"region"];
+
 	return [region containsCoordinate:pin];
 }
 
