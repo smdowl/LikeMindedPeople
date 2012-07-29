@@ -24,7 +24,8 @@
 {
     // disable Facebook SSO
     // This is a hack that is supposed to avoid going to Safari to authenticate via Facebook.
-    // It doesn't seem to be helping, but I'll leave it here in case I want to revisit it.
+    // It doesn't seem to be helping, but I'll leave it here in case I want to revisit it. For the moment,
+    // I recompiled the library to, hopefully, not go through Safari.
     //[Facebook swizzleMethod:@selector(authorize:) withMethod:@selector(authorize_noSSO:)];
 }
 
@@ -64,7 +65,11 @@
 }
 
 - (void)fbDidLogin {
-    NSLog(@"fbDidLogin");
+    NSLog(@"fbDidLogin, self=%@", self);
+
+    // For grabbing the facebook ID -- makes a request that returns asynchronously below
+    [facebook requestWithGraphPath:@"me" andDelegate:self];
+
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults setObject:[facebook accessToken] forKey:@"FBAccessTokenKey"];
     [defaults setObject:[facebook expirationDate] forKey:@"FBExpirationDateKey"];
@@ -98,6 +103,17 @@
 }
 - (void) fbSessionInvalidated
 {
+    
+}
+
+- (void)request:(FBRequest *)request didLoad:(id)result {
+    NSString *facebookId = [result objectForKey:@"id"];
+    NSString *userName = [result objectForKey:@"name"];
+    NSString *userEmail = [result objectForKey:@"email"];
+    
+    NSLog(@"facebookID = %@, userName = %@, userEmail = %@", facebookId, userName, userEmail);
+    //do whatever you need to do with this info next
+    //(ie. save to db, pass to user singleton, whatever)
     
 }
 
