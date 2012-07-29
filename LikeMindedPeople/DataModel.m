@@ -76,6 +76,7 @@ static DataModel *_sharedInstance = nil;
 
 - (void)setup
 {
+	_userId = @"userId";
 	_currentLocation = [NSMutableArray array];
 	
     [self.contextCoreConnector checkStatusAndOnEnabled:^(QLContextConnectorPermissions *contextConnectorPermissions) 
@@ -168,7 +169,7 @@ static DataModel *_sharedInstance = nil;
 {
 	// Update the current profile
 	PRProfile *profile = self.contextInterestsConnector.interests;
-	NSLog(@"%@ %@", profile, [profile.attrs.allValues objectAtIndex:0]);
+//	NSLog(@"%@ %@", profile, [profile.attrs.allValues objectAtIndex:0]);
 	
 	NSArray *profileArray = [self _flattenProfile:profile];
 	[ServiceAdapter uploadPointsOfInterest:profileArray forUser:_userId success:^(id result)
@@ -278,8 +279,10 @@ static DataModel *_sharedInstance = nil;
 - (NSArray *)_flattenProfile:(PRProfile *)profile
 {
 	NSMutableArray *profileArray = [NSMutableArray array];
-	for (PRProfileAttribute *attr in profile.attrs)
+	for (NSString *key in [profile.attrs allKeys])
 	{
+		PRProfileAttribute *attr = [profile getAttribute:key];
+		
 		for (PRAttributeCategory *cat in attr.attributeCategories)
 		{
 			NSDictionary *categoryDictionary = [NSMutableDictionary dictionaryWithObject:[NSNumber numberWithDouble:cat.likelihood] forKey:cat.key];

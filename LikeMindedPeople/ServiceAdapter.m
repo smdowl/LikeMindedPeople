@@ -8,7 +8,8 @@
 
 #import "ServiceAdapter.h"
 #import "AFJSONRequestOperation.h"
-
+#import <ContextLocation/QLPlace.h>
+#import <ContextLocation/QLGeofenceCircle.h>
 
 
 @implementation ServiceAdapter
@@ -108,12 +109,19 @@
     [d setObject:userId forKey:@"uid"];
     [d setObject:location forKey:@"location"];
     
-	
+	NSMutableArray *places = [NSMutableArray array];
+	QLPlace *place = [[QLPlace alloc] init];
+	QLGeoFenceCircle *circle = [[QLGeoFenceCircle alloc] init];
+	circle.longitude = 37.776074;
+	circle.latitude = -122.394304;
+	circle.radius = 50;
+	place.geoFence = circle;
+	[places addObject:place];
 	
     // TODO: Uncomment when servers come online
     //[ServiceAdapter callServiceWithPath:@"/user/geofences" httpMethod:@"GET" dataObj:d success:success];
     
-	success(nil);
+	success(places);
 }
 
 @end
