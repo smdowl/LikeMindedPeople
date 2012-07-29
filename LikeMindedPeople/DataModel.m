@@ -13,14 +13,17 @@
 #import <ContextLocation/QLPlace.h>
 #import <ContextCore/QLContextConnectorPermissions.h>
 #import <ContextProfiling/PRProfile.h>
+#import <ContextProfiling/PRProfileAttribute.h>
+#import <ContextProfiling/PRAttributeCategory.h>
 #import <ContextCore/QLContextCoreError.h>
 #import "ServiceAdapter.h"
 
 @interface DataModel()
 - (void)_getPPOIList;
-- (void)_updateListOfPlaces;
 - (void)_removeAllPrivateFences;
+- (void)_getPrivateFences;
 - (void)_setPrivateFences:(NSArray *)geofences;
+- (NSArray *)_flattenProfile:(PRProfile *)profile;
 @end
 
 @implementation DataModel
@@ -50,7 +53,7 @@ static DataModel *_sharedInstance = nil;
 			
 			_sharedInstance.contextInterestsConnector = [[PRContextInterestsConnector alloc] init];
 			_sharedInstance.contextInterestsConnector.delegate = _sharedInstance;
-						
+			
 			[_sharedInstance setup];
 		}
 		
@@ -79,9 +82,9 @@ static DataModel *_sharedInstance = nil;
 	 {
 		 [self.contextPlaceConnector requestLatestPlaceEventsAndOnSuccess:^(NSArray *placeEvents) 
 		  {
-
+			  
 			  _placeEvents = placeEvents;
-
+			  
 		  } failure:^(NSError *error) {
 			  NSLog(@"%@", [error localizedDescription]);
 		  }];
@@ -94,7 +97,7 @@ static DataModel *_sharedInstance = nil;
 		 else 
          {
 			 // Authentication, going to happen from 
-//          enableSDKButton.enabled = YES;
+			 //          enableSDKButton.enabled = YES;
 		 }
 	 }];
 }
@@ -151,13 +154,13 @@ static DataModel *_sharedInstance = nil;
 // Remove a private place
 - (void)deletePlace:(long long)existingPlaceId
 {
-[self.contextPlaceConnector deletePlaceWithId:existingPlaceId success:^()
-{
-	// do something after place has been deleted
-}
-failure:^(NSError *error) {
-	// failed with statusCode
-}]; 
+	[self.contextPlaceConnector deletePlaceWithId:existingPlaceId success:^()
+	{
+		// do something after place has been deleted
+	}
+										  failure:^(NSError *error) {
+											  // failed with statusCode
+										  }]; 
 }
 
 #pragma mark - QLContextCorePermissionsDelegate methods
@@ -176,19 +179,17 @@ failure:^(NSError *error) {
 {
 	// Update the current profile
 	PRProfile *profile = self.contextInterestsConnector.interests;
-	/*
-	 *	TODO: Send this to server
-	 */
 	NSLog(@"%@ %@", profile, [profile.attrs.allValues objectAtIndex:0]);
 	
-//	[ServiceAdapter uploadPointsOfInterest:<#(NSArray *)#> forUser:<#(NSString *)#> success:<#^(id)success#>
+	[self _flattenProfile:profile];
+	//	[ServiceAdapter uploadPointsOfInterest:<#(NSArray *)#> forUser:<#(NSString *)#> success:<#^(id)success#>
 	
 	// Add the new pois to the database
 	[self _getPPOIList];
 	
 	// TODO: Upload to server 
 	
-//	[ServiceAdapter uploadPointsOfInterest:<#(NSArray *)#> forUser:<#(NSString *)#> success:<#^(id)success#>
+	//	[ServiceAdapter uploadPointsOfInterest:<#(NSArray *)#> forUser:<#(NSString *)#> success:<#^(id)success#>
 	
 	/*
 	 * Upload to server _ppoi
@@ -200,10 +201,10 @@ failure:^(NSError *error) {
 	
 	// TODO: Get list of geofences from the server
 	[ServiceAdapter getGeofencesForUser:_userId atLocation:location success:^(NSArray *geofences)
-						  {
-							  [self _removeAllPrivateFences];
-							  [self _setPrivateFences:geofences];
-						  }];
+	 {
+		 [self _removeAllPrivateFences];
+		 [self _setPrivateFences:geofences];
+	 }];
 }
 
 #pragma mark -
@@ -212,8 +213,8 @@ failure:^(NSError *error) {
 {
     if (subscriptionPermission)
     {
-        [self _getPPOIList];	
-		[self _updateListOfPlaces];
+		[self setup];
+		[self runStartUpSequence];
     }
     else
     {
@@ -256,6 +257,17 @@ failure:^(NSError *error) {
 	_privateFences = nil;
 }
 
+- (void)_getPrivateFences
+{
+	[self.contextPlaceConnector allPlacesAndOnSuccess:^(NSArray *allPlaces)
+	 {
+		 _privateFences = [NSMutableArray arrayWithArray:allPlaces];
+	 } failure:^(NSError *err)
+	 {
+		 NSLog(@"%@", err);
+	 }];
+}
+
 - (void)_setPrivateFences:(NSArray *)geofences
 {
 	if (_privateFences == nil)
@@ -274,10 +286,19 @@ failure:^(NSError *error) {
 	}
 }
 
-- (void)_updateListOfPlaces
+- (NSArray *)flattenProfile:(PRProfile *)profile
 {
+	NSMutableArray *profileArray = [NSMutableArray array];
+	for (PRProfileAttribute *attr in profile.attrs)
+	{
+		for (PRAttributeCategory *cat in attr.attributeCategories)
+		{
+			NSDictionary *categoryDictionary = [NSMutableDictionary dictionaryWithObject:[NSNumber numberWithDouble:cat.likelihood] forKey:cat.key];
+			[profileArray addObject:categoryDictionary];
+		}
+	}
 	
-//	[self.contextPlaceConnector all
+	return profileArray;
 }
 
 @end
