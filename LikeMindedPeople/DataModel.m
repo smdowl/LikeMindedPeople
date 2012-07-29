@@ -118,7 +118,8 @@ static DataModel *_sharedInstance = nil;
 {
 	_userId = userId;
 	
-	[self runStartUpSequence];
+//	[self runStartUpSequence];
+    [self performSelector:@selector(runStartUpSequence) withObject:nil afterDelay:0.1];
 }
 
 - (void)getInfo
@@ -237,15 +238,17 @@ static DataModel *_sharedInstance = nil;
 			 
 		 }];
 	}
+
 	
 	// Get the current location to filter the results from the server
 	CLLocationManager *manager = [[CLLocationManager alloc] init];
 	CLLocation *location = [manager location];
-	
+	if(location) {
 	[ServiceAdapter getGeofencesForUser:_userId atLocation:location success:^(NSArray *geofences)
 	 {
 		 [self _replacePrivateGeofencesWithFences:geofences];
 	 }];
+    }
 }
 
 #pragma mark -

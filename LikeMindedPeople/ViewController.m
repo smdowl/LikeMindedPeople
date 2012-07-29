@@ -189,7 +189,8 @@
     region.span = span;
     region.center = newLocation.coordinate;
     
-    [mapView setRegion:region animated:YES];    
+    [mapView setRegion:region animated:YES];
+    [self performSelector:@selector(refershMap) withObject:nil afterDelay:0.1];
 }
 -(IBAction)refershMap {
     double miles = 20-slider.value+0.25;
