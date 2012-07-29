@@ -247,9 +247,12 @@
     GoogleLocalObject *av= [pins 
                             objectAtIndex: [indexPath row]];
     GeofenceLocation *gl = [dm getInfoForPin:[av coordinate]];
-    
-    int percent = [gl rating];
-    int users = [gl peopleCount];
+    int percent = 0;
+    int users = 0;
+    if(gl) {
+    percent = [gl rating];
+    users = [gl peopleCount];
+    }
 	NSString *badge = [NSString stringWithFormat:@"%d%@",percent*100,@"%"];    
     NSString *inter = @"Sports, Food, Movies";
     
@@ -285,7 +288,10 @@
 	cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 //    double percent = 0.79;
     GeofenceLocation *gl = [dm getInfoForPin:[av coordinate]];
-    double percent = [gl rating];
+    double percent = 0;
+    if(gl) {
+        percent = [gl rating];
+    }
     
 	NSString *badge = [NSString stringWithFormat:@"%.0f%@",percent*100,@"%"];    
 

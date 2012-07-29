@@ -233,15 +233,15 @@
 	
         QLPlace *place = [[QLPlace alloc] init];
         QLGeoFenceCircle *circle = [[QLGeoFenceCircle alloc] init];
-        circle.latitude = 37.776074;
-        circle.longitude = -122.394304;
+        circle.latitude = 37.77638;
+        circle.longitude = -122.39439;
         circle.radius = 50;
         place.geoFence = circle;
-        place.name = @"tempLocation3";
+        place.name = @"Caltrain Station";
 
         newLocation.place = place;
 	
-        newLocation.peopleCount = 5;
+        newLocation.peopleCount = 25;
         newLocation.rating = 0.7;
 	
         [places addObject:newLocation];

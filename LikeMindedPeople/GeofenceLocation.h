@@ -25,6 +25,6 @@
 @property (readonly) CGFloat longitude;
 @property (readonly) CGFloat radius;
 
-- (BOOL)containsPin:(CLLocation *)pin;
+- (BOOL)containsPin:(CLLocationCoordinate2D)pin;
 
 @end

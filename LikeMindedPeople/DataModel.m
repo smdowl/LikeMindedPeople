@@ -147,7 +147,7 @@ static DataModel *_sharedInstance = nil;
 		return nil;
 }
 
-- (GeofenceLocation *)getInfoForPin:(CLLocation *)pin
+- (GeofenceLocation *)getInfoForPin:(CLLocationCoordinate2D)pin
 {
 	// Try to find the description that matches
 	for (GeofenceLocation *location in _geofenceSearchLocations)
