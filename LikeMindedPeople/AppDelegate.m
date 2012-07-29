@@ -149,8 +149,10 @@
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {
-	DataModel *dataModel = [DataModel sharedInstance];
-	[dataModel runStartUpSequence];	
+//	DataModel *dataModel = [DataModel sharedInstance];
+//	
+//	// Make the call that updates all the internal variables for the model
+//	[dataModel runStartUpSequence];	
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application

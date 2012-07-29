@@ -17,7 +17,6 @@
 Facebook *facebook;
 }
 
--(void)fbApp;
 @property (strong, nonatomic) UIWindow *window;
 @property (strong, nonatomic) ViewController *viewController;
 @property (strong, nonatomic) LoginViewController *loginViewController;

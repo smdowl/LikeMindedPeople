@@ -19,12 +19,14 @@
 #import "ServiceAdapter.h"
 
 @interface DataModel()
+- (void)setup;
+
 - (void)_getPPOIList;
 - (void)_replacePrivateGeofencesWithFences:(NSArray *)fences; // Remove
 - (void)_getPrivateFences;
 - (NSArray *)_flattenProfile:(PRProfile *)profile;
-- (void)_removeAllPrivateFences;
 - (void)_setPrivateFences:(NSArray *)geofences;
+- (void)_removePrivateFence:(QLPlace *)fence completion:(void (^)(void ))complete;
 @end
 
 @implementation DataModel
@@ -34,6 +36,12 @@ static DataModel *_sharedInstance = nil;
 @synthesize contextCoreConnector;
 @synthesize contextPlaceConnector;
 @synthesize contextInterestsConnector;
+
+@synthesize userId = _userId;
+
+@synthesize placeEvents = _placeEvents;
+@synthesize personalPointsOfInterest = _personalPointsOfInterest;
+@synthesize privateFences = _privateFences;
 
 #pragma mark -
 #pragma mark Initialization Methods
@@ -78,12 +86,13 @@ static DataModel *_sharedInstance = nil;
 - (void)setup
 {
 	_userId = @"userId";
+	_privateFences = nil;
 	_currentLocation = [NSMutableArray array];
-	
-	[self _getPrivateFences];
-	
+		
     [self.contextCoreConnector checkStatusAndOnEnabled:^(QLContextConnectorPermissions *contextConnectorPermissions) 
 	 {
+		 
+		 // Get all the events that the user has recently been sent
 		 [self.contextPlaceConnector requestLatestPlaceEventsAndOnSuccess:^(NSArray *placeEvents) 
 		  {
 			  
@@ -104,6 +113,8 @@ static DataModel *_sharedInstance = nil;
 			 //          enableSDKButton.enabled = YES;
 		 }
 	 }];
+
+	[self runStartUpSequence];
 }
 
 - (void)getInfo
@@ -112,7 +123,7 @@ static DataModel *_sharedInstance = nil;
 	 {
 		 for (QLPlaceEvent *event in ppoi)
 		 {
-			 NSLog(@"%@", event);
+//			 NSLog(@"%@", event);
 		 }
 	 } failure:^(NSError *err)
 	 {
@@ -121,37 +132,62 @@ static DataModel *_sharedInstance = nil;
 }
 
 #pragma mark -
+#pragma mark External Methods
+
+- (QLPlace *)currentLocation
+{
+	if ([_currentLocation count] > 0)
+		return [_currentLocation objectAtIndex:0];
+	else
+		return nil;
+}
+
+#pragma mark -
+#pragma mark Internal Methods
+
+#pragma mark -
 #pragma mark Geofence listening
 
 - (void)didGetPlaceEvent:(QLPlaceEvent *)event
 {	
-	QLPlace *currentPlace;
-	
-	// Depending on what happened, change the current locatoin
-	switch (event.eventType)
+	@synchronized(self)
 	{
-		case QLPlaceEventTypeAt:
-			
-			// Find this place in the full list
-			for (QLPlace *place in _privateFences)
-			{
-				if (event.placeId == place.id)
+		QLPlace *currentPlace;
+
+		[self _getPrivateFences];
+		while (!_privateFences) {};
+		
+		NSLog(@"event name: %@", event.placeName);
+		
+		// Depending on what happened, change the current locatoin
+		switch (event.eventType)
+		{
+			case QLPlaceEventTypeAt:
+				NSLog(@"event id: %li", event.placeId);
+				
+				// Find this place in the full list
+				for (QLPlace *place in _privateFences)
 				{
-					currentPlace = place;
-					break;
+					NSLog(@"Stored place id: %lli", place.id);
+					if (event.placeId == place.id)
+					{
+						currentPlace = place;
+						break;
+					}
 				}
-			}
-			
-			[_currentLocation insertObject:currentPlace atIndex:0];
-			
-			break;
-			
-		case QLPlaceEventTypeLeft:
-			[_currentLocation removeObjectAtIndex:0];
-			currentPlace = [_currentLocation objectAtIndex:0];
-			break;
+				if (currentPlace)
+				{
+					[_currentLocation insertObject:currentPlace atIndex:0];
+				}
+				
+				break;
+				
+			case QLPlaceEventTypeLeft:
+				[_currentLocation removeObjectAtIndex:0];
+				currentPlace = [_currentLocation objectAtIndex:0];
+				break;
+		}
 	}
-	
 	// TODO: Server, set current location
 }
 
@@ -183,7 +219,7 @@ static DataModel *_sharedInstance = nil;
 	// Add the new pois to the database
 	[self _getPPOIList];
 	
-	[ServiceAdapter uploadPointsOfInterest:_privatePointsOfInterest forUser:_userId success:^(id result)
+	[ServiceAdapter uploadPointsOfInterest:_personalPointsOfInterest forUser:_userId success:^(id result)
 	 {
 		 
 	 }];
@@ -206,7 +242,6 @@ static DataModel *_sharedInstance = nil;
     if (subscriptionPermission)
     {
 		[self setup];
-		[self runStartUpSequence];
     }
     else
     {
@@ -221,11 +256,11 @@ static DataModel *_sharedInstance = nil;
 {
 	[self.contextPlaceConnector allPrivatePointsOfInterestAndOnSuccess:^(NSArray *ppoi)
 	 {
-		 _privatePointsOfInterest = ppoi;
+		 _personalPointsOfInterest = ppoi;
 		 
 		 for (QLPlace *point in ppoi)
 		 {
-			 NSLog(@"%@", point);
+//			 NSLog(@"%@", point);
 		 }
 	 } failure:^(NSError *err)
 	 {
@@ -238,18 +273,27 @@ static DataModel *_sharedInstance = nil;
 	
 }
 
-- (void)_removePrivateFence:(QLPlace *)geofence
+- (void)_removePrivateFence:(QLPlace *)geofence completion:(void (^)(void ))complete
 {
+	NSLog(@"Geofence: %lli %@: %@", geofence.id, geofence.name, geofence.geoFence);
+		
 	[self.contextPlaceConnector deletePlaceWithId:geofence.id
 										  success:^(void){
 											  [_privateFences removeObject:geofence];
-											  if ([_privateFences count] == 0)
+											  
+											  if ([_privateFences count] == _failures)
 											  {
-												  _deletingPrivateFences = NO;
+												  complete();
 											  }
 											  NSLog(@"successfully removed place");
 										  } failure:^(NSError *err){
 											  NSLog(@"ERROR: %@", err);
+											  _failures++;
+											  
+											  if ([_privateFences count] == _failures)
+											  {
+												  complete();
+											  }
 										  }];
 }
 
@@ -258,6 +302,11 @@ static DataModel *_sharedInstance = nil;
 	[self.contextPlaceConnector allPlacesAndOnSuccess:^(NSArray *allPlaces)
 	 {
 		 _privateFences = [NSMutableArray arrayWithArray:allPlaces];
+//		 for (QLPlace *place in allPlaces)
+//		 {
+//			 NSLog(@"place id: %lli", place.id);
+//			 [_privateFences addObject:place];
+//		 }
 	 } failure:^(NSError *err)
 	 {
 		 NSLog(@"%@", err);
@@ -280,31 +329,39 @@ static DataModel *_sharedInstance = nil;
 		 } failure:^(NSError *err){
 			 NSLog(@"%@", err);
 		 }];
-		NSLog(@"%@", geofence);
+//		NSLog(@"%@", geofence);
 	}
 }
 
 - (void)_replacePrivateGeofencesWithFences:(NSArray *)fences
 {
-	if (_deletingPrivateFences)
-		return;
-	
-	if ([_privateFences count] > 0)
+	@synchronized(self)
 	{
-		_deletingPrivateFences = YES;
-		
-		for (QLPlace *fence in _privateFences)
-		{
-			[self _removePrivateFence:fence];
-		}
+		[self.contextPlaceConnector allPlacesAndOnSuccess:^(NSArray *allPlaces)
+		 {
+			 _privateFences = [NSMutableArray arrayWithArray:allPlaces];
+			 
+			 if ([_privateFences count] > 0)
+			 {			 
+				 _failures = 0;
+				 for (QLPlace *fence in _privateFences)
+				 {
+					 [self _removePrivateFence:fence completion:^()
+					  {
+						  [self _setPrivateFences:fences];
+					  }];
+				 }
+			 }
+			 else
+			 {
+				 [self _setPrivateFences:fences];
+			 }
+			 
+		 } failure:^(NSError *err)
+		 {
+			 NSLog(@"%@", err);
+		 }];
 	}
-	dispatch_async(dispatch_get_main_queue(), ^()
-				   {
-					   while (_deletingPrivateFences){};
-					   
-					   [self _setPrivateFences:fences];
-				   });
-	
 }
 
 //- (void)_removeFence:(void (^)(void))callback

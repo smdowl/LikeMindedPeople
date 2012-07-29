@@ -14,11 +14,11 @@
 @class QLPlace;
 @interface DataModel : NSObject <QLContextCorePermissionsDelegate, QLContextPlaceConnectorDelegate, PRContextInterestsDelegate>
 {
-	NSString *_userId;
+	NSString *_userId;	// In out app is going to be the fb ID. Used to identify you on the server
 	
-	NSArray *_placeEvents;
+	NSArray *_placeEvents; // An array of all the previous events
 	
-	NSArray *_privatePointsOfInterest;
+	NSArray *_personalPointsOfInterest;
 	
 	// An array basically being used as a stack, pushing and popping from index 0
 	NSMutableArray *_currentLocation;
@@ -26,15 +26,21 @@
 	
 	NSMutableArray *_privateFences;
 	
-	BOOL _deletingPrivateFences;
+	int _failures;
 }
 
 @property (nonatomic, strong) QLContextCoreConnector *contextCoreConnector;
 @property (nonatomic, strong) QLContextPlaceConnector *contextPlaceConnector;
 @property (nonatomic, strong) PRContextInterestsConnector *contextInterestsConnector;
 
+@property (nonatomic, strong) NSString *userId;
+
+@property (nonatomic, readonly) NSArray *placeEvents;
+@property (nonatomic, readonly) NSArray *personalPointsOfInterest;
+@property (nonatomic, readonly) QLPlace *currentLocation;
+@property (nonatomic, readonly) NSArray *privateFences;
+
 + (DataModel *)sharedInstance;
-- (void)setup;
 - (void)getInfo;
 - (void)runStartUpSequence;
 

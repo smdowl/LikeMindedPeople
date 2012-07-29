@@ -72,7 +72,6 @@
 // Just used for testing
 + (void)getAllUsersWithSuccess:(void (^)(id))success
 {
-    
     NSMutableDictionary *d = [[NSMutableDictionary alloc] init];
     [ServiceAdapter callServiceWithPath:@"users.json" httpMethod:@"GET" dataObj:d success:success];
 }
@@ -112,11 +111,11 @@
 	NSMutableArray *places = [NSMutableArray array];
 	QLPlace *place = [[QLPlace alloc] init];
 	QLGeoFenceCircle *circle = [[QLGeoFenceCircle alloc] init];
-	circle.longitude = 37.776074;
-	circle.latitude = -122.394304;
+	circle.latitude = 37.776074;
+	circle.longitude = -122.394304;
 	circle.radius = 50;
 	place.geoFence = circle;
-	place.name = @"tempLocation";
+	place.name = @"tempLocation3";
 	[places addObject:place];
 	
     // TODO: Uncomment when servers come online

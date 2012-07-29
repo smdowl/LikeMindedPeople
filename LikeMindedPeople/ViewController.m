@@ -9,6 +9,8 @@
 #import "ViewController.h"
 #import "GoogleLocalObject.h" 
 #import "GTMNSString+URLArguments.h"
+#import <ContextLocation/QLPlace.h>
+
 @implementation ViewController
 @synthesize fbLogin, fbButton;
 - (void)viewDidLoad
@@ -54,6 +56,8 @@
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error finding place - Try again" message:[error localizedDescription] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
     [alert show];
 }
+
+// This doesn't get called
 -(void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
 
@@ -81,7 +85,9 @@
     region.center = newLocation.coordinate;
     
     [mapView setRegion:region animated:YES];    
+	
 }
+
 -(IBAction)refershMap {
     double miles = slider.value;
 //    miles = 10 - miles;
@@ -104,6 +110,7 @@
     [mapView setRegion:region animated:YES];
 }
 -(IBAction)showPermissions {
+	NSLog(@"Current location: %@", [[[DataModel sharedInstance] currentLocation] name]);
     [dm.contextCoreConnector showPermissionsFromViewController:self];
 }
 -(IBAction)search:(id)sender {

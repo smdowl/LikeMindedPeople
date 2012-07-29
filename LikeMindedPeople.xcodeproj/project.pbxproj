@@ -30,7 +30,6 @@
 		925AE80315C43213008840D9 /* rules.txt in Resources */ = {isa = PBXBuildFile; fileRef = 925AE7E715C43212008840D9 /* rules.txt */; };
 		925AE80415C43213008840D9 /* NetworkServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7E915C43212008840D9 /* NetworkServices.framework */; };
 		925AE80615C43244008840D9 /* UserContext.plist in Resources */ = {isa = PBXBuildFile; fileRef = 925AE80515C43244008840D9 /* UserContext.plist */; };
-		925AE80C15C43F7D008840D9 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE80B15C43F7D008840D9 /* MapKit.framework */; };
 		925AE83C15C44018008840D9 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 925AE83A15C44018008840D9 /* ViewController.m */; };
 		925AE83D15C44018008840D9 /* ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 925AE83B15C44018008840D9 /* ViewController.xib */; };
 		925AE86F15C45924008840D9 /* UserContext.plist in Resources */ = {isa = PBXBuildFile; fileRef = 925AE86E15C45924008840D9 /* UserContext.plist */; };
@@ -221,7 +220,6 @@
 				925AE7F815C43212008840D9 /* ContextLocation.framework in Frameworks */,
 				925AE80215C43213008840D9 /* ContextProfiling.framework in Frameworks */,
 				925AE80415C43213008840D9 /* NetworkServices.framework in Frameworks */,
-				925AE80C15C43F7D008840D9 /* MapKit.framework in Frameworks */,
 				D31363BA15C494510071BED3 /* libfacebook_ios_sdk.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
