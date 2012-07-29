@@ -25,6 +25,8 @@
 //	NSArray *_allLocations;
 	
 	NSMutableArray *_privateFences;
+	
+	BOOL _deletingPrivateFences;
 }
 
 @property (nonatomic, strong) QLContextCoreConnector *contextCoreConnector;

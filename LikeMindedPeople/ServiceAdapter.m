@@ -116,6 +116,7 @@
 	circle.latitude = -122.394304;
 	circle.radius = 50;
 	place.geoFence = circle;
+	place.name = @"tempLocation";
 	[places addObject:place];
 	
     // TODO: Uncomment when servers come online

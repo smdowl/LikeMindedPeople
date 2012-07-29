@@ -20,10 +20,11 @@
 
 @interface DataModel()
 - (void)_getPPOIList;
-- (void)_removeAllPrivateFences;
+- (void)_replacePrivateGeofencesWithFences:(NSArray *)fences; // Remove
 - (void)_getPrivateFences;
-- (void)_setPrivateFences:(NSArray *)geofences;
 - (NSArray *)_flattenProfile:(PRProfile *)profile;
+- (void)_removeAllPrivateFences;
+- (void)_setPrivateFences:(NSArray *)geofences;
 @end
 
 @implementation DataModel
@@ -78,6 +79,8 @@ static DataModel *_sharedInstance = nil;
 {
 	_userId = @"userId";
 	_currentLocation = [NSMutableArray array];
+	
+	[self _getPrivateFences];
 	
     [self.contextCoreConnector checkStatusAndOnEnabled:^(QLContextConnectorPermissions *contextConnectorPermissions) 
 	 {
@@ -192,8 +195,7 @@ static DataModel *_sharedInstance = nil;
 	
 	[ServiceAdapter getGeofencesForUser:_userId atLocation:location success:^(NSArray *geofences)
 	 {
-		 [self _removeAllPrivateFences];
-		 [self _setPrivateFences:geofences];
+		 [self _replacePrivateGeofencesWithFences:geofences];
 	 }];
 }
 
@@ -236,15 +238,19 @@ static DataModel *_sharedInstance = nil;
 	
 }
 
-- (void)_removeAllPrivateFences
+- (void)_removePrivateFence:(QLPlace *)geofence
 {
-	for (QLPlace *geofence in _privateFences)
-	{
-		[self.contextPlaceConnector deletePlaceWithId:geofence.id
-											  success:^(void){} failure:^(NSError *err){}];
-	}
-	
-	_privateFences = nil;
+	[self.contextPlaceConnector deletePlaceWithId:geofence.id
+										  success:^(void){
+											  [_privateFences removeObject:geofence];
+											  if ([_privateFences count] == 0)
+											  {
+												  _deletingPrivateFences = NO;
+											  }
+											  NSLog(@"successfully removed place");
+										  } failure:^(NSError *err){
+											  NSLog(@"ERROR: %@", err);
+										  }];
 }
 
 - (void)_getPrivateFences
@@ -271,10 +277,46 @@ static DataModel *_sharedInstance = nil;
 										success:^(QLPlace *newFence)
 		 {
 			 [_privateFences addObject:geofence];
-		 } failure:^(NSError *err){}];
-		
+		 } failure:^(NSError *err){
+			 NSLog(@"%@", err);
+		 }];
+		NSLog(@"%@", geofence);
 	}
 }
+
+- (void)_replacePrivateGeofencesWithFences:(NSArray *)fences
+{
+	if (_deletingPrivateFences)
+		return;
+	
+	if ([_privateFences count] > 0)
+	{
+		_deletingPrivateFences = YES;
+		
+		for (QLPlace *fence in _privateFences)
+		{
+			[self _removePrivateFence:fence];
+		}
+	}
+	dispatch_async(dispatch_get_main_queue(), ^()
+				   {
+					   while (_deletingPrivateFences){};
+					   
+					   [self _setPrivateFences:fences];
+				   });
+	
+}
+
+//- (void)_removeFence:(void (^)(void))callback
+//{
+//	[self.contextPlaceConnector deletePlaceWithId:geofence.id
+//										  success:^(void){
+//											  [_privateFences removeObject:geofence];
+//											  NSLog(@"successfully removed place");
+//										  } failure:^(NSError *err){
+//											  NSLog(@"%@", err);
+//										  }];
+//}
 
 - (NSArray *)_flattenProfile:(PRProfile *)profile
 {
