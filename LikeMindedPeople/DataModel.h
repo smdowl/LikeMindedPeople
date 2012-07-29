@@ -10,6 +10,8 @@
 #import <ContextCore/QLContextCoreConnector.h>
 #import <ContextLocation/QLContextPlaceConnector.h>
 #import <ContextProfiling/PRContextInterestsConnector.h>
+#import <CoreLocation/CoreLocation.h>
+#import "GeofenceLocation.h"
 
 @class QLPlace;
 @interface DataModel : NSObject <QLContextCorePermissionsDelegate, QLContextPlaceConnectorDelegate, PRContextInterestsDelegate>

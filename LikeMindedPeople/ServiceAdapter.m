@@ -157,9 +157,9 @@
     [d setObject:userStuff forKey:@"user"];
     [d setObject:profile forKey:@"profile"];
 
-    [ServiceAdapter callServiceWithPath:@"users.json" httpMethod:@"POST" postPrefixString:@"user_profile=" dataObj:d success:success];
+    //[ServiceAdapter callServiceWithPath:@"users.json" httpMethod:@"POST" postPrefixString:@"user_profile=" dataObj:d success:success];
 
-	//success(nil);
+	success(nil);
 }
 
 + (void)updateCurrentLocationForUser:(NSString *)userId location:(CLLocation *)location success:(void (^)(id))success
@@ -177,9 +177,9 @@
     // TODO: Get radius somehow
     
     
-    [ServiceAdapter callServiceWithPath:[NSString stringWithFormat:@"update_location/%@.json",userId] httpMethod:@"POST" postPrefixString:@"location=" dataObj:dloc success:success];
+    //[ServiceAdapter callServiceWithPath:[NSString stringWithFormat:@"update_location/%@.json",userId] httpMethod:@"POST" postPrefixString:@"location=" dataObj:dloc success:success];
 
-    //success(nil);
+    success(nil);
 }
                                                                                                  
 
@@ -207,7 +207,7 @@
 
     [ds setObject:pois forKey:@"pois"];
     
-    [ServiceAdapter callServiceWithPath:[NSString stringWithFormat:@"users/%@.json",userId] httpMethod:@"POST" postPrefixString:@"pois=" dataObj:ds success:success];
+    //[ServiceAdapter callServiceWithPath:[NSString stringWithFormat:@"users/%@.json",userId] httpMethod:@"POST" postPrefixString:@"pois=" dataObj:ds success:success];
     
 	success(nil);
 }
@@ -223,9 +223,9 @@
     [d setObject:@"Now" forKey:@"moment"];
     
     // Make "YES" for testing, "NO" to use servers.
-    if (!YES) {
-        [ServiceAdapter callServiceWithPath:[NSString stringWithFormat:@"filter_locations/%@.json",userId] httpMethod:@"POST" postPrefixString:@"location_filter=" dataObj:d success:success];
-    } else {
+//    if (!NO) {
+       // [ServiceAdapter callServiceWithPath:[NSString stringWithFormat:@"filter_locations/%@.json",userId] httpMethod:@"POST" postPrefixString:@"location_filter=" dataObj:d success:success];
+//    } else {
     
         NSMutableArray *places = [NSMutableArray array];
 	
@@ -247,7 +247,7 @@
         [places addObject:newLocation];
 	
         success(places);
-    }
+//    }
 }
 
 @end
