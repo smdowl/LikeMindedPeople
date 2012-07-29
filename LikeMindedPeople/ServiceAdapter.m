@@ -41,8 +41,8 @@
             NSMutableArray *places = [[NSMutableArray alloc] init];
             QLPlace *place = [[QLPlace alloc] init];
             QLGeoFenceCircle *circle = [[QLGeoFenceCircle alloc] init];
-            circle.latitude = 37.776074;
-            circle.longitude = -122.394304;
+            circle.latitude = 23.776074;
+            circle.longitude = 122.394304;
             circle.radius = 10;
             place.geoFence = circle;
             place.name = @"poi1";
@@ -157,9 +157,9 @@
     [d setObject:userStuff forKey:@"user"];
     [d setObject:profile forKey:@"profile"];
 
-    //[ServiceAdapter callServiceWithPath:@"users.json" httpMethod:@"POST" postPrefixString:@"user_profile=" dataObj:d success:success];
+    [ServiceAdapter callServiceWithPath:@"users.json" httpMethod:@"POST" postPrefixString:@"user_profile=" dataObj:d success:success];
 
-	success(nil);
+	//success(nil);
 }
 
 + (void)updateCurrentLocationForUser:(NSString *)userId location:(CLLocation *)location success:(void (^)(id))success
@@ -177,9 +177,9 @@
     // TODO: Get radius somehow
     
     
-    //[ServiceAdapter callServiceWithPath:[NSString stringWithFormat:@"update_location/%@.json",userId] httpMethod:@"POST" postPrefixString:@"location=" dataObj:dloc success:success];
+    [ServiceAdapter callServiceWithPath:[NSString stringWithFormat:@"update_location/%@.json",userId] httpMethod:@"POST" postPrefixString:@"location=" dataObj:dloc success:success];
 
-    success(nil);
+    //success(nil);
 }
                                                                                                  
 
@@ -207,9 +207,9 @@
 
     [ds setObject:pois forKey:@"pois"];
     
-    //[ServiceAdapter callServiceWithPath:[NSString stringWithFormat:@"users/%@.json",userId] httpMethod:@"POST" postPrefixString:@"pois=" dataObj:ds success:success];
+    [ServiceAdapter callServiceWithPath:[NSString stringWithFormat:@"users/%@.json",userId] httpMethod:@"POST" postPrefixString:@"pois=" dataObj:ds success:success];
     
-	success(nil);
+	//success(nil);
 }
 
 + (void)getGeofencesForUser:(NSString *)userId atLocation:(CLLocation *)location success:(void (^)(NSArray *))success
@@ -219,13 +219,13 @@
     [d setObject:[NSString stringWithFormat:@"%f",location.coordinate.latitude] forKey:@"lattitude"];
     [d setObject:[NSString stringWithFormat:@"%f",location.coordinate.longitude] forKey:@"longitude"];
     // Filter in miles
-    [d setObject:@"100000000000" forKey:@"filter"];
+    [d setObject:@"1000000000" forKey:@"filter"];
     [d setObject:@"Now" forKey:@"moment"];
     
     // Make "YES" for testing, "NO" to use servers.
-//    if (!NO) {
-       // [ServiceAdapter callServiceWithPath:[NSString stringWithFormat:@"filter_locations/%@.json",userId] httpMethod:@"POST" postPrefixString:@"location_filter=" dataObj:d success:success];
-//    } else {
+    if (!NO) {
+        [ServiceAdapter callServiceWithPath:[NSString stringWithFormat:@"filter_locations/%@.json",userId] httpMethod:@"POST" postPrefixString:@"location_filter=" dataObj:d success:success];
+    } else {
     
         NSMutableArray *places = [NSMutableArray array];
 	
@@ -247,7 +247,7 @@
         [places addObject:newLocation];
 	
         success(places);
-//    }
+    }
 }
 
 @end

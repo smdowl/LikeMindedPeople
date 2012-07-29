@@ -44,7 +44,7 @@
     [self.window makeKeyAndVisible];
     
     // Just for testing the service adapter through NSLogs
-    //  [ServiceAdapter testService];
+    //[ServiceAdapter testService];
     
     
     // FB Integration fb123987074412482
