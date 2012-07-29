@@ -37,6 +37,28 @@
     oldBtn.enabled = TRUE;
     btn.enabled = FALSE;
     selectedCategory = btn.tag;
+    
+    switch (selectedCategory) {
+        case 1:
+            //all
+//            [self lookup:@""];
+            break;
+        case 2:
+            //bars
+            [self lookup:@"bar"];
+            break;
+        case 3:
+            //cafe
+            break;
+        case 4:
+            //clubs
+            break;
+        case 5:
+            //food
+            break;
+        default:
+            break;
+    }
 }
 -(IBAction)fullScreen:(id)sender {
 //    UIView *whiteScreen = [[UIView alloc] initWithFrame:self.view.frame];
@@ -137,9 +159,17 @@
 }
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     // called when 'return' key pressed. return NO to ignore.
-[textField resignFirstResponder];
-    [googleLocalConnection getGoogleObjectsWithQuery:textField.text andMapRegion:[mapView region] andNumberOfResults:200 addressesOnly:YES andReferer:@"http://WWW.CHANGETHISTOYOURSITENAME.COM"];
+    [textField resignFirstResponder];
+    [self lookup:textField.text];
     return YES;
+}
+-(IBAction)forceSearch {
+    [self textFieldShouldReturn:(UITextField*)[searchView viewWithTag:80]];
+}
+-(void)lookup:(NSString*)query {
+    if(query && [query length]) {
+        [googleLocalConnection getGoogleObjectsWithQuery:query andMapRegion:[mapView region] andNumberOfResults:200 addressesOnly:YES andReferer:@"http://WWW.CHANGETHISTOYOURSITENAME.COM"];    
+    }
 }
 - (void) googleLocalConnection:(GoogleLocalConnection *)conn didFinishLoadingWithGoogleLocalObjects:(NSMutableArray *)objects andViewPort:(MKCoordinateRegion)region
 {
