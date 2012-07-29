@@ -218,6 +218,7 @@
     [mapView setRegion:region animated:YES];
 }
 -(IBAction)showPermissions {
+	NSLog(@"%@", [[dm currentLocation] name]);
     [dm.contextCoreConnector showPermissionsFromViewController:self];
 }
 -(IBAction)search:(id)sender {

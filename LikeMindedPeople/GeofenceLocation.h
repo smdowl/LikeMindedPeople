@@ -20,4 +20,7 @@
 @property (nonatomic) int peopleCount;
 @property (nonatomic) float rating;
 
+@property (readonly) CGFloat latitude;
+@property (readonly) CGFloat longitude;
+
 @end
