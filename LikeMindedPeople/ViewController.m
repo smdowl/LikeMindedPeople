@@ -162,16 +162,28 @@
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     // called when 'return' key pressed. return NO to ignore.
     [textField resignFirstResponder];
+    UIButton *glass = (UIButton*)[self.view viewWithTag:1];
+    glass.enabled = TRUE;
     [self lookup:textField.text];
     return YES;
 }
 -(IBAction)forceSearch {
     [self textFieldShouldReturn:(UITextField*)[searchView viewWithTag:80]];
 }
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {// return NO to disallow editing.
+
+UIButton *btn = (UIButton*)[self.view viewWithTag:1];
+UIButton *oldBtn = (UIButton*)[self.view viewWithTag:selectedCategory];
+oldBtn.enabled = TRUE;
+btn.enabled = FALSE;
+selectedCategory = btn.tag;
+    return YES;
+}
 -(void)lookup:(NSString*)query {
     if(query && [query length]) {
         [googleLocalConnection getGoogleObjectsWithQuery:query andMapRegion:[mapView region] andNumberOfResults:200 addressesOnly:YES andReferer:@"http://WWW.CHANGETHISTOYOURSITENAME.COM"];    
     }
+
 }
 - (void) googleLocalConnection:(GoogleLocalConnection *)conn didFinishLoadingWithGoogleLocalObjects:(NSMutableArray *)objects andViewPort:(MKCoordinateRegion)region
 {
@@ -315,7 +327,7 @@
     GoogleLocalObject *av= [pins 
                             objectAtIndex: [indexPath row]];
     
-	cell.detailTextLabel.text = [av description];
+	cell.detailTextLabel.text = [av subtitle];
 	
 	cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 //    double percent = 0.79;
@@ -354,8 +366,9 @@
 -(void)setDetailView:(NSString*)title withDesc:(NSString*)desc andMatch:(NSString*)match andUsers:(NSString*)count andInterests:(NSString*)interests {
     UILabel *lblTitle = (UILabel*)[detailView viewWithTag:1];
     UITextView *lblDesc = (UITextView*)[detailView viewWithTag:2];
-    UILabel *lblMatch = (UILabel*)[detailView viewWithTag:3];
-    UILabel *lblCount = (UILabel*)[detailView viewWithTag:4];
+    UILabel *lblCount = (UILabel*)[detailView viewWithTag:3];
+    UILabel *lblMatch = (UILabel*)[detailView viewWithTag:4];
+    
     UILabel *lblInterests = (UILabel*)[detailView viewWithTag:5];
     [lblTitle setText:title];
     [lblDesc setText:desc];

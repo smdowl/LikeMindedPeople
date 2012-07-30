@@ -52,6 +52,10 @@
 		925AE8DE15C49BCF008840D9 /* foodactive.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 925AE8D415C49BCF008840D9 /* foodactive.jpg */; };
 		925AE8DF15C49BCF008840D9 /* foodbtn.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 925AE8D515C49BCF008840D9 /* foodbtn.jpg */; };
 		925AE90615C4A077008840D9 /* lines.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 925AE90515C4A077008840D9 /* lines.jpg */; };
+		925F9FDA15C5CDFD0081E098 /* magnifyingactive.png in Resources */ = {isa = PBXBuildFile; fileRef = 925F9FD815C5CDFD0081E098 /* magnifyingactive.png */; };
+		925F9FDB15C5CDFD0081E098 /* magnifying.png in Resources */ = {isa = PBXBuildFile; fileRef = 925F9FD915C5CDFD0081E098 /* magnifying.png */; };
+		925F9FDE15C5CE630081E098 /* 57icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 925F9FDD15C5CE630081E098 /* 57icon.png */; };
+		925F9FE015C5CE650081E098 /* 114icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 925F9FDF15C5CE650081E098 /* 114icon.png */; };
 		92D8511915C5BEAD00579B05 /* GeofenceLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 92D8511815C5BEAD00579B05 /* GeofenceLocation.m */; };
 		92EBF2FE15C5932D0085C47E /* savefield.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EBF2FD15C5932D0085C47E /* savefield.png */; };
 		92EBF31F15C593FB0085C47E /* NSObject+SBJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 92EBF30515C593FB0085C47E /* NSObject+SBJson.m */; };
@@ -161,6 +165,10 @@
 		925AE8D415C49BCF008840D9 /* foodactive.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = foodactive.jpg; sourceTree = "<group>"; };
 		925AE8D515C49BCF008840D9 /* foodbtn.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = foodbtn.jpg; sourceTree = "<group>"; };
 		925AE90515C4A077008840D9 /* lines.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = lines.jpg; path = ../lines.jpg; sourceTree = "<group>"; };
+		925F9FD815C5CDFD0081E098 /* magnifyingactive.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = magnifyingactive.png; sourceTree = "<group>"; };
+		925F9FD915C5CDFD0081E098 /* magnifying.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = magnifying.png; sourceTree = "<group>"; };
+		925F9FDD15C5CE630081E098 /* 57icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 57icon.png; sourceTree = "<group>"; };
+		925F9FDF15C5CE650081E098 /* 114icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = 114icon.png; sourceTree = "<group>"; };
 		92D8511715C5BEAD00579B05 /* GeofenceLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeofenceLocation.h; sourceTree = "<group>"; };
 		92D8511815C5BEAD00579B05 /* GeofenceLocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeofenceLocation.m; sourceTree = "<group>"; };
 		92EBF2FD15C5932D0085C47E /* savefield.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = savefield.png; sourceTree = "<group>"; };
@@ -435,6 +443,8 @@
 		925AE8AD15C476E4008840D9 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				925F9FD815C5CDFD0081E098 /* magnifyingactive.png */,
+				925F9FD915C5CDFD0081E098 /* magnifying.png */,
 				92EBF34E15C5C0990085C47E /* bg.png */,
 				92EBF34C15C5C04B0085C47E /* backactive.png */,
 				92EBF34815C5C0430085C47E /* minimize.png */,
@@ -503,6 +513,8 @@
 		92FBED3915C3A85F000D1AE3 = {
 			isa = PBXGroup;
 			children = (
+				925F9FDF15C5CE650081E098 /* 114icon.png */,
+				925F9FDD15C5CE630081E098 /* 57icon.png */,
 				92FBED4E15C3A85F000D1AE3 /* LikeMindedPeople */,
 				92FBED6615C3A85F000D1AE3 /* LikeMindedPeopleTests */,
 				92FBED4715C3A85F000D1AE3 /* Frameworks */,
@@ -767,6 +779,10 @@
 				92EBF34B15C5C0440085C47E /* fullscreen.png in Resources */,
 				92EBF34D15C5C04B0085C47E /* backactive.png in Resources */,
 				92EBF34F15C5C0990085C47E /* bg.png in Resources */,
+				925F9FDA15C5CDFD0081E098 /* magnifyingactive.png in Resources */,
+				925F9FDB15C5CDFD0081E098 /* magnifying.png in Resources */,
+				925F9FDE15C5CE630081E098 /* 57icon.png in Resources */,
+				925F9FE015C5CE650081E098 /* 114icon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -950,7 +966,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/LikeMindedPeople/facebook-ios-sdk\"",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = LikeMindedPeople;
 				PROVISIONING_PROFILE = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				WRAPPER_EXTENSION = app;
