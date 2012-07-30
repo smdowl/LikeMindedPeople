@@ -33,18 +33,19 @@
     IBOutlet UIButton *btnFull;
     IBOutlet UIButton *btnMin;
     IBOutlet UIView *detailView;
+    IBOutlet UIView *searchView;
     BOOL full;
 }
 @property (nonatomic, strong) IBOutlet UIViewController *fbLogin;
 @property IBOutlet UIButton *fbButton;
 -(IBAction)search:(id)sender;
+-(IBAction)forceSearch;
 -(IBAction)refershMap;
 -(IBAction)showPermissions;
 -(IBAction)category:(id)sender;
 -(IBAction)fullScreen:(id)sender;
 -(IBAction)minimize:(id)sender;
 -(IBAction)back;
-- (void)handleGesture;
-- (void)handleGesture:(UIGestureRecognizer *)gestureRecognizer;
+-(void)lookup:(NSString*)query;
 -(void)setDetailView:(NSString*)title withDesc:(NSString*)desc andMatch:(NSString*)match andUsers:(NSString*)count andInterests:(NSString*)interests;
 @end

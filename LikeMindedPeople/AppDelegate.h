@@ -14,7 +14,7 @@
 #import "DataModel.h"
 @class ViewController;
 @class LoginViewController;
-@interface AppDelegate : UIResponder <UIApplicationDelegate, FBSessionDelegate> {
+@interface AppDelegate : UIResponder <UIApplicationDelegate, FBRequestDelegate, FBSessionDelegate> {
 Facebook *facebook;
 }
 

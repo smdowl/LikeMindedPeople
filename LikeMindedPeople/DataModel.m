@@ -22,7 +22,7 @@
 @interface DataModel()
 - (void)setup;
 
-- (void)_getPPOIList;
+- (void)_uploadPersonalPointsOfInterest;
 - (void)_replacePrivateGeofencesWithFences:(NSArray *)fences; // Remove
 - (void)_getPrivateFences;
 - (NSArray *)_flattenProfile:(PRProfile *)profile;
@@ -86,40 +86,46 @@ static DataModel *_sharedInstance = nil;
 
 - (void)setup
 {
-	_privateFences = nil;
-	_currentLocation = [NSMutableArray array];
+	@synchronized(self)
+	{
+		_privateFences = nil;
+		_currentLocation = [NSMutableArray array];
 		
-    [self.contextCoreConnector checkStatusAndOnEnabled:^(QLContextConnectorPermissions *contextConnectorPermissions) 
-	 {
-		 
-		 // Get all the events that the user has recently been sent
-		 [self.contextPlaceConnector requestLatestPlaceEventsAndOnSuccess:^(NSArray *placeEvents) 
-		  {
-			  
-			  _placeEvents = placeEvents;
-			  
-		  } failure:^(NSError *error) {
-			  NSLog(@"%@", [error localizedDescription]);
-		  }];
-	 }	disabled:^(NSError *error) {
-		 NSLog(@"%@", error);
-		 if (error.code == QLContextCoreNonCompatibleOSVersion)
-         {
-			 NSLog(@"%@", @"SDK Requires iOS 5.0 or higher");
-		 }
-		 else 
-         {
-			 // Authentication, going to happen from 
-			 //          enableSDKButton.enabled = YES;
-		 }
-	 }];
+		[self.contextCoreConnector checkStatusAndOnEnabled:^(QLContextConnectorPermissions *contextConnectorPermissions) 
+		 {
+			 
+			 // Get all the events that the user has recently been sent
+			 [self.contextPlaceConnector requestLatestPlaceEventsAndOnSuccess:^(NSArray *placeEvents) 
+			  {
+				  
+				  _placeEvents = placeEvents;
+				  
+			  } failure:^(NSError *error) {
+				  NSLog(@"%@", [error localizedDescription]);
+			  }];
+		 }	disabled:^(NSError *error) {
+			 NSLog(@"%@", error);
+			 if (error.code == QLContextCoreNonCompatibleOSVersion)
+			 {
+				 NSLog(@"%@", @"SDK Requires iOS 5.0 or higher");
+			 }
+			 else 
+			 {
+				 // Authentication, going to happen from 
+				 //          enableSDKButton.enabled = YES;
+			 }
+		 }];
+	}
 }
 
 - (void)setUserId:(NSString *)userId
 {
-	_userId = userId;
-	
-    [self performSelector:@selector(runStartUpSequence) withObject:nil afterDelay:0.1];
+	@synchronized(self)
+	{
+		_userId = userId;
+		
+		[self performSelector:@selector(runStartUpSequence) withObject:nil afterDelay:0.1];
+	}
 }
 
 - (void)getInfo
@@ -232,45 +238,40 @@ static DataModel *_sharedInstance = nil;
 
 - (void)runStartUpSequence
 {
-	// Update the current profile
-	PRProfile *profile = self.contextInterestsConnector.interests;
-//	NSLog(@"%@ %@", profile, [profile.attrs.allValues objectAtIndex:0]);
-	
-	NSArray *profileArray = [self _flattenProfile:profile];
-	[ServiceAdapter uploadUserProfile:profileArray forUser:_userId success:^(id result)
-	 {
-		 
-	 }];
-	
-	// Add the new pois to the database
-	[self _getPPOIList];
-	
-	if (_personalPointsOfInterest)
+	@synchronized(self)
 	{
-		[ServiceAdapter uploadPointsOfInterest:_personalPointsOfInterest forUser:_userId success:^(id result)
+		// Update the current profile
+		PRProfile *profile = self.contextInterestsConnector.interests;
+		//	NSLog(@"%@ %@", profile, [profile.attrs.allValues objectAtIndex:0]);
+		
+		NSArray *profileArray = [self _flattenProfile:profile];
+		[ServiceAdapter uploadUserProfile:profileArray forUser:_userId success:^(id result)
 		 {
 			 
 		 }];
-	}
-
-	
-	// Get the current location to filter the results from the server
-	CLLocationManager *manager = [[CLLocationManager alloc] init];
-	CLLocation *location = [manager location];
-	if(location) {
-	[ServiceAdapter getGeofencesForUser:_userId atLocation:location success:^(NSArray *geofences)
-	 {
-		 _geofenceSearchLocations = geofences;
-		 NSMutableArray *places = [NSMutableArray array];
-		 for (GeofenceLocation *location in geofences)
+		
+		// Add the new pois to the database
+		[self _uploadPersonalPointsOfInterest];
+		
+		
+		// Get the current location to filter the results from the server
+		CLLocationManager *manager = [[CLLocationManager alloc] init];
+		CLLocation *location = [manager location];
+		//	if(location) {
+		[ServiceAdapter getGeofencesForUser:_userId atLocation:location success:^(NSArray *geofences)
 		 {
-			 NSLog(@"%@", location);
-			 [places addObject:location.place];
-		 }
-		 
-		 [self _replacePrivateGeofencesWithFences:places];
-	 }];
-    }
+			 _geofenceSearchLocations = geofences;
+			 NSMutableArray *places = [NSMutableArray array];
+			 for (GeofenceLocation *geofence in geofences)
+			 {
+				 NSLog(@"%@", geofence.place.name);
+				 [places addObject:geofence.place];
+			 }
+			 
+			 [self _replacePrivateGeofencesWithFences:places];
+		 }];
+		//    }
+	}
 }
 
 #pragma mark -
@@ -290,27 +291,29 @@ static DataModel *_sharedInstance = nil;
 #pragma mark -
 #pragma mark Private Methods
 
-- (void)_getPPOIList
+- (void)_uploadPersonalPointsOfInterest
 {
-	[self.contextPlaceConnector allPrivatePointsOfInterestAndOnSuccess:^(NSArray *ppoi)
-	 {
-		 _personalPointsOfInterest = ppoi;
-		 
-		 for (QLPlace *point in ppoi)
+	@synchronized(self)
+	{
+		[self.contextPlaceConnector allPrivatePointsOfInterestAndOnSuccess:^(NSArray *ppoi)
 		 {
-//			 NSLog(@"%@", point);
-		 }
-	 } failure:^(NSError *err)
-	 {
-		 
-	 }];
+			 _personalPointsOfInterest = ppoi;
+			 
+			 [ServiceAdapter uploadPointsOfInterest:_personalPointsOfInterest 
+											forUser:_userId 
+											success:^(id result)
+			  {
+				  // Do something useful with result
+			  }];
+		 } failure:^(NSError *err)
+		 {
+			 
+		 }];
+	}
 }
 
-- (void)test
-{
-	
-}
-
+// This method removes a single fences and then calls the completion block if it was the last in the array
+// This is one way of handling the asyn calls, probably better ways
 - (void)_removePrivateFence:(QLPlace *)geofence completion:(void (^)(void ))complete
 {
 	NSLog(@"Geofence: %lli %@: %@", geofence.id, geofence.name, geofence.geoFence);
@@ -335,39 +338,42 @@ static DataModel *_sharedInstance = nil;
 										  }];
 }
 
+// Access the local store and create a copy of all the private fences
 - (void)_getPrivateFences
 {
-	[self.contextPlaceConnector allPlacesAndOnSuccess:^(NSArray *allPlaces)
-	 {
-		 _privateFences = [NSMutableArray arrayWithArray:allPlaces];
-//		 for (QLPlace *place in allPlaces)
-//		 {
-//			 NSLog(@"place id: %lli", place.id);
-//			 [_privateFences addObject:place];
-//		 }
-	 } failure:^(NSError *err)
-	 {
-		 NSLog(@"%@", err);
-	 }];
-}
-
-- (void)_setPrivateFences:(NSArray *)geofences
-{
-	if (_privateFences == nil)
+	@synchronized(self)
 	{
-		_privateFences = [NSMutableArray array];
-	}
-	
-	for (QLPlace *geofence in geofences)
-	{
-		[self.contextPlaceConnector createPlace:geofence 
-										success:^(QLPlace *newFence)
+		[self.contextPlaceConnector allPlacesAndOnSuccess:^(NSArray *allPlaces)
 		 {
-			 [_privateFences addObject:geofence];
-		 } failure:^(NSError *err){
+			 _privateFences = [NSMutableArray arrayWithArray:allPlaces];
+		 } failure:^(NSError *err)
+		 {
 			 NSLog(@"%@", err);
 		 }];
-//		NSLog(@"%@", geofence);
+	}
+}
+
+// Go through each of the fences in the array and try to create them
+// They are only added to the iVar if the addition was successful so take care with it
+- (void)_setPrivateFences:(NSArray *)geofences
+{
+	@synchronized(self)
+	{
+		if (_privateFences == nil)
+		{
+			_privateFences = [NSMutableArray array];
+		}
+		
+		for (QLPlace *geofence in geofences)
+		{
+			[self.contextPlaceConnector createPlace:geofence 
+											success:^(QLPlace *newFence)
+			 {
+				 [_privateFences addObject:geofence];
+			 } failure:^(NSError *err){
+				 NSLog(@"%@", err);
+			 }];
+		}
 	}
 }
 
@@ -375,15 +381,20 @@ static DataModel *_sharedInstance = nil;
 {
 	@synchronized(self)
 	{
+		// First get all places
 		[self.contextPlaceConnector allPlacesAndOnSuccess:^(NSArray *allPlaces)
 		 {
 			 _privateFences = [NSMutableArray arrayWithArray:allPlaces];
 			 
+			 // Only remove fences if there are some!
 			 if ([_privateFences count] > 0)
 			 {			 
+				 // The failures iVar keeps track of how many removes didn't work
+				 // We need this because without it we don't know when to call the completion block
 				 _failures = 0;
 				 for (QLPlace *fence in _privateFences)
 				 {
+					 // Pass the same completion block to each method call, it should only be called once.
 					 [self _removePrivateFence:fence completion:^()
 					  {
 						  [self _setPrivateFences:fences];
@@ -391,7 +402,7 @@ static DataModel *_sharedInstance = nil;
 				 }
 			 }
 			 else
-			 {
+			 {	 // If there aren't any to delete it will be a simple case of just adding all the ones we need
 				 [self _setPrivateFences:fences];
 			 }
 			 
@@ -402,17 +413,7 @@ static DataModel *_sharedInstance = nil;
 	}
 }
 
-//- (void)_removeFence:(void (^)(void))callback
-//{
-//	[self.contextPlaceConnector deletePlaceWithId:geofence.id
-//										  success:^(void){
-//											  [_privateFences removeObject:geofence];
-//											  NSLog(@"successfully removed place");
-//										  } failure:^(NSError *err){
-//											  NSLog(@"%@", err);
-//										  }];
-//}
-
+// A convenience method for making a PRProfile more manageable for JSON
 - (NSArray *)_flattenProfile:(PRProfile *)profile
 {
 	NSMutableArray *profileArray = [NSMutableArray array];
