@@ -233,19 +233,67 @@
 	
         QLPlace *place = [[QLPlace alloc] init];
         QLGeoFenceCircle *circle = [[QLGeoFenceCircle alloc] init];
-        circle.latitude = 37.77638;
-        circle.longitude = -122.39439;
-        circle.radius = 50;
+        circle.latitude = 37.780586;
+        circle.longitude = -122.396107;
+        circle.radius = 100;
         place.geoFence = circle;
         place.name = @"Caltrain Station";
 
         newLocation.place = place;
 	
+        newLocation.peopleCount = 15;
+        newLocation.rating = 0.2;
+        
+        [places addObject:newLocation];
+        
+        newLocation = [[GeofenceLocation alloc] init];
+        place = [[QLPlace alloc] init];
+        circle = [[QLGeoFenceCircle alloc] init];
+        circle.latitude = 37.777567;
+        circle.longitude = -122.394991;
+        circle.radius = 40;
+        place.geoFence = circle;
+        place.name = @"Bar";
+        
+        newLocation.place = place;
+        
         newLocation.peopleCount = 25;
         newLocation.rating = 0.7;
 	
         [places addObject:newLocation];
 	
+        newLocation = [[GeofenceLocation alloc] init];
+        place = [[QLPlace alloc] init];
+        circle = [[QLGeoFenceCircle alloc] init];
+        circle.latitude = 37.782553;
+        circle.longitude = -122.39306;
+        circle.radius = 40;
+        place.geoFence = circle;
+        place.name = @"Last";
+        
+        newLocation.place = place;
+        
+        newLocation.peopleCount = 10;
+        newLocation.rating = 0.92;
+        
+        [places addObject:newLocation];
+        
+        newLocation = [[GeofenceLocation alloc] init];
+        place = [[QLPlace alloc] init];
+        circle = [[QLGeoFenceCircle alloc] init];
+        circle.latitude = 37.780111;
+        circle.longitude = -122.39439;
+        circle.radius = 40;
+        place.geoFence = circle;
+        place.name = @"Another";
+        
+        newLocation.place = place;
+        
+        newLocation.peopleCount = 5;
+        newLocation.rating = 0.5;
+        
+        [places addObject:newLocation];
+        
         success(places);
     }
 }
