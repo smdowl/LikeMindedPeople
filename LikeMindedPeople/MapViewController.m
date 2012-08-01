@@ -7,16 +7,19 @@
 //
 
 #import "MapViewController.h"
+#import "DataModel.h"
 #import "SearchView.h"
 #import "SearchBarPanel.h"
 #import "TDBadgedCell.h"
 #import "GeofenceLocation.h"
 #import "SearchBar.h"
 
+#define SHOW_GEOFENCE_LOCATIONS NO
 #define RESIZE_BUTTTON_PADDING 5
 
 @interface MapViewController ()
 
+- (void)_removeAllNonUserAnnotations;
 - (void)_animateMap:(BOOL)fullScreen;
 - (void)_hideKeyboard;
 
@@ -46,9 +49,15 @@
 	// Need to set us as the delgate because of the map views own gesture reconizers
 	pinchRecognizer.delegate = self;  
     [_mapView addGestureRecognizer:pinchRecognizer];
+	_mapView.delegate = self;
 	
 	[_keyboardCancelButton addTarget:self action:@selector(_hideKeyboard) forControlEvents:UIControlEventTouchUpInside];
 	[_keyboardCancelButton removeFromSuperview];
+	
+	_searchConnection = [[GoogleLocalConnection alloc] initWithDelegate:self];
+	
+	_searchView.searchResultsView.delegate = self;
+	_searchView.searchResultsView.dataSource = self;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -87,6 +96,13 @@
 											 selector:@selector(keyboardWillHide:)
 												 name:UIKeyboardWillHideNotification
 											   object:nil];
+
+	DataModel *dataModel = [DataModel sharedInstance];
+	[dataModel.contextCoreConnector checkStatusAndOnEnabled:^(QLContextConnectorPermissions *connectorPermissions) {
+        
+    } disabled:^(NSError *err) {
+		[dataModel.contextCoreConnector enableFromViewController:self success:nil failure:nil];
+    }];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -106,14 +122,6 @@
 }
 
 #pragma mark -
-#pragma mark SearchBarPanelDelegate
-
-- (void)beginSearchForPlaces:(NSString *)searchText
-{
-	
-}
-
-#pragma mark -
 #pragma mark IBOutlet Methods
 
 - (IBAction)toggleFullScreen:(id)sender
@@ -130,30 +138,121 @@
 	}
 }
 
+- (IBAction)debug:(id)sender
+{
+	[[[DataModel sharedInstance] contextCoreConnector] showPermissionsFromViewController:self];
+}
+
+#pragma mark -
+#pragma mark SearchBarPanelDelegate
+
+- (void)beginSearchForPlaces:(NSString *)searchText
+{
+	if (searchText.length)
+	{
+		[_searchConnection getGoogleObjectsWithQuery:searchText andMapRegion:[_mapView region] andNumberOfResults:20 addressesOnly:YES andReferer:@"http://WWW.radii.com"];    
+	}
+	else 
+	{
+		[self _removeAllNonUserAnnotations];
+	}
+}
+
+- (void)cancelSearch
+{
+	[self _removeAllNonUserAnnotations];
+	[_searchView.searchBarPanel selectButton:-1];
+}
+
+#pragma mark -
+#pragma mark GoogleConnectionDelegate
+
+
+- (void) googleLocalConnection:(GoogleLocalConnection *)conn didFinishLoadingWithGoogleLocalObjects:(NSMutableArray *)objects andViewPort:(MKCoordinateRegion)region
+{
+	if ([objects count] == 0)
+	{
+		// No results found
+	}
+	else 
+	{				
+		// Replace all the annotations with new ones
+		[self _removeAllNonUserAnnotations];
+		[_mapView addAnnotations:objects];
+		
+		// Store a ref to the results
+		_searchResults = objects;
+		
+		if (_userLocation)
+		{
+			[_mapView addAnnotation:_userLocation];
+		}
+		
+		[_searchView setData:_searchResults];
+	}
+	
+	if (SHOW_GEOFENCE_LOCATIONS)
+	{
+		NSArray *allGeofenceRegions = [[DataModel sharedInstance] getAllGeofenceRegions];
+		[_mapView addAnnotations:allGeofenceRegions];
+	}
+}
+
+- (void) googleLocalConnection:(GoogleLocalConnection *)conn didFailWithError:(NSError *)error
+{
+	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error finding place - Try again" message:[error localizedDescription] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+    [alert show];
+}
+
+#pragma mark -
+#pragma mark MKMapViewDelegate
+
+- (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation
+{
+	_userLocation = userLocation;
+}
+
+- (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated
+{
+	if (_userLocation)
+	{
+//		[_mapView addAnnotation:_userLocation];
+	}
+}
+
 #pragma mark -
 #pragma mark UITableViewDelegate
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath;
 {
-	TDBadgedCell *cell = [[TDBadgedCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"cell"];
-	cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-		
-    GeofenceLocation *gl;
-	double percent = gl ? [gl rating] : 0.0;
+	TDBadgedCell *cell = (TDBadgedCell *)[tableView dequeueReusableCellWithIdentifier:@"cell"];
+	if (!cell)
+	{
+		cell = [[TDBadgedCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"cell"];	
+		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+		cell.textLabel.textColor = [UIColor colorWithRed:89/255 green:89/255 blue:89/255 alpha:1.0];
+		cell.textLabel.font = [UIFont fontWithName:@"Helvetica" size:12];  
+	}	
+	
+	GoogleLocalObject *searchObject = [_searchResults objectAtIndex:indexPath.row];
+	cell.textLabel.text = searchObject.title;
+	cell.detailTextLabel.text = searchObject.subtitle;
+	
+	GeofenceLocation *containingGeofence = [[DataModel sharedInstance] getInfoForPin:[searchObject coordinate]];
+			
+	double rating = containingGeofence ? [containingGeofence rating] : 0.0;
     
-	NSString *badge = [NSString stringWithFormat:@"%.0f%@",percent*100,@"%"];    
+	NSString *badge = [NSString stringWithFormat:@"%.0f%@",rating*100,@"%"];    
 	
     cell.badgeString = badge;
-    cell.badgeColor = [UIColor colorWithRed:percent green:0 blue:0 alpha:1.0];
+    cell.badgeColor = [UIColor colorWithRed:rating green:0 blue:0 alpha:1.0];
 
-    cell.textLabel.textColor = [UIColor colorWithRed:89/255 green:89/255 blue:89/255 alpha:1.0];
-    cell.textLabel.font = [UIFont fontWithName:@"Helvetica" size:12];    
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-	
+	[tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 #pragma mark -
@@ -183,6 +282,8 @@
 		_isFullScreen = YES;
 		[self _animateMap:YES];
 	}
+	
+//	[_mapView addAnnotation:_userLocation];
 }
 
 // Must call this so that our recognizers pinch insn't stolen by the map view
@@ -232,6 +333,24 @@
 
 #pragma mark -
 #pragma mark Private Methods
+
+- (void)_removeAllNonUserAnnotations
+{
+	for (id<MKAnnotation> annotation in _mapView.annotations)
+	{
+		if (annotation == _userLocation)
+		{
+			continue;
+		}
+		else
+		{
+			[_mapView removeAnnotation:annotation];
+		}
+	}
+	
+	_searchResults = nil;
+	[_searchView setData:_searchResults];
+}
 
 - (void)_animateMap:(BOOL)toFullScreen
 {

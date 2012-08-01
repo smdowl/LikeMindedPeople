@@ -14,7 +14,7 @@
 #import "GeofenceLocation.h"
 
 #define BASE_URL @"http://4ach.localtunnel.com"
-#define DEBUG_MODE NO
+#define DEBUG_MODE YES
 
 #define SAN_FRAN_LATITUDE_MIN 37.755787
 #define SAN_FRAN_LATITUDE_MAX 37.797306
@@ -22,9 +22,9 @@
 #define SAN_FRAN_LONGITUDE_MIN -122.430439
 #define SAN_FRAN_LONGITUDE_MAX -122.378769
 
-#define TEST_GRID_WIDTH 30
+#define TEST_GRID_WIDTH 25
 
-#define TEST_RADIUS 50
+#define TEST_RADIUS 100
 
 @interface ServiceAdapter()
 + (void)_callServiceWithPath:(NSString *)path

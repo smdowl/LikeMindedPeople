@@ -9,18 +9,22 @@
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
 #import "SearchBarPanelDelegate.h"
+#import "GoogleLocalConnection.h"
 
 @class DataModel, SearchBarPanel, SearchView;
-@interface MapViewController : UIViewController <SearchBarPanelDelegate, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate>
-{
-	NSMutableArray *_searchResults;
-	
+@interface MapViewController : UIViewController <SearchBarPanelDelegate, GoogleLocalConnectionDelegate, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, MKMapViewDelegate>
+{	
 	MKMapView *_mapView;
 	SearchView *_searchView;
 	
 	UIButton *_resizeButton;
 	UIButton *_keyboardCancelButton;
 	BOOL _isFullScreen;
+	
+	GoogleLocalConnection *_searchConnection;
+	NSArray *_searchResults;
+	
+	MKUserLocation *_userLocation;
 }
 
 @property (nonatomic, strong) IBOutlet MKMapView *mapView;
@@ -30,5 +34,7 @@
 @property (nonatomic, strong) IBOutlet UIButton *keyboardCancelButton;
 
 - (IBAction)toggleFullScreen:(id)sender;
+
+- (IBAction)debug:(id)sender;
 
 @end

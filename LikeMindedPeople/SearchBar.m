@@ -69,9 +69,10 @@
 		 boxImageFrame.size.width = 0;
 		 _boxImage.frame = boxImageFrame;
 		 
-		 _cancelButton.alpha = 0;
 		 CGRect buttonFrame = _cancelButton.frame;
-		 buttonFrame.origin.x = boxFrame.size.width;
+		 buttonFrame.origin.x = 0;
+		 _cancelButton.frame = buttonFrame;
+		 
 	 }
 					 completion:^(BOOL finished) 
 	 {
@@ -79,23 +80,20 @@
 	 }];
 }
 
+#pragma mark -
+#pragma mark First Responder Chain Methods
+
 - (BOOL)resignFirstResponder
 {
 	[_searchBox resignFirstResponder];
 	return YES;
 }
 
-#pragma mark -
-#pragma mark UITextFieldDelegate
-
-- (void)textFieldDidBeginEditing:(UITextField *)textField
+- (BOOL)becomeFirstResponder
 {
-	
+	[_searchBox becomeFirstResponder];
+	return YES;
 }
 
-- (void)textFieldDidEndEditing:(UITextField *)textField
-{
-	
-}
 
 @end

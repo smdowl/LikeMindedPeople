@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface SearchBar : UIView <UITextFieldDelegate>
+@interface SearchBar : UIView
 {
 	UITextField *_searchBox;
 	UIButton *_cancelButton;

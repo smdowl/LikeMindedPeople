@@ -10,7 +10,7 @@
 #import "SearchBarPanelDelegate.h"
 
 @class SearchBar;
-@interface SearchBarPanel : UIView
+@interface SearchBarPanel : UIView <UITextFieldDelegate>
 {
 	__weak id<SearchBarPanelDelegate> _delegate;
 	
@@ -24,6 +24,8 @@
 	UIButton *_cafeButton;
 	UIButton *_clubButton;
 	UIButton *_foodButton;
+	
+	NSArray *_searchKeys;
 }
 
 @property (nonatomic, weak) IBOutlet id<SearchBarPanelDelegate> delegate;
@@ -36,12 +38,9 @@
 @property (nonatomic, strong) IBOutlet UIButton *clubButton;
 @property (nonatomic, strong) IBOutlet UIButton *foodButton;
 
-- (IBAction)buttonPressed:(id)sender;
+- (IBAction)tabBarButtonSelected:(id)sender;
 
 - (void)setup;
-
-// Notification center methods
-- (void)keyboardWillShow:(NSNotification *)notification;
-- (void)keyboardWillHide:(NSNotification *)notification;
+- (void)selectButton:(NSUInteger)buttonIndex; // Use -1 for none
 
 @end

@@ -103,7 +103,6 @@
 
 	connectionIsActive = NO;
 	NSString *responseString = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];	
-	NSLog(@"ResponseString: %@", responseString);
 	NSError *jsonError = nil;
 	SBJsonParser *json = [[SBJsonParser new] autorelease];
 

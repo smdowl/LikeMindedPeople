@@ -22,4 +22,6 @@
 @property (nonatomic, strong) IBOutlet UITableView *searchResultsView;
 @property (nonatomic, strong) IBOutlet UIView *noResultsView;
 
+- (void)setData:(NSArray *)data;
+
 @end

@@ -11,13 +11,6 @@
 
 #define SEARCH_BUTTON_SIZE 200
 
-@interface SearchBarPanel()
-
-- (void)_animateToFrame:(CGRect)frame;
-- (void)_showSearchBar:(BOOL)show;
-
-@end
-
 @implementation SearchBarPanel
 
 @synthesize delegate = _delegate;
@@ -28,14 +21,8 @@
 @synthesize clubButton = _clubButton;
 @synthesize foodButton = _foodButton;
 
-#pragma mark -
-#pragma mark IBActions
-
-- (IBAction)buttonPressed:(id)sender
-{
-	UIButton *selectedButton = (UIButton *)sender;
-	NSUInteger buttonIndex = [_buttonsArray indexOfObject:selectedButton];
-	
+- (void)selectButton:(NSUInteger)buttonIndex
+{	
 	// Disabled is taking the meaning of selected
 	if (_selectedIndex != -1)
 	{
@@ -64,30 +51,56 @@
 		[UIView commitAnimations];
 	}
 	
-	selectedButton.enabled = NO;
+	// Update the selected index
 	_selectedIndex = buttonIndex;
-
-	// If this button is the search button, show the text field
-	if (_selectedIndex == 0)
+	
+	if (_selectedIndex != -1)
 	{
-		CGRect searchButtonRect = _searchButton.frame;
-		searchButtonRect.size.width += SEARCH_BUTTON_SIZE;
-		_searchButton.frame = searchButtonRect;
+		UIButton *selectedButton = [_buttonsArray objectAtIndex:_selectedIndex];
 		
-		_searchButton.backgroundColor = [UIColor purpleColor];
+		selectedButton.enabled = NO;
 		
-		[_searchBar animateIn:SEARCH_BUTTON_SIZE];
-		
-		[UIView beginAnimations:nil context:nil];
-		for (int i=1; i<[_buttonsArray count]; i++)
+		// If this button is the search button, show the text field
+		if (_selectedIndex == 0)
 		{
-			UIButton *button = [_buttonsArray objectAtIndex:i];
-			CGRect buttonFrame = [button frame];
-			buttonFrame.origin.x += ([_buttonsArray count] - i)*(SEARCH_BUTTON_SIZE - button.frame.size.width)/(_buttonsArray.count -1);
-			button.frame = buttonFrame;
+			CGRect searchButtonRect = _searchButton.frame;
+			searchButtonRect.size.width += SEARCH_BUTTON_SIZE;
+			_searchButton.frame = searchButtonRect;
+			
+			_searchButton.backgroundColor = [UIColor purpleColor];
+			
+			[_searchBar animateIn:SEARCH_BUTTON_SIZE];
+			
+			[_searchBar becomeFirstResponder];
+			
+			[UIView beginAnimations:nil context:nil];
+			for (int i=1; i<[_buttonsArray count]; i++)
+			{
+				UIButton *button = [_buttonsArray objectAtIndex:i];
+				CGRect buttonFrame = [button frame];
+				buttonFrame.origin.x += ([_buttonsArray count] - i)*(SEARCH_BUTTON_SIZE - button.frame.size.width)/(_buttonsArray.count -1);
+				button.frame = buttonFrame;
+			}
+			[UIView commitAnimations];
 		}
-		[UIView commitAnimations];
+		
+		// Don't want to search if the search was selected until the keyboard return is pressed
+		if (_selectedIndex != 0)
+		{
+			NSString *searchKey = [_searchKeys objectAtIndex:_selectedIndex];
+			[_delegate beginSearchForPlaces:searchKey];
+		}
 	}
+}
+
+#pragma mark -
+#pragma mark IBActions
+
+- (IBAction)tabBarButtonSelected:(id)sender
+{
+	NSUInteger buttonIndex = [_buttonsArray indexOfObject:sender];
+	
+	[self selectButton:buttonIndex];
 }
 
 #pragma mark -
@@ -112,20 +125,27 @@
 	[_clubButton setImage:[UIImage imageNamed:@"clubsactive.jpg"] forState:UIControlStateDisabled];
 	[_foodButton setImage:[UIImage imageNamed:@"foodactive.jpg"] forState:UIControlStateDisabled];
 	
+	_searchKeys = [NSArray arrayWithObjects:@"", @"bar", @"cafe", @"club", @"food", nil];
+	
+	_searchBar.searchBox.delegate = self;
+	
+	[_searchBar.cancelButton addTarget:_delegate action:@selector(cancelSearch) forControlEvents:UIControlEventTouchUpInside];
+	
 	_selectedIndex = -1;
 }
 
+
 #pragma mark -
-#pragma mark Animation Methods
+#pragma mark UITextFieldDelegate
 
-- (void)_animateToFrame:(CGRect)frame
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-	self.frame = frame;
-}
-
-- (void)_showSearchBar:(BOOL)show
-{
+	NSString *searchText = textField.text;
+	[_delegate beginSearchForPlaces:searchText];
 	
+	[textField resignFirstResponder];
+	
+	return YES;
 }
 
 @end

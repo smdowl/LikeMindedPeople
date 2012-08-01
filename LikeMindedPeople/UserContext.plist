@@ -7,10 +7,10 @@
 	<key>PRODUCTION_API_KEY</key>
 	<string></string>
 	<key>SANDBOX_API_KEY</key>
-	<string>291d863a-bf28-4986-9908-cff61280e856</string>
+	<string>73fafda2-8d07-4715-b66a-c7e7349f1155</string>
 	<key>FEATURE_NAME</key>
-	<string>In-store Deals</string>
+	<string>Review my places</string>
 	<key>FEATURE_DESCRIPTION</key>
-	<string>Receive exclusive offers, including ones when you are at or near Mallmart stores.</string>
+	<string>Let us do the hard work for you and use when you enter an exit a business to revies it for you!</string>
 </dict>
 </plist>

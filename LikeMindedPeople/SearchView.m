@@ -13,4 +13,18 @@
 @synthesize searchResultsView = _searchResultsView;
 @synthesize noResultsView = _noResultsView;
 
+- (void)setData:(NSArray *)data
+{
+	if ([data count])
+	{
+		[_noResultsView removeFromSuperview];
+	}
+	else
+	{
+		[self insertSubview:_noResultsView aboveSubview:_searchResultsView];
+	}
+	
+	[_searchResultsView reloadData];
+}
+
 @end

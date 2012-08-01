@@ -189,9 +189,6 @@ static DataModel *_sharedInstance = nil;
 }
 
 #pragma mark -
-#pragma mark Internal Methods
-
-#pragma mark -
 #pragma mark Geofence listening
 
 - (void)didGetPlaceEvent:(QLPlaceEvent *)event
@@ -200,6 +197,7 @@ static DataModel *_sharedInstance = nil;
 	{
 		QLPlace *currentPlace;
 
+		// TODO: remove this
 		[self _getPrivateFences];
 		while (!_privateFences) {};
 		
@@ -285,7 +283,6 @@ static DataModel *_sharedInstance = nil;
 			 NSMutableArray *places = [NSMutableArray array];
 			 for (GeofenceLocation *geofence in geofences)
 			 {
-				 NSLog(@"%@", geofence.place.name);
 				 [places addObject:geofence.place];
 			 }
 			 
@@ -336,9 +333,7 @@ static DataModel *_sharedInstance = nil;
 // This method removes a single fences and then calls the completion block if it was the last in the array
 // This is one way of handling the asyn calls, probably better ways
 - (void)_removePrivateFence:(QLPlace *)geofence completion:(void (^)(void ))complete
-{
-	NSLog(@"Geofence: %lli %@: %@", geofence.id, geofence.name, geofence.geoFence);
-		
+{		
 	[self.contextPlaceConnector deletePlaceWithId:geofence.id
 										  success:^(void){
 											  [_privateFences removeObject:geofence];
@@ -349,7 +344,9 @@ static DataModel *_sharedInstance = nil;
 											  }
 											  NSLog(@"successfully removed place");
 										  } failure:^(NSError *err){
-											  NSLog(@"ERROR: %@", err);
+											  // TODO: failing a lot here. Need to cut down the number of database calls i think (persistatn storage?)
+//											  NSLog(@"ERROR: %@", err);
+//											  	NSLog(@"Geofence: %lli %@: %@", geofence.id, geofence.name, geofence.geoFence);
 											  _failures++;
 											  
 											  if ([_privateFences count] == _failures)
