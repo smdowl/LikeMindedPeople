@@ -10,7 +10,6 @@
 #import "ViewController.h"
 #import "FBConnect.h"
 #import "Facebook+iCatalog.h"
-#import "LoginViewController.h"
 #import "DataModel.h"
 @class ViewController;
 @class LoginViewController;

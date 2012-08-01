@@ -49,4 +49,6 @@
 - (void)runStartUpSequence;
 - (GeofenceLocation *)getInfoForPin:(CLLocationCoordinate2D)pin;
 
+- (NSArray *)getAllGeofenceRegions;
+
 @end

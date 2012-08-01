@@ -11,7 +11,8 @@
 #import "Facebook+iCatalog.h"
 #import "NSObject+DTRuntime.h"
 #import "ServiceAdapter.h"
-
+#import "LoginViewController.h"
+#import "MapViewController.h"
 
 @implementation AppDelegate
 
@@ -40,7 +41,11 @@
     self.loginViewController = [[LoginViewController alloc] initWithNibName:@"LoginViewController" bundle:nil];    
 
 //    [facebook authorize:nil];
-    self.window.rootViewController = viewController;
+//    self.window.rootViewController = viewController;
+	
+	MapViewController *mapViewController = [[MapViewController alloc] initWithNibName:nil bundle:nil];
+	self.window.rootViewController = mapViewController;
+	
     [self.window makeKeyAndVisible];
     
     // Just for testing the service adapter through NSLogs

@@ -11,6 +11,7 @@
 #import <ContextLocation/QLContentDescriptor.h>
 #import <ContextLocation/QLPlaceEvent.h>
 #import <ContextLocation/QLPlace.h>
+#import <ContextLocation/QLGeofenceCircle.h>
 #import <ContextCore/QLContextConnectorPermissions.h>
 #import <ContextProfiling/PRProfile.h>
 #import <ContextProfiling/PRProfileAttribute.h>
@@ -165,6 +166,26 @@ static DataModel *_sharedInstance = nil;
 	// Otherwise return nil which is interpreted as zero
 	
 	return nil;
+}
+
+- (NSArray *)getAllGeofenceRegions
+{
+	// Unused code
+	NSMutableArray *regions = [NSMutableArray array];
+	
+	for (QLPlace *geofence in _privateFences)
+	{
+		QLGeoFenceCircle *circle = (QLGeoFenceCircle *)geofence.geoFence;
+		
+		CLLocationCoordinate2D center;
+		center.latitude = circle.latitude;
+		center.longitude = circle.longitude;
+		
+		CLRegion *geofenceRegion = [[CLRegion alloc] initCircularRegionWithCenter:center radius:circle.radius identifier:@"geoRegion"];
+		[regions addObject:geofenceRegion];
+	}
+	
+	return _geofenceSearchLocations;
 }
 
 #pragma mark -

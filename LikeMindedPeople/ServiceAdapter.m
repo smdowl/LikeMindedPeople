@@ -14,6 +14,17 @@
 #import "GeofenceLocation.h"
 
 #define BASE_URL @"http://4ach.localtunnel.com"
+#define DEBUG_MODE NO
+
+#define SAN_FRAN_LATITUDE_MIN 37.755787
+#define SAN_FRAN_LATITUDE_MAX 37.797306
+
+#define SAN_FRAN_LONGITUDE_MIN -122.430439
+#define SAN_FRAN_LONGITUDE_MAX -122.378769
+
+#define TEST_GRID_WIDTH 30
+
+#define TEST_RADIUS 50
 
 @interface ServiceAdapter()
 + (void)_callServiceWithPath:(NSString *)path
@@ -24,13 +35,6 @@
 @end
 
 @implementation ServiceAdapter
-
-static int testCount = 5;
-static float latitudes[] = {37.77638, 37.7638, 37.638, 37.738, 37.38};
-static float longitude[] = {-122.39439, -122.9439, -122.339, -122.49439, -122.9539};
-static int radii[] = {50, 50, 50, 50, 50};
-static float peopleCounts[] = {25,12,27,8,32};
-static float ratings[] = {0.2,0.5,0.78,0.32,0.95};
 
 // TODO: Use data from facebook
 + (void)uploadUserProfile:(NSArray *)profile forUser:(NSString *)userId success:(void (^)(id))success
@@ -99,7 +103,7 @@ static float ratings[] = {0.2,0.5,0.78,0.32,0.95};
 + (void)getGeofencesForUser:(NSString *)userId atLocation:(CLLocation *)location success:(void (^)(NSArray *))success
 {    
     // Make "YES" for testing, "NO" to use servers.
-    if (!YES) {
+    if (!DEBUG_MODE) {
 		NSMutableDictionary *d = [[NSMutableDictionary alloc] init];
 		//[d setObject:userId forKey:@"uid"];
 		[d setObject:[NSString stringWithFormat:@"%f",location.coordinate.latitude] forKey:@"lattitude"];
@@ -113,26 +117,32 @@ static float ratings[] = {0.2,0.5,0.78,0.32,0.95};
     
         NSMutableArray *places = [NSMutableArray array];
 	
-		for (int i=0; i<testCount; i++)
+		CGFloat latitudeStep = (SAN_FRAN_LATITUDE_MAX - SAN_FRAN_LATITUDE_MIN) / TEST_GRID_WIDTH;
+		CGFloat longitudeStep = (SAN_FRAN_LONGITUDE_MAX - SAN_FRAN_LONGITUDE_MIN) / TEST_GRID_WIDTH;
+		
+		for (int i=0; i<TEST_GRID_WIDTH; i++)
 		{
+			for (int j=0; j<TEST_GRID_WIDTH; j++)
+			{
 			// Create the containing object
-			GeofenceLocation *newLocation = [[GeofenceLocation alloc] init];
-			
-			// When testing use hard coded values
-			QLPlace *place = [[QLPlace alloc] init];
-			QLGeoFenceCircle *circle = [[QLGeoFenceCircle alloc] init];
-			circle.latitude = latitudes[i];
-			circle.longitude = longitude[i];
-			circle.radius = radii[i];
-			place.geoFence = circle;
-			place.name = [NSString stringWithFormat:@"Location %i", i];
-			
-			newLocation.place = place;
-			
-			newLocation.peopleCount = peopleCounts[i];
-			newLocation.rating = ratings[i];
-			
-			[places addObject:newLocation];
+				GeofenceLocation *newLocation = [[GeofenceLocation alloc] init];
+				
+				// When testing use hard coded values
+				QLPlace *place = [[QLPlace alloc] init];
+				QLGeoFenceCircle *circle = [[QLGeoFenceCircle alloc] init];
+				circle.latitude = SAN_FRAN_LATITUDE_MIN + i*latitudeStep;
+				circle.longitude = SAN_FRAN_LONGITUDE_MIN + j*longitudeStep;
+				circle.radius = TEST_RADIUS;
+				place.geoFence = circle;
+				place.name = [NSString stringWithFormat:@"Location %i.%i", i, j];
+				
+				newLocation.place = place;
+				
+				newLocation.peopleCount = 10;				
+				newLocation.rating = fmodf(rand(), 100) / 100.0;
+				
+				[places addObject:newLocation];
+			}
 		}
         success(places);
     }

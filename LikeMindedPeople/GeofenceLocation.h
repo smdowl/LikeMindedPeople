@@ -8,9 +8,10 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
+#import <MapKit/MapKit.h>
 
 @class QLPlace;
-@interface GeofenceLocation : NSObject
+@interface GeofenceLocation : NSObject <MKAnnotation>
 {
 	QLPlace *_place;
 	int _peopleCount;

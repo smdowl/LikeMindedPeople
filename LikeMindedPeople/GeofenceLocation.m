@@ -43,8 +43,29 @@
 	regionCenter.latitude = circle.latitude;
 		
 	CLRegion *region = [[CLRegion alloc] initCircularRegionWithCenter:regionCenter radius:circle.radius identifier:@"region"];
-
+	
+	NSLog(@"%@", region);
+	
 	return [region containsCoordinate:pin];
+}
+
+#pragma mark -
+#pragma mark MKAnnotation protocol
+
+- (CLLocationCoordinate2D)coordinate
+{
+	QLGeoFenceCircle *circle = (QLGeoFenceCircle *)_place.geoFence;
+	
+	CLLocationCoordinate2D regionCenter;
+	regionCenter.longitude = circle.longitude;
+	regionCenter.latitude = circle.latitude;
+	
+	return regionCenter;
+}
+
+- (NSString *)title
+{
+	return [NSString stringWithFormat:@"Rating: %f", _rating];
 }
 
 @end

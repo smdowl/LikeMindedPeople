@@ -11,6 +11,8 @@
 #import "GTMNSString+URLArguments.h"
 #import <ContextLocation/QLPlace.h>
 
+#define SHOW_GEOFENCE_LOCATIONS YES
+
 @implementation ViewController
 @synthesize fbLogin, fbButton;
 - (void)viewDidLoad
@@ -200,6 +202,12 @@ selectedCategory = btn.tag;
 			[mapView addAnnotation:userAnnotation];
         [mapView setRegion:region];
         [tbl reloadData];
+		
+		if (SHOW_GEOFENCE_LOCATIONS)
+		{
+			NSArray *allGeofenceRegions = [dm getAllGeofenceRegions];
+			[mapView addAnnotations:allGeofenceRegions];
+		}
     }
 }
 
@@ -224,7 +232,6 @@ selectedCategory = btn.tag;
     
     double scalingFactor = ABS( (cos(2 * M_PI * newLocation.coordinate.latitude / 360.0) ));
     
-    
     MKCoordinateSpan span; 
     
     span.latitudeDelta = miles/69.0;
@@ -236,6 +243,12 @@ selectedCategory = btn.tag;
     
     [mapView setRegion:region animated:YES];
     [self performSelector:@selector(refershMap) withObject:nil afterDelay:0.1];
+
+	if (SHOW_GEOFENCE_LOCATIONS)
+	{
+		NSArray *allGeofenceRegions = [dm getAllGeofenceRegions];
+		[mapView addAnnotations:allGeofenceRegions];
+	}
 }
 -(IBAction)refershMap {
     double miles = 20-slider.value+0.25;
@@ -261,6 +274,12 @@ selectedCategory = btn.tag;
     region.center = newLocation.coordinate;
     
     [mapView setRegion:region animated:YES];
+	
+	if (SHOW_GEOFENCE_LOCATIONS)
+	{
+		NSArray *allGeofenceRegions = [dm getAllGeofenceRegions];
+		[mapView addAnnotations:allGeofenceRegions];
+	}
 }
 -(IBAction)showPermissions {
 	NSLog(@"%@", [[dm currentLocation] name]);
