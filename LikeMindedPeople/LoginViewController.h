@@ -7,7 +7,17 @@
 //
 
 #import <UIKit/UIKit.h>
-@interface LoginViewController : UIViewController {
-    IBOutlet UIButton *fbButton;
+
+@class Facebook;
+@interface LoginViewController : UIViewController 
+{
+	Facebook *_facebook;
+	UIButton *_fbButton;
 }
+
+@property (nonatomic, strong) Facebook *facebook;
+@property (nonatomic, strong) IBOutlet UIButton *fbButton;
+
+- (void)authorizeFacebook;
+
 @end

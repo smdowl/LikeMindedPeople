@@ -20,6 +20,9 @@
 #import "ServiceAdapter.h"
 #import "GeofenceLocation.h"
 
+// TODO: work out behaiour when there is no internet. As it is now the request will just time out after about 10 seconds
+// TODO: at the moment loading and unloading private locations takes a long time due to all the server interaction that is required. Try and find a faster way.
+
 @interface DataModel()
 - (void)setup;
 
@@ -27,8 +30,6 @@
 - (void)_replacePrivateGeofencesWithFences:(NSArray *)fences; // Remove
 - (void)_getPrivateFences;
 - (NSArray *)_flattenProfile:(PRProfile *)profile;
-- (void)_setPrivateFences:(NSArray *)geofences;
-- (void)_removePrivateFence:(QLPlace *)fence completion:(void (^)(void ))complete;
 @end
 
 @implementation DataModel
@@ -89,21 +90,24 @@ static DataModel *_sharedInstance = nil;
 {
 	@synchronized(self)
 	{
+		// This is where we should load all variables from the persistent storage
+//		_privateFences = [NSKeyedUnarchiver unarchiveObjectWithFile:<#(NSString *)#>;
 		_privateFences = nil;
 		_currentLocation = [NSMutableArray array];
+		
+		[self _getPrivateFences];
 		
 		[self.contextCoreConnector checkStatusAndOnEnabled:^(QLContextConnectorPermissions *contextConnectorPermissions) 
 		 {
 			 
-			 // Get all the events that the user has recently been sent
-			 [self.contextPlaceConnector requestLatestPlaceEventsAndOnSuccess:^(NSArray *placeEvents) 
-			  {
-				  
-				  _placeEvents = placeEvents;
-				  
-			  } failure:^(NSError *error) {
-				  NSLog(@"%@", [error localizedDescription]);
-			  }];
+//			 // Get all the events that the user has recently been sent - NOT SURE IF WE NEED THIS
+//			 [self.contextPlaceConnector requestLatestPlaceEventsAndOnSuccess:^(NSArray *placeEvents) 
+//			  {
+//				  _placeEvents = placeEvents;
+//				  
+//			  } failure:^(NSError *error) {
+//				  NSLog(@"%@", [error localizedDescription]);
+//			  }];
 		 }	disabled:^(NSError *error) {
 			 NSLog(@"%@", error);
 			 if (error.code == QLContextCoreNonCompatibleOSVersion)
@@ -119,6 +123,7 @@ static DataModel *_sharedInstance = nil;
 	}
 }
 
+// Set the ID that will be used in all server calls
 - (void)setUserId:(NSString *)userId
 {
 	@synchronized(self)
@@ -206,13 +211,10 @@ static DataModel *_sharedInstance = nil;
 		// Depending on what happened, change the current locatoin
 		switch (event.eventType)
 		{
-			case QLPlaceEventTypeAt:
-				NSLog(@"event id: %li", event.placeId);
-				
+			case QLPlaceEventTypeAt:				
 				// Find this place in the full list
 				for (QLPlace *place in _privateFences)
 				{
-					NSLog(@"Stored place id: %lli", place.id);
 					if (event.placeId == place.id)
 					{
 						currentPlace = place;
@@ -259,6 +261,12 @@ static DataModel *_sharedInstance = nil;
 {
 	@synchronized(self)
 	{
+		if (_settingUp)
+		{
+			return;
+		}
+		
+		_settingUp = YES;
 		// Update the current profile
 		PRProfile *profile = self.contextInterestsConnector.interests;
 		//	NSLog(@"%@ %@", profile, [profile.attrs.allValues objectAtIndex:0]);
@@ -330,32 +338,6 @@ static DataModel *_sharedInstance = nil;
 	}
 }
 
-// This method removes a single fences and then calls the completion block if it was the last in the array
-// This is one way of handling the asyn calls, probably better ways
-- (void)_removePrivateFence:(QLPlace *)geofence completion:(void (^)(void ))complete
-{		
-	[self.contextPlaceConnector deletePlaceWithId:geofence.id
-										  success:^(void){
-											  [_privateFences removeObject:geofence];
-											  
-											  if ([_privateFences count] == _failures)
-											  {
-												  complete();
-											  }
-											  NSLog(@"successfully removed place");
-										  } failure:^(NSError *err){
-											  // TODO: failing a lot here. Need to cut down the number of database calls i think (persistatn storage?)
-//											  NSLog(@"ERROR: %@", err);
-//											  	NSLog(@"Geofence: %lli %@: %@", geofence.id, geofence.name, geofence.geoFence);
-											  _failures++;
-											  
-											  if ([_privateFences count] == _failures)
-											  {
-												  complete();
-											  }
-										  }];
-}
-
 // Access the local store and create a copy of all the private fences
 - (void)_getPrivateFences
 {
@@ -371,57 +353,46 @@ static DataModel *_sharedInstance = nil;
 	}
 }
 
-// Go through each of the fences in the array and try to create them
-// They are only added to the iVar if the addition was successful so take care with it
-- (void)_setPrivateFences:(NSArray *)geofences
+- (void)_replacePrivateGeofencesWithFences:(NSMutableArray *)fences
 {
 	@synchronized(self)
 	{
-		if (_privateFences == nil)
-		{
-			_privateFences = [NSMutableArray array];
-		}
-		
-		for (QLPlace *geofence in geofences)
-		{
-			[self.contextPlaceConnector createPlace:geofence 
-											success:^(QLPlace *newFence)
-			 {
-				 [_privateFences addObject:geofence];
-			 } failure:^(NSError *err){
-				 NSLog(@"%@", err);
-			 }];
-		}
-	}
-}
-
-- (void)_replacePrivateGeofencesWithFences:(NSArray *)fences
-{
-	@synchronized(self)
-	{
+		__weak DataModel *weakSelf = self;
 		// First get all places
 		[self.contextPlaceConnector allPlacesAndOnSuccess:^(NSArray *allPlaces)
 		 {
-			 _privateFences = [NSMutableArray arrayWithArray:allPlaces];
+			 if (!weakSelf)
+			 {
+				 return;
+			 }
+			 
+			 weakSelf->_privateFences = [NSMutableArray arrayWithArray:allPlaces];
 			 
 			 // Only remove fences if there are some!
-			 if ([_privateFences count] > 0)
-			 {			 
-				 // The failures iVar keeps track of how many removes didn't work
-				 // We need this because without it we don't know when to call the completion block
-				 _failures = 0;
-				 for (QLPlace *fence in _privateFences)
-				 {
-					 // Pass the same completion block to each method call, it should only be called once.
-					 [self _removePrivateFence:fence completion:^()
-					  {
-						  [self _setPrivateFences:fences];
-					  }];
-				 }
+			 if ([weakSelf->_privateFences count] > 0)
+			 {			 				 
+				 [self _removeAllFences:weakSelf->_privateFences onCompletion:^()
+				  {
+					  NSLog(@"Finished!");
+					  [self _addAllFences:fences onCompletion:^()
+					   {
+						   if (!weakSelf)
+						   {
+							   return;
+						   }
+						   weakSelf->_settingUp = NO; 
+						   NSLog(@"Finished!");
+					   }];
+				  }];
 			 }
 			 else
 			 {	 // If there aren't any to delete it will be a simple case of just adding all the ones we need
-				 [self _setPrivateFences:fences];
+//				 [self _setPrivateFences:fences];
+				 [self _addAllFences:fences onCompletion:^()
+				 {
+					 NSLog(@"done");
+				 }];
+				 weakSelf->_settingUp = NO;
 			 }
 			 
 		 } failure:^(NSError *err)
@@ -430,6 +401,69 @@ static DataModel *_sharedInstance = nil;
 		 }];
 	}
 }
+
+// Go through each of the fences in the array and try to create them. Only add the next one after a successful add
+// They are only added to the iVar if the addition was successful so take care with it
+- (void)_addAllFences:(NSMutableArray *)fences onCompletion:(void (^)(void))finished
+{
+	if (_privateFences == nil)
+	{
+		_privateFences = [NSMutableArray array];
+	}
+	
+	QLPlace *fence = [fences objectAtIndex:0];
+	[self.contextPlaceConnector createPlace:fence
+									success:^(QLPlace *newFence)
+	 {
+		 [fences removeObject:fence];
+		 [_privateFences addObject:fence];
+		 
+		 if (fences.count == 0)
+		 {
+			 finished();
+		 }
+		 else
+		 {
+			 [self _addAllFences:fences onCompletion:finished];
+		 }
+	 } 
+									failure:^(NSError *err)
+	 {
+		 NSLog(@"Error: %@", err);
+	 }];
+}
+
+- (void)_removeAllFences:(NSMutableArray *)fences onCompletion:(void (^)(void))completed
+{
+	// Pop one fence from the stack
+	QLPlace *fence = [fences objectAtIndex:0];
+		
+	[self.contextPlaceConnector deletePlaceWithId:fence.id
+										  success:^(void){
+											  [fences removeObject:fence];
+											  
+											  if ([fences count] == 0)
+											  {
+												  completed();
+											  }
+											  else
+											  {
+												  [self _removeAllFences:fences onCompletion:completed];
+											  }
+											  NSLog(@"successfully removed place");
+										  } failure:^(NSError *err){
+											  // TODO: failing a lot here. Need to cut down the number of database calls i think (persistatn storage?)
+											  // Take one off the front and put it at the back to try it again
+											  NSLog(@"ERROR: %@", err);
+											  NSLog(@"Geofence: %lli %@: %@", fence.id, fence.name, fence.geoFence);
+											  [fences removeObject:fence];
+											  [fences insertObject:fence atIndex:[_privateFences count]-1];
+											  
+											  [self _removeAllFences:fences onCompletion:completed];
+										  }];
+}
+
+
 
 // A convenience method for making a PRProfile more manageable for JSON
 - (NSArray *)_flattenProfile:(PRProfile *)profile
@@ -447,6 +481,11 @@ static DataModel *_sharedInstance = nil;
 	}
 	
 	return profileArray;
+}
+
+- (void)close
+{
+	_settingUp = NO;
 }
 
 @end

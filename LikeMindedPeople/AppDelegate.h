@@ -11,14 +11,18 @@
 #import "FBConnect.h"
 #import "Facebook+iCatalog.h"
 #import "DataModel.h"
+
 @class ViewController;
 @class LoginViewController;
-@interface AppDelegate : UIResponder <UIApplicationDelegate, FBRequestDelegate, FBSessionDelegate> {
-Facebook *facebook;
+@class MapViewController;
+@interface AppDelegate : UIResponder <UIApplicationDelegate, FBRequestDelegate, FBSessionDelegate> 
+{	
+	LoginViewController *_loginViewController;
+	Facebook *_facebook;
+	MapViewController *_mapViewController;
 }
 
 @property (strong, nonatomic) UIWindow *window;
-@property (strong, nonatomic) ViewController *viewController;
 @property (strong, nonatomic) LoginViewController *loginViewController;
 @property (nonatomic, retain) Facebook *facebook;
 

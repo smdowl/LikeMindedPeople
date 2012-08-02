@@ -16,11 +16,9 @@
 
 @implementation AppDelegate
 
-@synthesize viewController;
-
 @synthesize window = _window;
-@synthesize facebook;
-@synthesize loginViewController;
+@synthesize facebook = _facebook;
+@synthesize loginViewController = _loginViewController;
 
 
 + (void)initialize
@@ -32,68 +30,92 @@
     //[Facebook swizzleMethod:@selector(authorize:) withMethod:@selector(authorize_noSSO:)];
 }
 
+#pragma mark -
+#pragma mark Application Lifecycle
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];
-    self.viewController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:nil];
-    self.loginViewController = [[LoginViewController alloc] initWithNibName:@"LoginViewController" bundle:nil];    
-
-//    [facebook authorize:nil];
-//    self.window.rootViewController = viewController;
-	
-	MapViewController *mapViewController = [[MapViewController alloc] initWithNibName:nil bundle:nil];
-	self.window.rootViewController = mapViewController;
-	
-    [self.window makeKeyAndVisible];
     
     // Just for testing the service adapter through NSLogs
     //[ServiceAdapter testService];
     
-    
+	_mapViewController = [[MapViewController alloc] initWithNibName:nil bundle:nil];
+	
     // FB Integration fb123987074412482
-    facebook = [[Facebook alloc] initWithAppId:@"123987074412482" andDelegate:self];
+    _facebook = [[Facebook alloc] initWithAppId:@"123987074412482" andDelegate:self];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if ([defaults objectForKey:@"FBAccessTokenKey"]
         && [defaults objectForKey:@"FBExpirationDateKey"]) {
-        facebook.accessToken = [defaults objectForKey:@"FBAccessTokenKey"];
-        facebook.expirationDate = [defaults objectForKey:@"FBExpirationDateKey"];
+        _facebook.accessToken = [defaults objectForKey:@"FBAccessTokenKey"];
+        _facebook.expirationDate = [defaults objectForKey:@"FBExpirationDateKey"];
     }
     
-    if (![facebook isSessionValid]) {
+    if (![_facebook isSessionValid]) {
         NSLog(@"Start facebook authorize");
-        self.window.rootViewController = loginViewController;
-//        [self.viewController presentModalViewController:loginViewController animated:NO];
-//        [facebook authorize:nil];
+		_loginViewController = [[LoginViewController alloc] initWithNibName:nil bundle:nil];    
+		_loginViewController.facebook = _facebook;
+        self.window.rootViewController = _loginViewController;
     }
-    [facebook requestWithGraphPath:@"me" andDelegate:self];
+	else
+	{
+		[_facebook requestWithGraphPath:@"me" andDelegate:self];
+		self.window.rootViewController = _mapViewController;
+	}
+	
+    [self.window makeKeyAndVisible];
 
     return YES;
 }
--(void)fbAuth {
-    
-    [facebook authorize:nil];
+
+- (void)applicationWillResignActive:(UIApplication *)application
+{
+	// Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
+	// Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
 }
+
+- (void)applicationDidEnterBackground:(UIApplication *)application
+{
+	[[DataModel sharedInstance] close];
+}
+
+- (void)applicationWillEnterForeground:(UIApplication *)application
+{
+	// Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+}
+
+- (void)applicationDidBecomeActive:(UIApplication *)application
+{	
+	// Make the call that updates all the internal variables for the model
+	[[DataModel sharedInstance] runStartUpSequence];	
+}
+
+- (void)applicationWillTerminate:(UIApplication *)application
+{
+	// Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+
 #pragma mark -- FB integration
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
     NSLog(@"openURL");
-    return [facebook handleOpenURL:url];
+    return [_facebook handleOpenURL:url];
 }
 
 - (void)fbDidLogin {
     NSLog(@"fbDidLogin, self=%@", self);
 
     // For grabbing the facebook ID -- makes a request that returns asynchronously below
-    [facebook requestWithGraphPath:@"me" andDelegate:self];
+    [_facebook requestWithGraphPath:@"me" andDelegate:self];
 
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setObject:[facebook accessToken] forKey:@"FBAccessTokenKey"];
-    [defaults setObject:[facebook expirationDate] forKey:@"FBExpirationDateKey"];
+    [defaults setObject:[_facebook accessToken] forKey:@"FBAccessTokenKey"];
+    [defaults setObject:[_facebook expirationDate] forKey:@"FBExpirationDateKey"];
     [defaults synchronize];
-    self.window.rootViewController = viewController;
+    self.window.rootViewController = _mapViewController;
     
 }
 
@@ -111,7 +133,9 @@
         [defaults removeObjectForKey:@"FBExpirationDateKey"];
         [defaults synchronize];
     }
-    [self.viewController presentModalViewController:self.viewController.fbLogin animated:NO];
+	
+	// TODO: Why display something else?
+//    [_loginViewController presentModalViewController:_loginViewController.fbLogin animated:NO];
 }
 
 - (void)fbExpiresAt
@@ -136,35 +160,6 @@
     //do whatever you need to do with this info next
     //(ie. save to db, pass to user singleton, whatever)
     [[DataModel sharedInstance] setUserId:facebookId];
-}
-
-
-- (void)applicationWillResignActive:(UIApplication *)application
-{
-	// Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-	// Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
-}
-
-- (void)applicationDidEnterBackground:(UIApplication *)application
-{
-	// Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
-	// If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-}
-
-- (void)applicationWillEnterForeground:(UIApplication *)application
-{
-	// Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
-}
-
-- (void)applicationDidBecomeActive:(UIApplication *)application
-{	
-	// Make the call that updates all the internal variables for the model
-	[[DataModel sharedInstance] runStartUpSequence];	
-}
-
-- (void)applicationWillTerminate:(UIApplication *)application
-{
-	// Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
 @end

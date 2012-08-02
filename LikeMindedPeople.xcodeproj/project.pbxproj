@@ -30,7 +30,6 @@
 		925AE80215C43213008840D9 /* ContextProfiling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7E515C43212008840D9 /* ContextProfiling.framework */; };
 		925AE80315C43213008840D9 /* rules.txt in Resources */ = {isa = PBXBuildFile; fileRef = 925AE7E715C43212008840D9 /* rules.txt */; };
 		925AE80415C43213008840D9 /* NetworkServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7E915C43212008840D9 /* NetworkServices.framework */; };
-		925AE80615C43244008840D9 /* UserContext.plist in Resources */ = {isa = PBXBuildFile; fileRef = 925AE80515C43244008840D9 /* UserContext.plist */; };
 		925AE83C15C44018008840D9 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 925AE83A15C44018008840D9 /* ViewController.m */; };
 		925AE83D15C44018008840D9 /* ViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 925AE83B15C44018008840D9 /* ViewController.xib */; };
 		925AE86F15C45924008840D9 /* UserContext.plist in Resources */ = {isa = PBXBuildFile; fileRef = 925AE86E15C45924008840D9 /* UserContext.plist */; };
@@ -144,7 +143,6 @@
 		925AE7E515C43212008840D9 /* ContextProfiling.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ContextProfiling.framework; sourceTree = "<group>"; };
 		925AE7E715C43212008840D9 /* rules.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rules.txt; sourceTree = "<group>"; };
 		925AE7E915C43212008840D9 /* NetworkServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = NetworkServices.framework; sourceTree = "<group>"; };
-		925AE80515C43244008840D9 /* UserContext.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UserContext.plist; sourceTree = "<group>"; };
 		925AE80B15C43F7D008840D9 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		925AE83915C44018008840D9 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		925AE83A15C44018008840D9 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
@@ -656,7 +654,6 @@
 		92FBED6715C3A85F000D1AE3 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				925AE80515C43244008840D9 /* UserContext.plist */,
 				92FBED6815C3A85F000D1AE3 /* LikeMindedPeopleTests-Info.plist */,
 				92FBED6915C3A85F000D1AE3 /* InfoPlist.strings */,
 			);
@@ -805,7 +802,6 @@
 				925AE80015C43213008840D9 /* Repository.omo in Resources */,
 				925AE80115C43213008840D9 /* VersionInfo.plist in Resources */,
 				925AE80315C43213008840D9 /* rules.txt in Resources */,
-				925AE80615C43244008840D9 /* UserContext.plist in Resources */,
 				925AE83D15C44018008840D9 /* ViewController.xib in Resources */,
 				925AE86F15C45924008840D9 /* UserContext.plist in Resources */,
 				D31363B915C494510071BED3 /* FBDialog.bundle in Resources */,
@@ -986,7 +982,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CLANG_ENABLE_OBJC_ARC = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Shaun Dowling";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
 				COPY_PHASE_STRIP = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
@@ -995,7 +991,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "8387F677-C072-4E66-B61B-159C5AFA9EDB";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};

@@ -18,19 +18,19 @@
 {
 	NSString *_userId;	// In out app is going to be the fb ID. Used to identify you on the server
 	
-	NSArray *_placeEvents; // An array of all the previous events
+//	NSArray *_placeEvents; // An array of all the previous events
 	
-	NSArray *_personalPointsOfInterest;
+
 	
 	// An array basically being used as a stack, pushing and popping from index 0
 	NSMutableArray *_currentLocation;
-//	NSArray *_allLocations;
 	
+	// Location arrays
 	NSArray *_geofenceSearchLocations;
-	
 	NSMutableArray *_privateFences;
-	
-	int _failures;
+	NSArray *_personalPointsOfInterest;
+		
+	BOOL _settingUp; // Is the model in the process of setting up already?
 }
 
 @property (nonatomic, strong) QLContextCoreConnector *contextCoreConnector;
@@ -50,5 +50,7 @@
 - (GeofenceLocation *)getInfoForPin:(CLLocationCoordinate2D)pin;
 
 - (NSArray *)getAllGeofenceRegions;
+
+- (void)close;
 
 @end

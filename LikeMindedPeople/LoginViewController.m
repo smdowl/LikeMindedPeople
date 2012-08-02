@@ -8,40 +8,25 @@
 
 #import "LoginViewController.h"
 #import "AppDelegate.h"
+
 @interface LoginViewController ()
 
 @end
 
 @implementation LoginViewController
-
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
+@synthesize facebook = _facebook;
+@synthesize fbButton = _fbButton;
 
 - (void)viewDidLoad
 {
-    [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib
-
-    AppDelegate *ap = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-    [fbButton addTarget:ap action:@selector(fbAuth) forControlEvents:UIControlEventTouchUpInside];                       
+	[super viewDidLoad];
+	
+	[_fbButton addTarget:self action:@selector(authorizeFacebook) forControlEvents:UIControlEventTouchUpInside];
 }
 
-- (void)viewDidUnload
+-(void)authorizeFacebook
 {
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
-}
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+    [_facebook authorize:nil];
 }
 
 @end

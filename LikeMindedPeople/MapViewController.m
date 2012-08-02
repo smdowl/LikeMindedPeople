@@ -29,6 +29,9 @@
 @synthesize mapView = _mapView;
 @synthesize searchView = _searchView;
 
+@synthesize searchingView = _searchingView;
+@synthesize indicatorView = _indicatorView;
+
 @synthesize resizeButton = _resizeButton;
 @synthesize keyboardCancelButton = _keyboardCancelButton;
 
@@ -50,6 +53,8 @@
 	pinchRecognizer.delegate = self;  
     [_mapView addGestureRecognizer:pinchRecognizer];
 	_mapView.delegate = self;
+	_mapView.showsUserLocation = YES;
+//	_mapView.userTrackingMode = MKUserTrackingModeNone;
 	
 	[_keyboardCancelButton addTarget:self action:@selector(_hideKeyboard) forControlEvents:UIControlEventTouchUpInside];
 	[_keyboardCancelButton removeFromSuperview];
@@ -68,22 +73,7 @@
 - (void)viewDidAppear:(BOOL)animated
 {
 	[super viewDidAppear:animated];
-	
-	// When the view appears, home in on our location
-	CLLocation *newLocation = _mapView.userLocation.location;
-    
-    double scalingFactor = ABS( (cos(2 * M_PI * newLocation.coordinate.latitude / 360.0) ));
-    
-	// Specify the amound of miles we want to see around our location
-	double miles = 2.0;
-
-	MKCoordinateRegion region;
-    region.span.latitudeDelta = miles/69.0;
-	region.span.longitudeDelta = miles/(scalingFactor * 69.0); 
-    region.center = newLocation.coordinate;
-    
-    [_mapView setRegion:region animated:YES];
-	
+		
 	// Set the searchBarPanel to recieve keyboard notifications
 	
 	
@@ -151,6 +141,8 @@
 	if (searchText.length)
 	{
 		[_searchConnection getGoogleObjectsWithQuery:searchText andMapRegion:[_mapView region] andNumberOfResults:20 addressesOnly:YES andReferer:@"http://WWW.radii.com"];    
+		_searchingView.hidden = NO;
+		[_indicatorView startAnimating];
 	}
 	else 
 	{
@@ -170,6 +162,9 @@
 
 - (void) googleLocalConnection:(GoogleLocalConnection *)conn didFinishLoadingWithGoogleLocalObjects:(NSMutableArray *)objects andViewPort:(MKCoordinateRegion)region
 {
+	_searchingView.hidden = YES;
+	[_indicatorView stopAnimating];
+	
 	if ([objects count] == 0)
 	{
 		// No results found
@@ -202,6 +197,12 @@
 {
 	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error finding place - Try again" message:[error localizedDescription] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
     [alert show];
+	
+	_searchingView.hidden = YES;
+	[_indicatorView stopAnimating];
+	
+	// Deselect whatever row was selected when the error occured
+	[_searchView.searchBarPanel selectButton:-1];
 }
 
 #pragma mark -
@@ -210,13 +211,29 @@
 - (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation
 {
 	_userLocation = userLocation;
+	
+	// When the view appears, home in on our location
+	CLLocation *newLocation = _mapView.userLocation.location;
+    
+    double scalingFactor = ABS( (cos(2 * M_PI * newLocation.coordinate.latitude / 360.0) ));
+    
+	// Specify the amound of miles we want to see around our location
+	double miles = 2.0;
+	
+	MKCoordinateRegion region;
+    region.span.latitudeDelta = miles/69.0;
+	region.span.longitudeDelta = miles/(scalingFactor * 69.0); 
+    region.center = newLocation.coordinate;
+    
+    [_mapView setRegion:region animated:YES];
 }
 
 - (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated
 {
+	// TODO: trying to stop the user from disappearing. Not 100% sure if this helps
 	if (_userLocation)
 	{
-//		[_mapView addAnnotation:_userLocation];
+		[_mapView addAnnotation:_userLocation];
 	}
 }
 
@@ -381,6 +398,7 @@
 - (void)_hideKeyboard
 {
 	[_searchView.searchBarPanel.searchBar resignFirstResponder];
+	[_searchView.searchBarPanel selectButton:-1];
 }
 
 @end
