@@ -15,11 +15,13 @@
 #import "SearchBar.h"
 #import "RAdiiResultDTO.h"
 #import "DetailView.h"
+#import "SideBar.h"
 
 #define SHOW_GEOFENCE_LOCATIONS NO
 #define RESIZE_BUTTTON_PADDING 5
+#define MAX_BUTTON_ALPHA 0.4
 
-#define COVERING_WIDTH 200
+#define SIDE_BAR_WIDTH 180
 
 @interface MapViewController ()
 
@@ -107,10 +109,10 @@
 											   object:nil];
 
 	DataModel *dataModel = [DataModel sharedInstance];
-	[dataModel.contextCoreConnector checkStatusAndOnEnabled:^(QLContextConnectorPermissions *connectorPermissions) {
+	[dataModel.coreConnector checkStatusAndOnEnabled:^(QLContextConnectorPermissions *connectorPermissions) {
         
     } disabled:^(NSError *err) {
-		[dataModel.contextCoreConnector enableFromViewController:self success:nil failure:nil];
+		[dataModel.coreConnector enableFromViewController:self success:nil failure:nil];
     }];
 }
 
@@ -149,7 +151,7 @@
 
 - (IBAction)debug:(id)sender
 {
-	[[[DataModel sharedInstance] contextCoreConnector] showPermissionsFromViewController:self];
+	[[[DataModel sharedInstance] coreConnector] showPermissionsFromViewController:self];
 }
 
 #pragma mark -
@@ -423,40 +425,49 @@
 	{
 		// Create an invisible button to cancel the overlay
 		_slideInCancelButton = [UIButton buttonWithType:UIButtonTypeCustom];
-		_slideInCancelButton.frame = self.view.frame;
+		_slideInCancelButton.frame = self.view.bounds;
+		_slideInCancelButton.backgroundColor = [UIColor darkGrayColor];
+		_slideInCancelButton.alpha = 0;
 		[_slideInCancelButton addTarget:self action:@selector(_outToLeft:) forControlEvents:UIControlEventTouchUpInside];
 		[self.view addSubview:_slideInCancelButton];
 		
 		// Create the covering view
-		_leftCoveringView = [[UIView alloc] initWithFrame:CGRectMake(xPosition - COVERING_WIDTH,0,COVERING_WIDTH,self.view.frame.size.height)];			
-		_leftCoveringView.backgroundColor = [UIColor purpleColor];
+		_leftSideBar = [[SideBar alloc] initWithFrame:CGRectMake(xPosition - SIDE_BAR_WIDTH,0,SIDE_BAR_WIDTH,self.view.frame.size.height)];			
 		
 		UISwipeGestureRecognizer *swipeRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(_outToLeft:)];
 		swipeRecognizer.direction = UISwipeGestureRecognizerDirectionLeft;
-		[_leftCoveringView addGestureRecognizer:swipeRecognizer];
+		[_leftSideBar addGestureRecognizer:swipeRecognizer];
 		
-		[self.view addSubview:_leftCoveringView];
+		[self.view addSubview:_leftSideBar];
 		
 	} 
 	else if (state == UIGestureRecognizerStateChanged)
 	{
 		// Only move the view to, at most, its width
-		if (xPosition <= COVERING_WIDTH)
+		if (xPosition <= SIDE_BAR_WIDTH)
 		{
-			coveringFrame = _leftCoveringView.frame;
-			coveringFrame.origin.x = xPosition - COVERING_WIDTH;
-			_leftCoveringView.frame = coveringFrame;
+			CGFloat buttonAlpha = xPosition / SIDE_BAR_WIDTH * MAX_BUTTON_ALPHA;
+			_slideInCancelButton.alpha = buttonAlpha;
+			
+			coveringFrame = _leftSideBar.frame;
+			coveringFrame.origin.x = xPosition - SIDE_BAR_WIDTH;
+			_leftSideBar.frame = coveringFrame;
 		}
 	} 
 	else if (state == UIGestureRecognizerStateEnded)
 	{
 		void (^onComplete)(BOOL finished);
+		CGFloat buttonAlpha;
+		
+		// Track the ending velocity to decide if the sidebar was "thrown" back
+		CGPoint endingVelocity = [recognizer velocityInView:self.view];
 		
 		// If the view is at least half out, animate the rest.
 		// Otherwise, animate it back out.
-		if (xPosition >	COVERING_WIDTH / 4)
+		if (xPosition >	SIDE_BAR_WIDTH / 4 && endingVelocity.x > 0.0)
 		{
-			coveringFrame = CGRectMake(0, 0, COVERING_WIDTH, self.view.frame.size.height);
+			coveringFrame = CGRectMake(0, 0, SIDE_BAR_WIDTH, self.view.frame.size.height);
+			buttonAlpha = MAX_BUTTON_ALPHA;
 			onComplete = ^(BOOL finished)
 			{
 				// Set up anything we want on the view after it has finished moving
@@ -464,11 +475,13 @@
 		}
 		else
 		{
-			coveringFrame = CGRectMake(-COVERING_WIDTH, 0, COVERING_WIDTH, self.view.frame.size.height);
+			coveringFrame = CGRectMake(-SIDE_BAR_WIDTH, 0, SIDE_BAR_WIDTH, self.view.frame.size.height);
+			buttonAlpha = 0.0;
+			
 			onComplete = ^(BOOL finished)
 			{
-				[_leftCoveringView removeFromSuperview];
-				_leftCoveringView = nil;
+				[_leftSideBar removeFromSuperview];
+				_leftSideBar = nil;
 				
 				[_slideInCancelButton removeFromSuperview];
 				_slideInCancelButton = nil;
@@ -476,29 +489,27 @@
 		}
 
 		// Animate for both in and out
-		[UIView animateWithDuration:0.5 animations:^()
+		[UIView animateWithDuration:0.2 animations:^()
 		 {
-			 _leftCoveringView.frame = coveringFrame;
+			 _leftSideBar.frame = coveringFrame;
+			 _slideInCancelButton.alpha = buttonAlpha;
 		 }
 						 completion:onComplete];
 	}
-	
-	NSLog(@"move to %@", NSStringFromCGPoint([recognizer translationInView:self.view]));
 }
 
 // Might want to do this with a swipe gestore or another pan
 - (void)_outToLeft:(id)sender
-{
-
-	[_slideInCancelButton removeFromSuperview];
-	
+{	
 	[UIView animateWithDuration:0.3 animations:^()
 	 {
-		 _leftCoveringView.frame = 	CGRectMake(-COVERING_WIDTH, 0, COVERING_WIDTH, self.view.frame.size.height);;
+		 _leftSideBar.frame = 	CGRectMake(-SIDE_BAR_WIDTH, 0, SIDE_BAR_WIDTH, self.view.frame.size.height);;
+		 _slideInCancelButton.alpha = 0.0;
 	 }
 					 completion:^(BOOL finished)
 	 {
-		 [_leftCoveringView removeFromSuperview];
+		 [_leftSideBar removeFromSuperview];
+		 [_slideInCancelButton removeFromSuperview];
 	 }];
 }
 

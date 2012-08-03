@@ -10,7 +10,7 @@
 #import "SearchBarPanelDelegate.h"
 #import "GoogleLocalConnection.h"
 
-@class DataModel, SearchBarPanel, SearchView;
+@class DataModel, SearchBarPanel, SearchView, SideBar;
 @interface MapViewController : UIViewController <SearchBarPanelDelegate, GoogleLocalConnectionDelegate, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, MKMapViewDelegate>
 {	
 	MKMapView *_mapView;
@@ -32,8 +32,8 @@
 	UIView *_slideInLeft;
 	UIView *_slideInRight;
 	
-	UIView *_leftCoveringView;
-	UIView *_rightCoveringView;
+	SideBar *_leftSideBar;
+	SideBar *_rightSideBar;
 	
 	// The button that will be use to remove the slide over view
 	UIButton *_slideInCancelButton;

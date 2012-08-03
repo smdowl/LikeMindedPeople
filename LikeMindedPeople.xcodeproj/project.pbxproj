@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		921E91D615CC3D360033C8B1 /* SideBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 921E91D515CC3D360033C8B1 /* SideBar.m */; };
 		9226EDE515C6F09E0081D01C /* libfacebook_ios_sdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D31363B215C494510071BED3 /* libfacebook_ios_sdk.a */; };
 		924FB9B715CAEAEF00E9E7C3 /* DetailView.m in Sources */ = {isa = PBXBuildFile; fileRef = 924FB9B615CAEAEF00E9E7C3 /* DetailView.m */; };
 		925AE7B315C430F2008840D9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7AC15C430F2008840D9 /* UIKit.framework */; };
@@ -123,6 +124,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		921E91D415CC3D360033C8B1 /* SideBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SideBar.h; path = Classes/SideBar.h; sourceTree = "<group>"; };
+		921E91D515CC3D360033C8B1 /* SideBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SideBar.m; path = Classes/SideBar.m; sourceTree = "<group>"; };
 		924FB9B515CAEAEF00E9E7C3 /* DetailView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DetailView.h; path = Classes/DetailView.h; sourceTree = "<group>"; };
 		924FB9B615CAEAEF00E9E7C3 /* DetailView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DetailView.m; path = Classes/DetailView.m; sourceTree = "<group>"; };
 		925AE7AC15C430F2008840D9 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -561,6 +564,8 @@
 				924FB9B615CAEAEF00E9E7C3 /* DetailView.m */,
 				92EBF32E15C5992D0085C47E /* TDBadgedCell.h */,
 				92EBF32F15C5992E0085C47E /* TDBadgedCell.m */,
+				921E91D415CC3D360033C8B1 /* SideBar.h */,
+				921E91D515CC3D360033C8B1 /* SideBar.m */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -922,6 +927,7 @@
 				9290AE8A15C84C1600E91D61 /* SearchView.m in Sources */,
 				924FB9B715CAEAEF00E9E7C3 /* DetailView.m in Sources */,
 				926FEAF915CB99510053FD1D /* RadiiResultDTO.m in Sources */,
+				921E91D615CC3D360033C8B1 /* SideBar.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

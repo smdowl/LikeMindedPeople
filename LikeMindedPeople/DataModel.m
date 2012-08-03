@@ -36,9 +36,9 @@
 
 static DataModel *_sharedInstance = nil;
 
-@synthesize contextCoreConnector;
-@synthesize contextPlaceConnector;
-@synthesize contextInterestsConnector;
+@synthesize coreConnector = _coreConnector;
+@synthesize placeConnector = _placeConnector;
+@synthesize interestsConnector = _interestsConnector;
 
 @synthesize userId = _userId;
 
@@ -57,14 +57,14 @@ static DataModel *_sharedInstance = nil;
 		{
 			_sharedInstance = [super allocWithZone:nil];
 			
-			_sharedInstance.contextCoreConnector = [[QLContextCoreConnector alloc] init];
-			_sharedInstance.contextCoreConnector.permissionsDelegate = _sharedInstance;
+			_sharedInstance.coreConnector = [[QLContextCoreConnector alloc] init];
+			_sharedInstance.coreConnector.permissionsDelegate = _sharedInstance;
 			
-			_sharedInstance.contextPlaceConnector = [[QLContextPlaceConnector alloc] init];
-			_sharedInstance.contextPlaceConnector.delegate = _sharedInstance;
+			_sharedInstance.placeConnector = [[QLContextPlaceConnector alloc] init];
+			_sharedInstance.placeConnector.delegate = _sharedInstance;
 			
-			_sharedInstance.contextInterestsConnector = [[PRContextInterestsConnector alloc] init];
-			_sharedInstance.contextInterestsConnector.delegate = _sharedInstance;
+			_sharedInstance.interestsConnector = [[PRContextInterestsConnector alloc] init];
+			_sharedInstance.interestsConnector.delegate = _sharedInstance;
 			
 			[_sharedInstance setup];
 		}
@@ -95,7 +95,7 @@ static DataModel *_sharedInstance = nil;
 		_privateFences = nil;
 		_currentLocation = [NSMutableArray array];
 				
-		[self.contextCoreConnector checkStatusAndOnEnabled:^(QLContextConnectorPermissions *contextConnectorPermissions) 
+		[_coreConnector checkStatusAndOnEnabled:^(QLContextConnectorPermissions *contextConnectorPermissions) 
 		 {
 			 
 //			 // Get all the events that the user has recently been sent - NOT SURE IF WE NEED THIS
@@ -134,7 +134,7 @@ static DataModel *_sharedInstance = nil;
 
 - (void)getInfo
 {
-	[self.contextPlaceConnector allPrivatePointsOfInterestAndOnSuccess:^(NSArray *ppoi)
+	[_placeConnector allPrivatePointsOfInterestAndOnSuccess:^(NSArray *ppoi)
 	 {
 		 for (QLPlaceEvent *event in ppoi)
 		 {
@@ -266,7 +266,7 @@ static DataModel *_sharedInstance = nil;
 		
 		_settingUp = YES;
 		// Update the current profile
-		PRProfile *profile = self.contextInterestsConnector.interests;
+		PRProfile *profile = _interestsConnector.interests;
 		//	NSLog(@"%@ %@", profile, [profile.attrs.allValues objectAtIndex:0]);
 		
 		NSArray *profileArray = [self _flattenProfile:profile];
@@ -319,7 +319,7 @@ static DataModel *_sharedInstance = nil;
 {
 	@synchronized(self)
 	{
-		[self.contextPlaceConnector allPrivatePointsOfInterestAndOnSuccess:^(NSArray *ppoi)
+		[_placeConnector allPrivatePointsOfInterestAndOnSuccess:^(NSArray *ppoi)
 		 {
 			 _personalPointsOfInterest = ppoi;
 			 
@@ -341,7 +341,7 @@ static DataModel *_sharedInstance = nil;
 {
 	@synchronized(self)
 	{
-		[self.contextPlaceConnector allPlacesAndOnSuccess:^(NSArray *allPlaces)
+		[_placeConnector allPlacesAndOnSuccess:^(NSArray *allPlaces)
 		 {
 			 _privateFences = [NSMutableArray arrayWithArray:allPlaces];
 		 } failure:^(NSError *err)
@@ -358,7 +358,7 @@ static DataModel *_sharedInstance = nil;
 		__weak DataModel *weakSelf = self;
 		// First get all places
 		
-		[self.contextPlaceConnector allPlacesAndOnSuccess:^(NSArray *allPlaces)
+		[_placeConnector allPlacesAndOnSuccess:^(NSArray *allPlaces)
 		 {
 			 if (!weakSelf)
 			 {
@@ -410,7 +410,7 @@ static DataModel *_sharedInstance = nil;
 	}
 	
 	QLPlace *fence = [fences objectAtIndex:0];
-	[self.contextPlaceConnector createPlace:fence
+	[_placeConnector createPlace:fence
 									success:^(QLPlace *newFence)
 	 {
 		 [fences removeObject:fence];
@@ -436,7 +436,7 @@ static DataModel *_sharedInstance = nil;
 	// Pop one fence from the stack
 	QLPlace *fence = [fences objectAtIndex:0];
 		
-	[self.contextPlaceConnector deletePlaceWithId:fence.id
+	[_placeConnector deletePlaceWithId:fence.id
 										  success:^(void){
 											  [fences removeObject:fence];
 											  
@@ -492,6 +492,8 @@ static DataModel *_sharedInstance = nil;
 - (void)close
 {
 	_settingUp = NO;
+	_placeConnector = nil;
+	
 }
 
 @end

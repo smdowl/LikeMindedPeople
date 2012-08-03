@@ -219,10 +219,10 @@ selectedCategory = btn.tag;
 -(void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
 
-    [dm.contextCoreConnector checkStatusAndOnEnabled:^(QLContextConnectorPermissions *qp) {
+    [dm.coreConnector checkStatusAndOnEnabled:^(QLContextConnectorPermissions *qp) {
         
     } disabled:^(NSError *err) {
-		[dm.contextCoreConnector enableFromViewController:self success:nil failure:nil];
+		[dm.coreConnector enableFromViewController:self success:nil failure:nil];
     }];
     double miles = 1;
     //    miles = 10 - miles;
@@ -283,10 +283,10 @@ selectedCategory = btn.tag;
 }
 -(IBAction)showPermissions {
 	NSLog(@"%@", [[dm currentLocation] name]);
-    [dm.contextCoreConnector showPermissionsFromViewController:self];
+    [dm.coreConnector showPermissionsFromViewController:self];
 }
 -(IBAction)search:(id)sender {
-    [dm.contextCoreConnector enableFromViewController:self success:nil failure:^(NSError *err) {
+    [dm.coreConnector enableFromViewController:self success:nil failure:^(NSError *err) {
         //show blank view
     }];  
 }

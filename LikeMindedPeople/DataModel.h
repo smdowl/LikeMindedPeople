@@ -20,6 +20,9 @@
 	
 //	NSArray *_placeEvents; // An array of all the previous events
 	
+	QLContextCoreConnector *_coreConnector;
+	QLContextPlaceConnector *_placeConnector;
+	PRContextInterestsConnector *_interestsConnector;
 
 	
 	// An array basically being used as a stack, pushing and popping from index 0
@@ -33,9 +36,9 @@
 	BOOL _settingUp; // Is the model in the process of setting up already?
 }
 
-@property (nonatomic, strong) QLContextCoreConnector *contextCoreConnector;
-@property (nonatomic, strong) QLContextPlaceConnector *contextPlaceConnector;
-@property (nonatomic, strong) PRContextInterestsConnector *contextInterestsConnector;
+@property (nonatomic, strong) QLContextCoreConnector *coreConnector;
+@property (nonatomic, strong) QLContextPlaceConnector *placeConnector;
+@property (nonatomic, strong) PRContextInterestsConnector *interestsConnector;
 
 @property (nonatomic, strong) NSString *userId;
 

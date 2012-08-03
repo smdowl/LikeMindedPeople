@@ -122,6 +122,9 @@
 - (void)fbDidNotLogin:(BOOL)cancelled
 {
     NSLog(@"fbDidNotLogin");
+	
+	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Could not connect to fb" message:@"Please check interent connection" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+    [alert show];
 }
 
 - (void)fbDidLogout
