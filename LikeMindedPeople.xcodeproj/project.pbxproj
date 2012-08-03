@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		9226EDE515C6F09E0081D01C /* libfacebook_ios_sdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D31363B215C494510071BED3 /* libfacebook_ios_sdk.a */; };
+		924FB9B715CAEAEF00E9E7C3 /* DetailView.m in Sources */ = {isa = PBXBuildFile; fileRef = 924FB9B615CAEAEF00E9E7C3 /* DetailView.m */; };
 		925AE7B315C430F2008840D9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7AC15C430F2008840D9 /* UIKit.framework */; };
 		925AE7B415C430F2008840D9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7AD15C430F2008840D9 /* Foundation.framework */; };
 		925AE7B515C430F2008840D9 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7AE15C430F2008840D9 /* CoreGraphics.framework */; };
@@ -55,6 +56,7 @@
 		925F9FDB15C5CDFD0081E098 /* magnifying.png in Resources */ = {isa = PBXBuildFile; fileRef = 925F9FD915C5CDFD0081E098 /* magnifying.png */; };
 		925F9FDE15C5CE630081E098 /* 57icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 925F9FDD15C5CE630081E098 /* 57icon.png */; };
 		925F9FE015C5CE650081E098 /* 114icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 925F9FDF15C5CE650081E098 /* 114icon.png */; };
+		926FEAF915CB99510053FD1D /* RadiiResultDTO.m in Sources */ = {isa = PBXBuildFile; fileRef = 926FEAF815CB99510053FD1D /* RadiiResultDTO.m */; };
 		9290AE7F15C7C03300E91D61 /* barsactive.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9290AE7A15C7C03300E91D61 /* barsactive.jpg */; };
 		9290AE8015C7C03300E91D61 /* cafeactive.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9290AE7B15C7C03300E91D61 /* cafeactive.jpg */; };
 		9290AE8115C7C03300E91D61 /* clubsactive.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9290AE7C15C7C03300E91D61 /* clubsactive.jpg */; };
@@ -121,6 +123,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		924FB9B515CAEAEF00E9E7C3 /* DetailView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DetailView.h; path = Classes/DetailView.h; sourceTree = "<group>"; };
+		924FB9B615CAEAEF00E9E7C3 /* DetailView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DetailView.m; path = Classes/DetailView.m; sourceTree = "<group>"; };
 		925AE7AC15C430F2008840D9 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		925AE7AD15C430F2008840D9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		925AE7AE15C430F2008840D9 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -176,6 +180,8 @@
 		925F9FD915C5CDFD0081E098 /* magnifying.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = magnifying.png; sourceTree = "<group>"; };
 		925F9FDD15C5CE630081E098 /* 57icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = 57icon.png; path = ../57icon.png; sourceTree = "<group>"; };
 		925F9FDF15C5CE650081E098 /* 114icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = 114icon.png; path = ../114icon.png; sourceTree = "<group>"; };
+		926FEAF715CB99510053FD1D /* RadiiResultDTO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RadiiResultDTO.h; sourceTree = "<group>"; };
+		926FEAF815CB99510053FD1D /* RadiiResultDTO.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RadiiResultDTO.m; sourceTree = "<group>"; };
 		9290AE7A15C7C03300E91D61 /* barsactive.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = barsactive.jpg; sourceTree = "<group>"; };
 		9290AE7B15C7C03300E91D61 /* cafeactive.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = cafeactive.jpg; sourceTree = "<group>"; };
 		9290AE7C15C7C03300E91D61 /* clubsactive.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = clubsactive.jpg; sourceTree = "<group>"; };
@@ -551,6 +557,8 @@
 				92EC3E4915C7B2410025E56C /* SearchBarPanelDelegate.h */,
 				9290AE8415C837B800E91D61 /* SearchBar.h */,
 				9290AE8515C837B800E91D61 /* SearchBar.m */,
+				924FB9B515CAEAEF00E9E7C3 /* DetailView.h */,
+				924FB9B615CAEAEF00E9E7C3 /* DetailView.m */,
 				92EBF32E15C5992D0085C47E /* TDBadgedCell.h */,
 				92EBF32F15C5992E0085C47E /* TDBadgedCell.m */,
 			);
@@ -566,6 +574,8 @@
 				92D8511815C5BEAD00579B05 /* GeofenceLocation.m */,
 				D31363F715C4E6DE0071BED3 /* ServiceAdapter.h */,
 				D31363F815C4E6DE0071BED3 /* ServiceAdapter.m */,
+				926FEAF715CB99510053FD1D /* RadiiResultDTO.h */,
+				926FEAF815CB99510053FD1D /* RadiiResultDTO.m */,
 			);
 			name = Backend;
 			sourceTree = "<group>";
@@ -910,6 +920,8 @@
 				92EC3E4415C7AD240025E56C /* SearchBarPanel.m in Sources */,
 				9290AE8615C837B800E91D61 /* SearchBar.m in Sources */,
 				9290AE8A15C84C1600E91D61 /* SearchView.m in Sources */,
+				924FB9B715CAEAEF00E9E7C3 /* DetailView.m in Sources */,
+				926FEAF915CB99510053FD1D /* RadiiResultDTO.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

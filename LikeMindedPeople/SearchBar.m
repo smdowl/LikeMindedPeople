@@ -45,7 +45,7 @@
 	 }
 					 completion:^(BOOL finished) 
 	 {
-		 
+
 	 }];
 }
 
@@ -76,7 +76,7 @@
 	 }
 					 completion:^(BOOL finished) 
 	 {
-		 		 self.hidden = YES;
+		 self.hidden = YES;
 	 }];
 }
 

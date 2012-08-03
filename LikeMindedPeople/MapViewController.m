@@ -13,15 +13,22 @@
 #import "TDBadgedCell.h"
 #import "GeofenceLocation.h"
 #import "SearchBar.h"
+#import "RAdiiResultDTO.h"
+#import "DetailView.h"
 
 #define SHOW_GEOFENCE_LOCATIONS NO
 #define RESIZE_BUTTTON_PADDING 5
+
+#define COVERING_WIDTH 200
 
 @interface MapViewController ()
 
 - (void)_removeAllNonUserAnnotations;
 - (void)_animateMap:(BOOL)fullScreen;
 - (void)_hideKeyboard;
+
+- (void)_inFromLeft:(UIPanGestureRecognizer *)recognizer;
+- (void)_inFromRight:(UIPanGestureRecognizer *)recognizer;
 
 @end
 
@@ -34,6 +41,9 @@
 
 @synthesize resizeButton = _resizeButton;
 @synthesize keyboardCancelButton = _keyboardCancelButton;
+
+@synthesize slideInLeft = _slideInLeft;
+@synthesize slideInRight = _slideInRight;
 
 #pragma mark -
 #pragma mark View lifecycle
@@ -54,7 +64,6 @@
     [_mapView addGestureRecognizer:pinchRecognizer];
 	_mapView.delegate = self;
 	_mapView.showsUserLocation = YES;
-//	_mapView.userTrackingMode = MKUserTrackingModeNone;
 	
 	[_keyboardCancelButton addTarget:self action:@selector(_hideKeyboard) forControlEvents:UIControlEventTouchUpInside];
 	[_keyboardCancelButton removeFromSuperview];
@@ -63,6 +72,16 @@
 	
 	_searchView.searchResultsView.delegate = self;
 	_searchView.searchResultsView.dataSource = self;
+	
+	// Recognizing gestures on the left side of the screen
+	UIPanGestureRecognizer *leftSwipeGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(_inFromLeft:)];
+	[_slideInLeft addGestureRecognizer:leftSwipeGestureRecognizer];
+	
+	// Recognizing gestures on the right side of the screen
+	UIPanGestureRecognizer *rightSwipeGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(_inFromRight:)];
+	[_slideInRight addGestureRecognizer:rightSwipeGestureRecognizer];
+	
+	[_searchView.detailView.backButton addTarget:_searchView action:@selector(hideDetailView) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -173,10 +192,35 @@
 	{				
 		// Replace all the annotations with new ones
 		[self _removeAllNonUserAnnotations];
-		[_mapView addAnnotations:objects];
 		
-		// Store a ref to the results
-		_searchResults = objects;
+		NSMutableArray *resultsArray = [NSMutableArray array];
+		
+		// Store the results as RadiiResultsDTOs
+		for (GoogleLocalObject *googleObject in objects)
+		{
+			RadiiResultDTO *result = [[RadiiResultDTO alloc] init];
+			result.businessTitle = googleObject.title;
+			result.description = googleObject.subtitle;
+			
+			GeofenceLocation *containingGeofence = [[DataModel sharedInstance] getInfoForPin:[googleObject coordinate]];
+			double rating = containingGeofence ? [containingGeofence rating] : 0.0;
+			
+			// TODO: cut out these iVars
+			result.rating = rating;
+			
+			result.peopleCount = 0;
+			result.relatedInterests = nil;
+			result.searchLocation = googleObject.coordinate;
+			result.geofence = containingGeofence;
+			
+			[resultsArray addObject:result];
+		}
+		
+		_searchResults = [NSArray arrayWithArray:resultsArray];
+		
+		// Add the repackaged results as annotations
+		[_mapView addAnnotations:_searchResults];
+		
 		
 		if (_userLocation)
 		{
@@ -237,6 +281,25 @@
 	}
 }
 
+- (void)mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)view
+{
+	if (view.annotation == _userLocation)
+		return;
+	
+	RadiiResultDTO *result = (RadiiResultDTO *)view.annotation;
+	
+	// Move the table view if it is on screen
+	[_searchView.searchResultsView selectRowAtIndexPath:[NSIndexPath indexPathForRow:[_searchResults indexOfObject:result] inSection:0] animated:YES scrollPosition:UITableViewScrollPositionMiddle];
+	
+	// Update the detail view
+	[_searchView.detailView setData:result];
+	
+	if (_isFullScreen)
+	{
+		[_searchView showDetailView];
+	}
+}
+
 #pragma mark -
 #pragma mark UITableViewDelegate
 
@@ -251,18 +314,15 @@
 		cell.textLabel.font = [UIFont fontWithName:@"Helvetica" size:12];  
 	}	
 	
-	GoogleLocalObject *searchObject = [_searchResults objectAtIndex:indexPath.row];
-	cell.textLabel.text = searchObject.title;
-	cell.detailTextLabel.text = searchObject.subtitle;
+	RadiiResultDTO *radiiResult = [_searchResults objectAtIndex:indexPath.row];
 	
-	GeofenceLocation *containingGeofence = [[DataModel sharedInstance] getInfoForPin:[searchObject coordinate]];
-			
-	double rating = containingGeofence ? [containingGeofence rating] : 0.0;
-    
-	NSString *badge = [NSString stringWithFormat:@"%.0f%@",rating*100,@"%"];    
+	cell.textLabel.text = radiiResult.businessTitle;
+	cell.detailTextLabel.text = radiiResult.description;
 	
-    cell.badgeString = badge;
-    cell.badgeColor = [UIColor colorWithRed:rating green:0 blue:0 alpha:1.0];
+	NSString *badgeString = [NSString stringWithFormat:@"%.0f%@",radiiResult.rating*100,@"%"];    
+	
+    cell.badgeString = badgeString;
+    cell.badgeColor = [UIColor colorWithRed:radiiResult.rating green:0 blue:0 alpha:1.0];
 
     return cell;
 }
@@ -270,6 +330,10 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
+	
+	// Set the detail view's data. This fill in the UI
+	_searchView.detailView.data = [_searchResults objectAtIndex:indexPath.row];
+	[_searchView showDetailView];
 }
 
 #pragma mark -
@@ -347,6 +411,101 @@
 	[_keyboardCancelButton removeFromSuperview];
 }
 
+- (void)_inFromLeft:(UIPanGestureRecognizer *)recognizer
+{
+	CGFloat xPosition = [recognizer translationInView:self.view].x;
+	CGRect coveringFrame;
+	
+	
+	
+	UIGestureRecognizerState state = recognizer.state;
+	if (state == UIGestureRecognizerStateBegan)
+	{
+		// Create an invisible button to cancel the overlay
+		_slideInCancelButton = [UIButton buttonWithType:UIButtonTypeCustom];
+		_slideInCancelButton.frame = self.view.frame;
+		[_slideInCancelButton addTarget:self action:@selector(_outToLeft:) forControlEvents:UIControlEventTouchUpInside];
+		[self.view addSubview:_slideInCancelButton];
+		
+		// Create the covering view
+		_leftCoveringView = [[UIView alloc] initWithFrame:CGRectMake(xPosition - COVERING_WIDTH,0,COVERING_WIDTH,self.view.frame.size.height)];			
+		_leftCoveringView.backgroundColor = [UIColor purpleColor];
+		
+		UISwipeGestureRecognizer *swipeRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(_outToLeft:)];
+		swipeRecognizer.direction = UISwipeGestureRecognizerDirectionLeft;
+		[_leftCoveringView addGestureRecognizer:swipeRecognizer];
+		
+		[self.view addSubview:_leftCoveringView];
+		
+	} 
+	else if (state == UIGestureRecognizerStateChanged)
+	{
+		// Only move the view to, at most, its width
+		if (xPosition <= COVERING_WIDTH)
+		{
+			coveringFrame = _leftCoveringView.frame;
+			coveringFrame.origin.x = xPosition - COVERING_WIDTH;
+			_leftCoveringView.frame = coveringFrame;
+		}
+	} 
+	else if (state == UIGestureRecognizerStateEnded)
+	{
+		void (^onComplete)(BOOL finished);
+		
+		// If the view is at least half out, animate the rest.
+		// Otherwise, animate it back out.
+		if (xPosition >	COVERING_WIDTH / 4)
+		{
+			coveringFrame = CGRectMake(0, 0, COVERING_WIDTH, self.view.frame.size.height);
+			onComplete = ^(BOOL finished)
+			{
+				// Set up anything we want on the view after it has finished moving
+			};
+		}
+		else
+		{
+			coveringFrame = CGRectMake(-COVERING_WIDTH, 0, COVERING_WIDTH, self.view.frame.size.height);
+			onComplete = ^(BOOL finished)
+			{
+				[_leftCoveringView removeFromSuperview];
+				_leftCoveringView = nil;
+				
+				[_slideInCancelButton removeFromSuperview];
+				_slideInCancelButton = nil;
+			};
+		}
+
+		// Animate for both in and out
+		[UIView animateWithDuration:0.5 animations:^()
+		 {
+			 _leftCoveringView.frame = coveringFrame;
+		 }
+						 completion:onComplete];
+	}
+	
+	NSLog(@"move to %@", NSStringFromCGPoint([recognizer translationInView:self.view]));
+}
+
+// Might want to do this with a swipe gestore or another pan
+- (void)_outToLeft:(id)sender
+{
+
+	[_slideInCancelButton removeFromSuperview];
+	
+	[UIView animateWithDuration:0.3 animations:^()
+	 {
+		 _leftCoveringView.frame = 	CGRectMake(-COVERING_WIDTH, 0, COVERING_WIDTH, self.view.frame.size.height);;
+	 }
+					 completion:^(BOOL finished)
+	 {
+		 [_leftCoveringView removeFromSuperview];
+	 }];
+}
+
+- (void)_inFromRight:(UIPanGestureRecognizer *)recognizer
+{
+	
+}
 
 #pragma mark -
 #pragma mark Private Methods
@@ -373,7 +532,22 @@
 {
 	CGFloat verticalShift = toFullScreen ? _searchView.searchResultsView.frame.size.height : -_searchView.searchResultsView.frame.size.height;
 	NSString *resizeButtonImageName = toFullScreen ? @"minimize.png" : @"fullscreen.png";
-		
+	
+	CGFloat backButtonRotation = toFullScreen ? M_PI_2 : 0;
+	
+	// Remove all targets from the back button
+	[_searchView.detailView.backButton removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
+	
+	// Either set it to remove from screen on return to normal view
+	if (toFullScreen)
+	{
+		[_searchView.detailView.backButton addTarget:self action:@selector(toggleFullScreen:) forControlEvents:UIControlEventTouchUpInside];
+	}
+	else
+	{
+		[_searchView.detailView.backButton addTarget:_searchView action:@selector(hideDetailView) forControlEvents:UIControlEventTouchUpInside];
+	}
+	
 	[UIView beginAnimations:nil context:nil];
 		
 	CGRect mapFrame = _mapView.frame;
@@ -389,6 +563,8 @@
 	_resizeButton.frame = resizeButtonFrame;
 	[_resizeButton setImage:[UIImage imageNamed:resizeButtonImageName] forState:UIControlStateNormal];
 	
+	CGAffineTransform rotation = CGAffineTransformMakeRotation(backButtonRotation);
+	[_searchView.detailView.backButton setTransform:rotation];
 	[UIView commitAnimations];
 	
 	// Also move the map to be centered on the same point
@@ -399,6 +575,21 @@
 {
 	[_searchView.searchBarPanel.searchBar resignFirstResponder];
 	[_searchView.searchBarPanel selectButton:-1];
+}
+
+- (void)dealloc
+{
+	_mapView = nil;
+	_searchView = nil;
+	
+	_searchingView = nil;
+	_indicatorView = nil;
+	
+	_resizeButton = nil;
+	_keyboardCancelButton = nil;
+	
+	_slideInLeft = nil;
+	_slideInRight = nil;
 }
 
 @end

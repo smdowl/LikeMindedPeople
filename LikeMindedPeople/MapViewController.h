@@ -27,6 +27,16 @@
 	NSArray *_searchResults;
 	
 	MKUserLocation *_userLocation;
+	
+	// Zero alpha views to pick up swipe gestures and animate in sidebars
+	UIView *_slideInLeft;
+	UIView *_slideInRight;
+	
+	UIView *_leftCoveringView;
+	UIView *_rightCoveringView;
+	
+	// The button that will be use to remove the slide over view
+	UIButton *_slideInCancelButton;
 }
 
 @property (nonatomic, strong) IBOutlet MKMapView *mapView;
@@ -37,6 +47,9 @@
 
 @property (nonatomic, strong) IBOutlet UIButton *resizeButton;
 @property (nonatomic, strong) IBOutlet UIButton *keyboardCancelButton;
+
+@property (nonatomic, strong) IBOutlet UIView *slideInLeft;
+@property (nonatomic, strong) IBOutlet UIView *slideInRight;
 
 - (IBAction)toggleFullScreen:(id)sender;
 

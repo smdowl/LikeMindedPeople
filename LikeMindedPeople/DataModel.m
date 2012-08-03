@@ -94,9 +94,7 @@ static DataModel *_sharedInstance = nil;
 //		_privateFences = [NSKeyedUnarchiver unarchiveObjectWithFile:<#(NSString *)#>;
 		_privateFences = nil;
 		_currentLocation = [NSMutableArray array];
-		
-		[self _getPrivateFences];
-		
+				
 		[self.contextCoreConnector checkStatusAndOnEnabled:^(QLContextConnectorPermissions *contextConnectorPermissions) 
 		 {
 			 
@@ -359,6 +357,7 @@ static DataModel *_sharedInstance = nil;
 	{
 		__weak DataModel *weakSelf = self;
 		// First get all places
+		
 		[self.contextPlaceConnector allPlacesAndOnSuccess:^(NSArray *allPlaces)
 		 {
 			 if (!weakSelf)
@@ -374,7 +373,7 @@ static DataModel *_sharedInstance = nil;
 				 [self _removeAllFences:weakSelf->_privateFences onCompletion:^()
 				  {
 					  NSLog(@"Finished!");
-					  [self _addAllFences:fences onCompletion:^()
+					  [weakSelf _addAllFences:fences onCompletion:^()
 					   {
 						   if (!weakSelf)
 						   {
@@ -387,12 +386,11 @@ static DataModel *_sharedInstance = nil;
 			 }
 			 else
 			 {	 // If there aren't any to delete it will be a simple case of just adding all the ones we need
-//				 [self _setPrivateFences:fences];
-				 [self _addAllFences:fences onCompletion:^()
+				 [weakSelf _addAllFences:fences onCompletion:^()
 				 {
 					 NSLog(@"done");
+					 weakSelf->_settingUp = NO;
 				 }];
-				 weakSelf->_settingUp = NO;
 			 }
 			 
 		 } failure:^(NSError *err)
@@ -457,10 +455,18 @@ static DataModel *_sharedInstance = nil;
 											  NSLog(@"ERROR: %@", err);
 											  NSLog(@"Geofence: %lli %@: %@", fence.id, fence.name, fence.geoFence);
 											  [fences removeObject:fence];
-											  [fences insertObject:fence atIndex:[_privateFences count]-1];
-											  
-											  [self _removeAllFences:fences onCompletion:completed];
-										  }];
+//											  [fences insertObject:fence atIndex:[_privateFences count]];
+
+											  // Some times we are left with
+											  if ([fences count] == 0)
+											  {
+												  completed();
+											  }
+											  else
+											  {
+												  [self _removeAllFences:fences onCompletion:completed];
+											  }
+											}];
 }
 
 
