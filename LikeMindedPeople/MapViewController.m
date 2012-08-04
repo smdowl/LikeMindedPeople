@@ -302,6 +302,11 @@
 	}
 }
 
+- (void)mapView:(MKMapView *)mapView didDeselectAnnotationView:(MKAnnotationView *)view
+{
+	[_searchView.searchResultsView deselectRowAtIndexPath:[_searchView.searchResultsView indexPathForSelectedRow] animated:YES];
+}
+
 #pragma mark -
 #pragma mark UITableViewDelegate
 

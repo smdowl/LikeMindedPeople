@@ -18,33 +18,30 @@
 {
 	NSString *_userId;	// In out app is going to be the fb ID. Used to identify you on the server
 	
-//	NSArray *_placeEvents; // An array of all the previous events
-	
 	QLContextCoreConnector *_coreConnector;
 	QLContextPlaceConnector *_placeConnector;
 	PRContextInterestsConnector *_interestsConnector;
 
-	
 	// An array basically being used as a stack, pushing and popping from index 0
 	NSMutableArray *_currentLocation;
 	
 	// Location arrays
+	NSArray *_personalPointsOfInterest;
 	NSArray *_geofenceSearchLocations;
 	NSMutableArray *_privateFences;
-	NSArray *_personalPointsOfInterest;
 		
 	BOOL _settingUp; // Is the model in the process of setting up already?
 }
+
+@property (nonatomic, strong) NSString *userId;
 
 @property (nonatomic, strong) QLContextCoreConnector *coreConnector;
 @property (nonatomic, strong) QLContextPlaceConnector *placeConnector;
 @property (nonatomic, strong) PRContextInterestsConnector *interestsConnector;
 
-@property (nonatomic, strong) NSString *userId;
-
-@property (nonatomic, readonly) NSArray *placeEvents;
-@property (nonatomic, readonly) NSArray *personalPointsOfInterest;
 @property (nonatomic, readonly) QLPlace *currentLocation;
+
+@property (nonatomic, readonly) NSArray *personalPointsOfInterest;
 @property (nonatomic, readonly) NSArray *privateFences;
 
 + (DataModel *)sharedInstance;

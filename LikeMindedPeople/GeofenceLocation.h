@@ -11,7 +11,7 @@
 #import <MapKit/MapKit.h>
 
 @class QLPlace;
-@interface GeofenceLocation : NSObject <MKAnnotation>
+@interface GeofenceLocation : NSObject <NSCoding, MKAnnotation>
 {
 	QLPlace *_place;
 	int _peopleCount;

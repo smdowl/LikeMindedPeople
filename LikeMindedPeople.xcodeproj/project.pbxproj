@@ -64,6 +64,7 @@
 		9290AE8215C7C03300E91D61 /* foodactive.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 9290AE7D15C7C03300E91D61 /* foodactive.jpg */; };
 		9290AE8615C837B800E91D61 /* SearchBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 9290AE8515C837B800E91D61 /* SearchBar.m */; };
 		9290AE8A15C84C1600E91D61 /* SearchView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9290AE8915C84C1500E91D61 /* SearchView.m */; };
+		9296F5A715CCE35C0091A692 /* QLPlace+QLPlace_NSCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 9296F5A615CCE35C0091A692 /* QLPlace+QLPlace_NSCoder.m */; };
 		92D8511915C5BEAD00579B05 /* GeofenceLocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 92D8511815C5BEAD00579B05 /* GeofenceLocation.m */; };
 		92EBF2FE15C5932D0085C47E /* savefield.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EBF2FD15C5932D0085C47E /* savefield.png */; };
 		92EBF31F15C593FB0085C47E /* NSObject+SBJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 92EBF30515C593FB0085C47E /* NSObject+SBJson.m */; };
@@ -193,6 +194,8 @@
 		9290AE8515C837B800E91D61 /* SearchBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchBar.m; sourceTree = "<group>"; };
 		9290AE8815C84C1500E91D61 /* SearchView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchView.h; sourceTree = "<group>"; };
 		9290AE8915C84C1500E91D61 /* SearchView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchView.m; sourceTree = "<group>"; };
+		9296F5A515CCE35C0091A692 /* QLPlace+QLPlace_NSCoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "QLPlace+QLPlace_NSCoder.h"; path = "Classes/QLPlace+QLPlace_NSCoder.h"; sourceTree = "<group>"; };
+		9296F5A615CCE35C0091A692 /* QLPlace+QLPlace_NSCoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "QLPlace+QLPlace_NSCoder.m"; path = "Classes/QLPlace+QLPlace_NSCoder.m"; sourceTree = "<group>"; };
 		92D8511715C5BEAD00579B05 /* GeofenceLocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeofenceLocation.h; sourceTree = "<group>"; };
 		92D8511815C5BEAD00579B05 /* GeofenceLocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeofenceLocation.m; sourceTree = "<group>"; };
 		92EBF2FD15C5932D0085C47E /* savefield.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = savefield.png; sourceTree = "<group>"; };
@@ -581,6 +584,8 @@
 				D31363F815C4E6DE0071BED3 /* ServiceAdapter.m */,
 				926FEAF715CB99510053FD1D /* RadiiResultDTO.h */,
 				926FEAF815CB99510053FD1D /* RadiiResultDTO.m */,
+				9296F5A515CCE35C0091A692 /* QLPlace+QLPlace_NSCoder.h */,
+				9296F5A615CCE35C0091A692 /* QLPlace+QLPlace_NSCoder.m */,
 			);
 			name = Backend;
 			sourceTree = "<group>";
@@ -928,6 +933,7 @@
 				924FB9B715CAEAEF00E9E7C3 /* DetailView.m in Sources */,
 				926FEAF915CB99510053FD1D /* RadiiResultDTO.m in Sources */,
 				921E91D615CC3D360033C8B1 /* SideBar.m in Sources */,
+				9296F5A715CCE35C0091A692 /* QLPlace+QLPlace_NSCoder.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

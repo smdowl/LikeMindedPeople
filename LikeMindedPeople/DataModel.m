@@ -30,6 +30,10 @@
 - (void)_replacePrivateGeofencesWithFences:(NSArray *)fences; // Remove
 - (void)_getPrivateFences;
 - (NSArray *)_flattenProfile:(PRProfile *)profile;
+
+// Persistent storage methods
+- (NSString *)_locationsStoragePath;
+
 @end
 
 @implementation DataModel
@@ -42,7 +46,6 @@ static DataModel *_sharedInstance = nil;
 
 @synthesize userId = _userId;
 
-@synthesize placeEvents = _placeEvents;
 @synthesize personalPointsOfInterest = _personalPointsOfInterest;
 @synthesize privateFences = _privateFences;
 
@@ -91,8 +94,7 @@ static DataModel *_sharedInstance = nil;
 	@synchronized(self)
 	{
 		// This is where we should load all variables from the persistent storage
-//		_privateFences = [NSKeyedUnarchiver unarchiveObjectWithFile:<#(NSString *)#>;
-		_privateFences = nil;
+		_privateFences = [NSKeyedUnarchiver unarchiveObjectWithFile:[self _locationsStoragePath]];
 		_currentLocation = [NSMutableArray array];
 				
 		[_coreConnector checkStatusAndOnEnabled:^(QLContextConnectorPermissions *contextConnectorPermissions) 
@@ -173,22 +175,16 @@ static DataModel *_sharedInstance = nil;
 
 - (NSArray *)getAllGeofenceRegions
 {
-	// Unused code
-	NSMutableArray *regions = [NSMutableArray array];
-	
-	for (QLPlace *geofence in _privateFences)
-	{
-		QLGeoFenceCircle *circle = (QLGeoFenceCircle *)geofence.geoFence;
-		
-		CLLocationCoordinate2D center;
-		center.latitude = circle.latitude;
-		center.longitude = circle.longitude;
-		
-		CLRegion *geofenceRegion = [[CLRegion alloc] initCircularRegionWithCenter:center radius:circle.radius identifier:@"geoRegion"];
-		[regions addObject:geofenceRegion];
-	}
-	
 	return _geofenceSearchLocations;
+}
+
+- (void)close
+{
+	_settingUp = NO;
+	_placeConnector = nil;
+	
+	[NSKeyedArchiver archiveRootObject:_privateFences toFile:[self _locationsStoragePath]];
+	
 }
 
 #pragma mark -
@@ -489,11 +485,14 @@ static DataModel *_sharedInstance = nil;
 	return profileArray;
 }
 
-- (void)close
+- (NSString *)_locationsStoragePath
 {
-	_settingUp = NO;
-	_placeConnector = nil;
+	NSArray *documentsDirectories = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+	NSString *documentDirectory = [documentsDirectories objectAtIndex:0];
 	
+	return [documentDirectory stringByAppendingPathComponent:@"profiles.archive"];
 }
+
+
 
 @end

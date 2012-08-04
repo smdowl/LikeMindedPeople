@@ -43,10 +43,32 @@
 	regionCenter.latitude = circle.latitude;
 		
 	CLRegion *region = [[CLRegion alloc] initCircularRegionWithCenter:regionCenter radius:circle.radius identifier:@"region"];
-	
-	NSLog(@"%@", region);
-	
+		
 	return [region containsCoordinate:pin];
+}
+
+#pragma mark -
+#pragma mark NSCoding
+
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+	self = [super init];
+	
+	if (self)
+	{
+		_place = [aDecoder decodeObjectForKey:@"place"];
+		_peopleCount = [[aDecoder decodeObjectForKey:@"peopleCount"] intValue];
+		_rating = [[aDecoder decodeObjectForKey:@"rating"] floatValue];
+	}
+	
+	return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)aCoder
+{
+	[aCoder encodeObject:_place forKey:@"place"];
+	[aCoder encodeObject:[NSNumber numberWithInt:_peopleCount] forKey:@"peopleCount"];
+	[aCoder encodeObject:[NSNumber numberWithFloat:_rating] forKey:@"rating"];
 }
 
 #pragma mark -
