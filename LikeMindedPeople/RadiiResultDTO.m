@@ -17,19 +17,11 @@
 @synthesize peopleCount = _peopleCount;
 @synthesize relatedInterests = _relatedInterests;
 
-@synthesize geofence = _geofence;
 @synthesize searchLocation = _searchLocation;
 
 - (CLLocationCoordinate2D)coordinate
 {
-	if (_geofence)
-	{
-		return _geofence.coordinate;		
-	}
-	else
-	{
-		return _searchLocation;
-	}
+	return _searchLocation;
 }
 
 @end

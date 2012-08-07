@@ -213,7 +213,6 @@
 			result.peopleCount = 0;
 			result.relatedInterests = nil;
 			result.searchLocation = googleObject.coordinate;
-			result.geofence = containingGeofence;
 			
 			[resultsArray addObject:result];
 		}
@@ -584,7 +583,7 @@
 	[UIView commitAnimations];
 	
 	// Also move the map to be centered on the same point
-	[_mapView setCenterCoordinate:_mapView.centerCoordinate];
+//	[_mapView setCenterCoordinate:_mapView.centerCoordinate];
 }
 
 - (void)_hideKeyboard

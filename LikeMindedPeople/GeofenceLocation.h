@@ -12,20 +12,29 @@
 
 @class QLPlace;
 @interface GeofenceLocation : NSObject <NSCoding, MKAnnotation>
-{
-	QLPlace *_place;
+{	
+	long long _placeId;
+	NSString *_geofenceName;
+	
 	int _peopleCount;
 	float _rating;
+	
+	CLLocationCoordinate2D _location;
+	CGFloat _radius;
 }
 
-@property (nonatomic, strong) QLPlace *place;
+@property (nonatomic, assign) long long placeId;
+@property (nonatomic, strong) NSString *geofenceName;
+
 @property (nonatomic) int peopleCount;
 @property (nonatomic) float rating;
 
-@property (readonly) CGFloat latitude;
-@property (readonly) CGFloat longitude;
-@property (readonly) CGFloat radius;
+@property (nonatomic) CLLocationCoordinate2D location;
+@property (nonatomic) CGFloat radius;
+
+- (id)initWithPlace:(QLPlace *)place;
 
 - (BOOL)containsPin:(CLLocationCoordinate2D)pin;
+- (QLPlace *)place;
 
 @end

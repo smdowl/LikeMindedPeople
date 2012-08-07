@@ -19,6 +19,8 @@
 
 + (void)getGeofencesForUser:(NSString *)userId atLocation:(CLLocation *)location success:(void (^)(NSArray *))success;
 
++ (void)getGoogleSearchResultsForUser:(NSString *)userId atLocation:(CLLocation *)location withName:(NSString *)name withType:(NSString *)type success:(void (^)(NSArray *))success;
+
 // Testing methods
 + (void)testService;
 + (void)getAllUsersWithSuccess:(void (^)(id))success;

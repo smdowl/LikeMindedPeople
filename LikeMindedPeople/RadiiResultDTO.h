@@ -19,7 +19,6 @@
 	NSUInteger _peopleCount;
 	NSArray *_relatedInterests;
 	
-	GeofenceLocation *_geofence;
 	CLLocationCoordinate2D _searchLocation;
 }
 
@@ -30,7 +29,6 @@
 @property (nonatomic) NSUInteger peopleCount;
 @property (nonatomic, strong) NSArray *relatedInterests;
 
-@property (nonatomic,strong) GeofenceLocation *geofence;
 @property (nonatomic) CLLocationCoordinate2D searchLocation;
 
 

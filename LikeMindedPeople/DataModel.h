@@ -27,9 +27,11 @@
 	
 	// Location arrays
 	NSArray *_personalPointsOfInterest;
-	NSArray *_geofenceSearchLocations;
 	NSMutableArray *_privateFences;
-		
+	
+	// This is the fence that will be used to trigger when the local place geofences need to be refreshed
+	GeofenceLocation *_geofenceRefreshLocation;
+	
 	BOOL _settingUp; // Is the model in the process of setting up already?
 }
 

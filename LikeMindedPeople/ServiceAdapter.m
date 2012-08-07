@@ -12,9 +12,10 @@
 #import <ContextLocation/QLGeofenceCircle.h>
 #import <CoreLocation/CoreLocation.h>
 #import "GeofenceLocation.h"
+#import "RadiiResultDTO.h"
+#import "ServerKeys.h"
 
-#define BASE_URL @"http://4ach.localtunnel.com"
-#define DEBUG_MODE YES
+#define DEBUG_MODE NO
 
 #define SAN_FRAN_LATITUDE_MIN 37.755787
 #define SAN_FRAN_LATITUDE_MAX 37.797306
@@ -110,7 +111,6 @@
 		[d setObject:[NSString stringWithFormat:@"%f",location.coordinate.longitude] forKey:@"longitude"];
 		// Filter in miles
 		[d setObject:@"10000" forKey:@"filter"];
-		[d setObject:@"Now" forKey:@"moment"];
 		
         [ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"filter_locations/%@.json",userId] httpMethod:@"POST" postPrefixString:@"location_filter=" dataObj:d success:success];
     } else {
@@ -127,16 +127,14 @@
 			// Create the containing object
 				GeofenceLocation *newLocation = [[GeofenceLocation alloc] init];
 				
-				// When testing use hard coded values
-				QLPlace *place = [[QLPlace alloc] init];
-				QLGeoFenceCircle *circle = [[QLGeoFenceCircle alloc] init];
-				circle.latitude = SAN_FRAN_LATITUDE_MIN + i*latitudeStep;
-				circle.longitude = SAN_FRAN_LONGITUDE_MIN + j*longitudeStep;
-				circle.radius = TEST_RADIUS;
-				place.geoFence = circle;
-				place.name = [NSString stringWithFormat:@"Location %i.%i", i, j];
+				CLLocationCoordinate2D location;
+				location.latitude = SAN_FRAN_LATITUDE_MIN + i*latitudeStep;
+				location.longitude = SAN_FRAN_LONGITUDE_MIN + j*longitudeStep;
+				newLocation.location = location;
 				
-				newLocation.place = place;
+				newLocation.radius = TEST_RADIUS;
+				
+				newLocation.geofenceName = [NSString stringWithFormat:@"Location %i.%i", i, j];
 				
 				newLocation.peopleCount = 10;				
 				newLocation.rating = fmodf(rand(), 100) / 100.0;
@@ -146,6 +144,37 @@
 		}
         success(places);
     }
+}
+
++ (void)getGoogleSearchResultsForUser:(NSString *)userId atLocation:(CLLocation *)location withName:(NSString *)name withType:(NSString *)type success:(void (^)(NSArray *))success
+{
+	NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+	[dictionary setObject:[NSString stringWithFormat:@"%f",location.coordinate.latitude] forKey:@"latitude"];
+	[dictionary setObject:[NSString stringWithFormat:@"%f",location.coordinate.longitude] forKey:@"longitude"];
+	
+	[dictionary setObject:name ? name : @"" forKey:@"name"];
+	
+	[dictionary setObject:type ? type : @"" forKey:@"type"];
+	if (!DEBUG_MODE)
+	{
+	[ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"google_locations/%@.json",@"fbid"] httpMethod:@"POST" postPrefixString:@"location_google=" dataObj:dictionary success:^(id results)
+	 {
+		 // Here we must build the Geofence objects from the returned dictionary
+		 NSMutableArray *resultsArray;
+		 for (NSDictionary *resultDictionary in results)
+		 {
+			 RadiiResultDTO *result = [[RadiiResultDTO alloc] init];
+//			 result.title = resultDictionary objectForKey:
+		 }
+		 
+		 success(results);
+	 }];
+	}
+	else
+	{
+//		RadiiResultDTO *result = [[RadiiResultDTO alloc] init];
+//		result.businessTitle = @"
+	}
 }
 
 #pragma mark -
@@ -199,7 +228,7 @@
     
     // Make request to server    
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-        NSLog(@"ServiceAdapter.callService: Received type=%@, response=%@", [JSON class], JSON);
+//        NSLog(@"ServiceAdapter.callService: Received type=%@, response=%@", [JSON class], JSON);
         success(JSON);
     } failure:^(NSURLRequest *request , NSHTTPURLResponse *response , NSError *error , id JSON ) {
         NSString *errorMsg = [NSString stringWithFormat:@"ServiceAdapter.callService error: %@", error];
