@@ -10,12 +10,11 @@
 #import "AFJSONRequestOperation.h"
 #import <ContextLocation/QLPlace.h>
 #import <ContextLocation/QLGeofenceCircle.h>
-#import <CoreLocation/CoreLocation.h>
 #import "GeofenceLocation.h"
 #import "RadiiResultDTO.h"
 #import "ServerKeys.h"
 
-#define DEBUG_MODE NO
+#define DEBUG_MODE YES
 
 #define SAN_FRAN_LATITUDE_MIN 37.755787
 #define SAN_FRAN_LATITUDE_MAX 37.797306
@@ -23,16 +22,16 @@
 #define SAN_FRAN_LONGITUDE_MIN -122.430439
 #define SAN_FRAN_LONGITUDE_MAX -122.378769
 
-#define TEST_GRID_WIDTH 5
+#define TEST_GRID_WIDTH 3
 
-#define TEST_RADIUS 100
+#define TEST_RADIUS 50
 
 @interface ServiceAdapter()
 + (void)_callServiceWithPath:(NSString *)path
-                 httpMethod:(NSString *)method
-           postPrefixString:(NSString *)prefix
-					dataObj:(id)dataObj
-					success:(void (^)(id))success;
+				  httpMethod:(NSString *)method
+			postPrefixString:(NSString *)prefix
+					 dataObj:(id)dataObj
+					 success:(void (^)(id))success;
 @end
 
 @implementation ServiceAdapter
@@ -46,9 +45,9 @@
     
     [d setObject:userStuff forKey:@"user"];
     [d setObject:profile forKey:@"profile"];
-
+	
     [ServiceAdapter _callServiceWithPath:@"users.json" httpMethod:@"POST" postPrefixString:@"user_profile=" dataObj:d success:success];
-
+	
 	success(nil);
 }
 
@@ -67,10 +66,10 @@
     
     
     [ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"update_location/%@.json",userId] httpMethod:@"POST" postPrefixString:@"location=" dataObj:dloc success:success];
-
+	
     success(nil);
 }
-                                                                                                 
+
 
 // pointsOfInterest: array of QLPlace
 + (void)uploadPointsOfInterest:(NSArray *)pointsOfInterest forUser:(NSString *)userId success:(void (^)(id))success
@@ -82,7 +81,7 @@
     
     [pointsOfInterest enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         QLPlace *p = (QLPlace *)obj;
-
+		
         QLGeoFenceCircle *c = (QLGeoFenceCircle *)p.geoFence;
         
         NSMutableDictionary *d = [[NSMutableDictionary alloc] init];
@@ -90,10 +89,10 @@
         [d setObject:[NSString stringWithFormat:@"%f",c.longitude] forKey:@"longitude"];
         [d setObject:[NSString stringWithFormat:@"%f",c.radius] forKey:@"radius"];
         [d setObject:[NSString stringWithFormat:@"%d",idx+1] forKey:@"rank"];
-
+		
         [pois addObject:d];
     }];
-
+	
     [ds setObject:pois forKey:@"pois"];
     
     [ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"users/%@.json",userId] httpMethod:@"POST" postPrefixString:@"pois=" dataObj:ds success:success];
@@ -101,7 +100,7 @@
 	success(nil);
 }
 
-+ (void)getGeofencesForUser:(NSString *)userId atLocation:(CLLocation *)location success:(void (^)(NSArray *))success
++ (void)getGeofencesForUser:(NSString *)userId atLocation:(CLLocation *)location radius:(CGFloat)radius success:(void (^)(NSArray *))success
 {    
     // Make "YES" for testing, "NO" to use servers.
     if (!DEBUG_MODE) {
@@ -110,34 +109,42 @@
 		[d setObject:[NSString stringWithFormat:@"%f",location.coordinate.latitude] forKey:@"lattitude"];
 		[d setObject:[NSString stringWithFormat:@"%f",location.coordinate.longitude] forKey:@"longitude"];
 		// Filter in miles
-		[d setObject:@"10000" forKey:@"filter"];
+		[d setObject:@"500000" forKey:@"filter"];
 		
         [ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"filter_locations/%@.json",userId] httpMethod:@"POST" postPrefixString:@"location_filter=" dataObj:d success:success];
     } else {
-    
+		
         NSMutableArray *places = [NSMutableArray array];
-	
-		CGFloat latitudeStep = (SAN_FRAN_LATITUDE_MAX - SAN_FRAN_LATITUDE_MIN) / TEST_GRID_WIDTH;
-		CGFloat longitudeStep = (SAN_FRAN_LONGITUDE_MAX - SAN_FRAN_LONGITUDE_MIN) / TEST_GRID_WIDTH;
+		
+		CLLocationCoordinate2D coordinate = location.coordinate;
+		
+		CGFloat approximateLatitudeChange = radius / 111000;
+		CGFloat approximateLongitudeChange = radius / (111000 * cosf(coordinate.latitude));
+		
+//		CGFloat latitudeStep = (SAN_FRAN_LATITUDE_MAX - SAN_FRAN_LATITUDE_MIN) / TEST_GRID_WIDTH;
+//		CGFloat longitudeStep = (SAN_FRAN_LONGITUDE_MAX - SAN_FRAN_LONGITUDE_MIN) / TEST_GRID_WIDTH;
+
+		CGFloat latitudeStep = approximateLatitudeChange / TEST_GRID_WIDTH;
+		CGFloat longitudeStep = approximateLongitudeChange / TEST_GRID_WIDTH;
+		
+		CGFloat startLat = coordinate.latitude - approximateLatitudeChange / 2;
+		CGFloat startLong = coordinate.longitude - approximateLongitudeChange / 2;
 		
 		for (int i=0; i<TEST_GRID_WIDTH; i++)
 		{
 			for (int j=0; j<TEST_GRID_WIDTH; j++)
 			{
-			// Create the containing object
+				// Create the containing object
 				GeofenceLocation *newLocation = [[GeofenceLocation alloc] init];
 				
 				CLLocationCoordinate2D location;
-				location.latitude = SAN_FRAN_LATITUDE_MIN + i*latitudeStep;
-				location.longitude = SAN_FRAN_LONGITUDE_MIN + j*longitudeStep;
+				location.latitude = startLat + i*latitudeStep;
+				location.longitude = startLong + j*longitudeStep;
 				newLocation.location = location;
 				
 				newLocation.radius = TEST_RADIUS;
 				
 				newLocation.geofenceName = [NSString stringWithFormat:@"Location %i.%i", i, j];
-				
-				newLocation.peopleCount = 10;				
-				newLocation.rating = fmodf(rand(), 100) / 100.0;
 				
 				[places addObject:newLocation];
 			}
@@ -146,35 +153,52 @@
     }
 }
 
-+ (void)getGoogleSearchResultsForUser:(NSString *)userId atLocation:(CLLocation *)location withName:(NSString *)name withType:(NSString *)type success:(void (^)(NSArray *))success
++ (void)getGoogleSearchResultsForUser:(NSString *)userId atLocation:(CLLocationCoordinate2D)location withName:(NSString *)name withType:(NSString *)type success:(void (^)(NSArray *))success failure:(void (^)(void))failure
 {
 	NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-	[dictionary setObject:[NSString stringWithFormat:@"%f",location.coordinate.latitude] forKey:@"latitude"];
-	[dictionary setObject:[NSString stringWithFormat:@"%f",location.coordinate.longitude] forKey:@"longitude"];
+	[dictionary setObject:[NSString stringWithFormat:@"%f",location.latitude] forKey:@"latitude"];
+	[dictionary setObject:[NSString stringWithFormat:@"%f",location.longitude] forKey:@"longitude"];
 	
 	[dictionary setObject:name ? name : @"" forKey:@"name"];
 	
 	[dictionary setObject:type ? type : @"" forKey:@"type"];
-	if (!DEBUG_MODE)
+	if (!userId)
 	{
-	[ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"google_locations/%@.json",@"fbid"] httpMethod:@"POST" postPrefixString:@"location_google=" dataObj:dictionary success:^(id results)
+		// Should never happen but if it does just break out
+		return;
+	}
+	[ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"google_locations/%@.json",userId] httpMethod:@"POST" postPrefixString:@"location_google=" dataObj:dictionary success:^(id results)
 	 {
 		 // Here we must build the Geofence objects from the returned dictionary
-		 NSMutableArray *resultsArray;
+		 NSMutableArray *resultsArray = [NSMutableArray array];
 		 for (NSDictionary *resultDictionary in results)
 		 {
+			 
 			 RadiiResultDTO *result = [[RadiiResultDTO alloc] init];
-//			 result.title = resultDictionary objectForKey:
+			 result.businessTitle = [resultDictionary objectForKey:BUSINESS_TITLE_KEY];
+			 
+			 NSNumber *rating = [resultDictionary objectForKey:RATING_KEY];
+			 result.rating = rating ? [rating floatValue] : 0;
+			 
+			 NSString *peopleCount = [resultDictionary objectForKey:PEOPLE_COUNT_KEY];
+			 result.peopleCount = peopleCount ? [peopleCount floatValue] : 0;
+			 
+			 NSString *description = [resultDictionary objectForKey:DESCRIPTION_KEY];
+			 result.details = description;
+			 
+			 CLLocationCoordinate2D location;
+			 NSNumber *longitude = [resultDictionary objectForKey:@"longitude"];
+			 location.longitude = [longitude floatValue];
+			 
+			 NSNumber *latitude = [resultDictionary objectForKey:@"latitude"];
+			 location.latitude = [latitude floatValue];
+			 result.searchLocation = location;
+			 
+			 [resultsArray addObject:result];
 		 }
 		 
-		 success(results);
+		 success(resultsArray);
 	 }];
-	}
-	else
-	{
-//		RadiiResultDTO *result = [[RadiiResultDTO alloc] init];
-//		result.businessTitle = @"
-	}
 }
 
 #pragma mark -
@@ -228,7 +252,7 @@
     
     // Make request to server    
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-//        NSLog(@"ServiceAdapter.callService: Received type=%@, response=%@", [JSON class], JSON);
+		//        NSLog(@"ServiceAdapter.callService: Received type=%@, response=%@", [JSON class], JSON);
         success(JSON);
     } failure:^(NSURLRequest *request , NSHTTPURLResponse *response , NSError *error , id JSON ) {
         NSString *errorMsg = [NSString stringWithFormat:@"ServiceAdapter.callService error: %@", error];
@@ -285,7 +309,7 @@
                 NSLog(@"testService: uploadPointsOfInterest, resp=%@", resp);
                 
                 
-                [ServiceAdapter getGeofencesForUser:userId atLocation:currentPoint success:^(id resp) {
+                [ServiceAdapter getGeofencesForUser:userId atLocation:currentPoint radius:5.0 success:^(id resp) {
                     NSLog(@"testService: getGeofencesForUser: %@", resp);
                 }];
             }];

@@ -7,11 +7,10 @@
 //
 
 #import "RadiiResultDTO.h"
-#import "GeofenceLocation.h"
 
 @implementation RadiiResultDTO
 @synthesize businessTitle = _businessTitle;
-@synthesize description = _description;
+@synthesize details = _details;
 
 @synthesize rating = _rating;
 @synthesize peopleCount = _peopleCount;
@@ -22,6 +21,11 @@
 - (CLLocationCoordinate2D)coordinate
 {
 	return _searchLocation;
+}
+
+- (NSString *)description
+{
+	return [NSString stringWithFormat:@"%@, %@. %0.2f %i people %@ interests (%f,%f)", _businessTitle, _details, _rating, _peopleCount, _relatedInterests, _searchLocation.latitude, _searchLocation.longitude];
 }
 
 @end

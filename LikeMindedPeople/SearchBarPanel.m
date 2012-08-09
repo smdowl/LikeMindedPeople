@@ -88,7 +88,7 @@
 		if (_selectedIndex != 0)
 		{
 			NSString *searchKey = [_searchKeys objectAtIndex:_selectedIndex];
-			[_delegate beginSearchForPlaces:searchKey];
+			[_delegate beginSearchForPlacesWithName:nil type:searchKey];
 		}
 	}
 }
@@ -113,17 +113,23 @@
 	
 	// TODO: One set of these button images should be different. I'm thinking darker for highlighted?
 	// When a selected button is selected it has another image
-	[_searchButton setImage:[UIImage imageNamed:@"magnifyingactive.png"] forState:UIControlStateHighlighted];
-	[_barButton setImage:[UIImage imageNamed:@"barsactive.jpg"] forState:UIControlStateHighlighted];
-	[_cafeButton setImage:[UIImage imageNamed:@"cafeactive.jpg"] forState:UIControlStateHighlighted];
-	[_clubButton setImage:[UIImage imageNamed:@"clubsactive.jpg"] forState:UIControlStateHighlighted];
-	[_foodButton setImage:[UIImage imageNamed:@"foodactive.jpg"] forState:UIControlStateHighlighted];
+	[_searchButton setImage:[UIImage imageNamed:@"searchbtn.png"] forState:UIControlStateNormal];
+	[_barButton setBackgroundImage:[UIImage imageNamed:@"barsbtn.png"] forState:UIControlStateNormal];
+	[_cafeButton setImage:[UIImage imageNamed:@"cafebtn.png"] forState:UIControlStateNormal];
+	[_clubButton setImage:[UIImage imageNamed:@"clubsbtn.png"] forState:UIControlStateNormal];
+	[_foodButton setImage:[UIImage imageNamed:@"foodbtn.png"] forState:UIControlStateNormal];
+	
+	[_searchButton setImage:[UIImage imageNamed:@"searchbtn2.png"] forState:UIControlStateHighlighted];
+	[_barButton setImage:[UIImage imageNamed:@"barsbtn2.png"] forState:UIControlStateHighlighted];
+	[_cafeButton setImage:[UIImage imageNamed:@"cafebtn2.png"] forState:UIControlStateHighlighted];
+	[_clubButton setImage:[UIImage imageNamed:@"clubsbtn2.png"] forState:UIControlStateHighlighted];
+	[_foodButton setImage:[UIImage imageNamed:@"foodbtn2.png"] forState:UIControlStateHighlighted];
 
-	[_searchButton setImage:[UIImage imageNamed:@"magnifyingactive.png"] forState:UIControlStateDisabled];
-	[_barButton setImage:[UIImage imageNamed:@"barsactive.jpg"] forState:UIControlStateDisabled];
-	[_cafeButton setImage:[UIImage imageNamed:@"cafeactive.jpg"] forState:UIControlStateDisabled];
-	[_clubButton setImage:[UIImage imageNamed:@"clubsactive.jpg"] forState:UIControlStateDisabled];
-	[_foodButton setImage:[UIImage imageNamed:@"foodactive.jpg"] forState:UIControlStateDisabled];
+	[_searchButton setImage:[UIImage imageNamed:@"searchbtn3.png"] forState:UIControlStateDisabled];
+	[_barButton setImage:[UIImage imageNamed:@"barsbtn2.png"] forState:UIControlStateDisabled];
+	[_cafeButton setImage:[UIImage imageNamed:@"cafebtn3.png"] forState:UIControlStateDisabled];
+	[_clubButton setImage:[UIImage imageNamed:@"clubsbtn3.png"] forState:UIControlStateDisabled];
+	[_foodButton setImage:[UIImage imageNamed:@"foodbtn3.png"] forState:UIControlStateDisabled];
 	
 	_searchKeys = [NSArray arrayWithObjects:@"", @"bar", @"cafe", @"club", @"food", nil];
 	
@@ -141,7 +147,7 @@
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
 	NSString *searchText = textField.text;
-	[_delegate beginSearchForPlaces:searchText];
+	[_delegate beginSearchForPlacesWithName:searchText type:nil];
 	
 	[textField resignFirstResponder];
 	

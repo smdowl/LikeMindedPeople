@@ -45,11 +45,11 @@
 
 @property (nonatomic, readonly) NSArray *personalPointsOfInterest;
 @property (nonatomic, readonly) NSArray *privateFences;
+@property (nonatomic, readonly) GeofenceLocation *geofenceRefreshLocation;
 
 + (DataModel *)sharedInstance;
 - (void)getInfo;
 - (void)runStartUpSequence;
-- (GeofenceLocation *)getInfoForPin:(CLLocationCoordinate2D)pin;
 
 - (NSArray *)getAllGeofenceRegions;
 

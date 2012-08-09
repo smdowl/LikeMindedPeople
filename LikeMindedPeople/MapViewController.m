@@ -8,14 +8,15 @@
 
 #import "MapViewController.h"
 #import "DataModel.h"
+#import "ServiceAdapter.h"
 #import "SearchView.h"
 #import "SearchBarPanel.h"
 #import "TDBadgedCell.h"
-#import "GeofenceLocation.h"
 #import "SearchBar.h"
 #import "RAdiiResultDTO.h"
 #import "DetailView.h"
 #import "SideBar.h"
+#import "GeofenceRegion.h"
 
 #define SHOW_GEOFENCE_LOCATIONS NO
 #define RESIZE_BUTTTON_PADDING 5
@@ -69,9 +70,7 @@
 	
 	[_keyboardCancelButton addTarget:self action:@selector(_hideKeyboard) forControlEvents:UIControlEventTouchUpInside];
 	[_keyboardCancelButton removeFromSuperview];
-	
-	_searchConnection = [[GoogleLocalConnection alloc] initWithDelegate:self];
-	
+		
 	_searchView.searchResultsView.delegate = self;
 	_searchView.searchResultsView.dataSource = self;
 	
@@ -157,11 +156,61 @@
 #pragma mark -
 #pragma mark SearchBarPanelDelegate
 
-- (void)beginSearchForPlaces:(NSString *)searchText
+- (void)beginSearchForPlacesWithName:(NSString *)name type:(NSString *)type
 {
-	if (searchText.length)
+	if (name.length || type.length)
 	{
-		[_searchConnection getGoogleObjectsWithQuery:searchText andMapRegion:[_mapView region] andNumberOfResults:20 addressesOnly:YES andReferer:@"http://WWW.radii.com"];    
+//		[_searchConnection getGoogleObjectsWithQuery:searchText andMapRegion:[_mapView region] andNumberOfResults:20 addressesOnly:YES andReferer:@"http://WWW.radii.com"];    
+		[ServiceAdapter getGoogleSearchResultsForUser:@"userId" atLocation:_mapView.centerCoordinate withName:name withType:type success:^(NSArray *results)
+		 {
+			 _searchingView.hidden = YES;
+			 [_indicatorView stopAnimating];
+			 
+			 if ([results count] == 0)
+			 {
+				 [self _removeAllNonUserAnnotations];
+			 }
+			 else 
+			 {				
+				 // Replace all the annotations with new ones
+				 [self _removeAllNonUserAnnotations];
+				 
+				 _searchResults = results;
+				 
+				 // Add the repackaged results as annotations
+				 [_mapView addAnnotations:_searchResults];
+				 
+				 
+				 if (_userLocation)
+				 {
+					 [_mapView addAnnotation:_userLocation];
+				 }
+				 
+				 [_searchView setData:_searchResults];
+			 }
+			 
+#ifdef SHOW_GEOFENCE_LOCATIONS
+			 [_mapView removeOverlays:[_mapView overlays]];
+			 			 
+			 NSArray *allGeofenceRegions = [[DataModel sharedInstance] getAllGeofenceRegions];
+			 [_mapView addOverlays:allGeofenceRegions];
+			 
+			 _refreshLocation = [[DataModel sharedInstance] geofenceRefreshLocation];
+			 [_mapView addOverlay:_refreshLocation];
+#endif
+		 }
+		 failure:^()
+		 {
+			 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error finding place - Try again" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+			 [alert show];
+			 
+			 _searchingView.hidden = YES;
+			 [_indicatorView stopAnimating];
+			 
+			 // Deselect whatever row was selected when the error occured
+			 [_searchView.searchBarPanel selectButton:-1];
+		 }
+		 ];
 		_searchingView.hidden = NO;
 		[_indicatorView startAnimating];
 	}
@@ -178,79 +227,6 @@
 }
 
 #pragma mark -
-#pragma mark GoogleConnectionDelegate
-
-
-- (void) googleLocalConnection:(GoogleLocalConnection *)conn didFinishLoadingWithGoogleLocalObjects:(NSMutableArray *)objects andViewPort:(MKCoordinateRegion)region
-{
-	_searchingView.hidden = YES;
-	[_indicatorView stopAnimating];
-	
-	if ([objects count] == 0)
-	{
-		// No results found
-	}
-	else 
-	{				
-		// Replace all the annotations with new ones
-		[self _removeAllNonUserAnnotations];
-		
-		NSMutableArray *resultsArray = [NSMutableArray array];
-		
-		// Store the results as RadiiResultsDTOs
-		for (GoogleLocalObject *googleObject in objects)
-		{
-			RadiiResultDTO *result = [[RadiiResultDTO alloc] init];
-			result.businessTitle = googleObject.title;
-			result.description = googleObject.subtitle;
-			
-			GeofenceLocation *containingGeofence = [[DataModel sharedInstance] getInfoForPin:[googleObject coordinate]];
-			double rating = containingGeofence ? [containingGeofence rating] : 0.0;
-			
-			// TODO: cut out these iVars
-			result.rating = rating;
-			
-			result.peopleCount = 0;
-			result.relatedInterests = nil;
-			result.searchLocation = googleObject.coordinate;
-			
-			[resultsArray addObject:result];
-		}
-		
-		_searchResults = [NSArray arrayWithArray:resultsArray];
-		
-		// Add the repackaged results as annotations
-		[_mapView addAnnotations:_searchResults];
-		
-		
-		if (_userLocation)
-		{
-			[_mapView addAnnotation:_userLocation];
-		}
-		
-		[_searchView setData:_searchResults];
-	}
-	
-	if (SHOW_GEOFENCE_LOCATIONS)
-	{
-		NSArray *allGeofenceRegions = [[DataModel sharedInstance] getAllGeofenceRegions];
-		[_mapView addAnnotations:allGeofenceRegions];
-	}
-}
-
-- (void) googleLocalConnection:(GoogleLocalConnection *)conn didFailWithError:(NSError *)error
-{
-	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error finding place - Try again" message:[error localizedDescription] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
-    [alert show];
-	
-	_searchingView.hidden = YES;
-	[_indicatorView stopAnimating];
-	
-	// Deselect whatever row was selected when the error occured
-	[_searchView.searchBarPanel selectButton:-1];
-}
-
-#pragma mark -
 #pragma mark MKMapViewDelegate
 
 - (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation
@@ -263,7 +239,7 @@
     double scalingFactor = ABS( (cos(2 * M_PI * newLocation.coordinate.latitude / 360.0) ));
     
 	// Specify the amound of miles we want to see around our location
-	double miles = 2.0;
+	double miles = 0.5;
 	
 	MKCoordinateRegion region;
     region.span.latitudeDelta = miles/69.0;
@@ -306,6 +282,56 @@
 	[_searchView.searchResultsView deselectRowAtIndexPath:[_searchView.searchResultsView indexPathForSelectedRow] animated:YES];
 }
 
+- (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation
+{
+	if ([annotation isKindOfClass:[RadiiResultDTO class]])
+	{
+		RadiiResultDTO *radiiResult = (RadiiResultDTO *)annotation;
+		MKAnnotationView *annotationView = [_mapView dequeueReusableAnnotationViewWithIdentifier:@"radiiPin"];
+		
+		if (!annotationView)
+		{
+			annotationView = [[MKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"radiiPin"];
+		}
+		else 
+		{
+			annotationView.annotation = annotation;
+		}
+		
+		// TODO: use the type of the result to decide on the image for the annotationView
+		annotationView.image = [UIImage imageNamed:@"bars_pin.png"];
+//		annotationView.centerOffset = CGPointMake(0,-annotationView.image.size.height);
+		
+		return annotationView;
+	}
+	else if (annotation == mapView.userLocation)
+	{
+		return nil;
+	}
+	else
+	{
+		return nil;
+	}
+
+}
+
+- (MKOverlayView *)mapView:(MKMapView *)mapView viewForOverlay:(id<MKOverlay>)overlay
+{
+	MKCircleView *region = [[MKCircleView alloc] initWithOverlay:overlay];
+	if (overlay == _refreshLocation)
+	{
+		region.fillColor = [UIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:0.5];
+//		region.fillColor = [UIColor clearColor];
+	}
+	else
+	{
+//	GeofenceRegion *region = [[GeofenceRegion alloc] initWithOverlay:overlay];
+	region.fillColor = [UIColor purpleColor];
+//	region.alpha = 0.5;
+	}
+	return region;
+}
+
 #pragma mark -
 #pragma mark UITableViewDelegate
 
@@ -318,17 +344,17 @@
 		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 		cell.textLabel.textColor = [UIColor colorWithRed:89/255 green:89/255 blue:89/255 alpha:1.0];
 		cell.textLabel.font = [UIFont fontWithName:@"Helvetica" size:12];  
-	}	
+	}
 	
 	RadiiResultDTO *radiiResult = [_searchResults objectAtIndex:indexPath.row];
 	
 	cell.textLabel.text = radiiResult.businessTitle;
-	cell.detailTextLabel.text = radiiResult.description;
+	cell.detailTextLabel.text = radiiResult.details;
 	
 	NSString *badgeString = [NSString stringWithFormat:@"%.0f%@",radiiResult.rating*100,@"%"];    
 	
     cell.badgeString = badgeString;
-    cell.badgeColor = [UIColor colorWithRed:radiiResult.rating green:0 blue:0 alpha:1.0];
+    cell.badgeColor = [UIColor colorWithRed:0 green:0.6796875 blue:0.93359375 alpha:radiiResult.rating];
 
     return cell;
 }
@@ -590,6 +616,18 @@
 {
 	[_searchView.searchBarPanel.searchBar resignFirstResponder];
 	[_searchView.searchBarPanel selectButton:-1];
+}
+
+// Test methods
+- (IBAction)printCurrentCenter
+{
+	CLLocationCoordinate2D position = _mapView.centerCoordinate;
+	NSLog(@"%f %f", position.latitude, position.longitude);
+}
+
+- (IBAction)currentLocation
+{
+	NSLog(@"Current location: %@", [[DataModel sharedInstance] currentLocation]);
 }
 
 - (void)dealloc

@@ -28,7 +28,7 @@
 	_data = data;
 	
 	_titleLabel.text = data.businessTitle;
-	_detailsView.text = data.description;
+	_detailsView.text = data.details;
 	_presentUsersLabel.text = [NSString stringWithFormat:@"%i", data.peopleCount];
 	_ratingLabel.text = [NSString stringWithFormat:@"%0.2f%", 100*data.rating];
 	

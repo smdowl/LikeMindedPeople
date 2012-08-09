@@ -10,7 +10,7 @@
 
 @protocol SearchBarPanelDelegate <NSObject>
 
-- (void)beginSearchForPlaces:(NSString *)searchText;
+- (void)beginSearchForPlacesWithName:(NSString *)name type:(NSString *)type;
 - (void)cancelSearch;
 
 @end

@@ -85,12 +85,21 @@
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
 	// Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+	
 }
 
 - (void)applicationDidBecomeActive:(UIApplication *)application
 {	
-	// Make the call that updates all the internal variables for the model
-	[[DataModel sharedInstance] runStartUpSequence];	
+	// If the gimbal SDK is enabled
+	[[[DataModel sharedInstance] coreConnector] checkStatusAndOnEnabled:^(QLContextConnectorPermissions *permissions)
+	 {
+		 // Make the call that updates all the internal variables for the model
+		 [[DataModel sharedInstance] runStartUpSequence];	 
+	 }
+															   disabled:^(NSError *error)
+	 {
+		 
+	 }];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
@@ -114,7 +123,7 @@
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults setObject:[_facebook accessToken] forKey:@"FBAccessTokenKey"];
     [defaults setObject:[_facebook expirationDate] forKey:@"FBExpirationDateKey"];
-    [defaults synchronize];
+    [defaults synchronize]; 
     self.window.rootViewController = _mapViewController;
     
 }

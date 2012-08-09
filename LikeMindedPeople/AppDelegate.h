@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ViewController.h"
 #import "FBConnect.h"
 #import "Facebook+iCatalog.h"
 #import "DataModel.h"

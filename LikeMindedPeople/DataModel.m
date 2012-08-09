@@ -19,6 +19,10 @@
 #import <ContextCore/QLContextCoreError.h>
 #import "ServiceAdapter.h"
 #import "GeofenceLocation.h"
+#import "RadiiResultDTO.h"
+
+#define REFRESH_RADIUS 1000
+#define GEOFENCE_DOWNLOAD_RADIUS 3000
 
 // TODO: work out behaiour when there is no internet. As it is now the request will just time out after about 10 seconds
 // TODO: at the moment loading and unloading private locations takes a long time due to all the server interaction that is required. Try and find a faster way.
@@ -34,8 +38,10 @@
 - (void)_updateGeofenceRefreshLocation;
 
 // Persistent storage methods
+- (NSString *)_baseStoragePath;
 - (NSString *)_locationsStoragePath;
-
+- (NSString *)_userIdStoragePath;
+- (void)_checkCurrentLocation;
 @end
 
 @implementation DataModel
@@ -50,6 +56,7 @@ static DataModel *_sharedInstance = nil;
 
 @synthesize personalPointsOfInterest = _personalPointsOfInterest;
 @synthesize privateFences = _privateFences;
+@synthesize geofenceRefreshLocation = _geofenceRefreshLocation;
 
 #pragma mark -
 #pragma mark Initialization Methods
@@ -94,9 +101,16 @@ static DataModel *_sharedInstance = nil;
 - (void)setup
 {
 	@synchronized(self)
-	{	
-		_privateFences = [NSKeyedUnarchiver unarchiveObjectWithFile:[self _locationsStoragePath]];
+	{			
+		_userId = [NSKeyedUnarchiver unarchiveObjectWithFile:[self _userIdStoragePath]];
+		
+		if (!_privateFences)
+		{
+			_privateFences = [NSKeyedUnarchiver unarchiveObjectWithFile:[self _locationsStoragePath]];
+		}
+		
 		_currentLocation = [NSMutableArray array];
+		_geofenceRefreshLocation = [[GeofenceLocation alloc] init];
 		
 		[_coreConnector checkStatusAndOnEnabled:^(QLContextConnectorPermissions *contextConnectorPermissions) 
 		 {
@@ -124,14 +138,65 @@ static DataModel *_sharedInstance = nil;
 	}
 }
 
+- (void)runStartUpSequence
+{
+	@synchronized(self)
+	{
+		if (_settingUp)
+		{
+			return;
+		}
+		
+		_settingUp = YES;
+		
+		// TODO: Removed some empty server calls to stop traffic. Complete them
+		// Update the current profile
+//		PRProfile *profile = _interestsConnector.interests;
+		//	NSLog(@"%@ %@", profile, [profile.attrs.allValues objectAtIndex:0]);
+		
+//		NSArray *profileArray = [self _flattenProfile:profile];
+		//		[ServiceAdapter uploadUserProfile:profileArray forUser:_userId success:^(id result)
+		//		 {
+		//			 
+		//		 }];
+		
+		// Add the new pois to the database
+		//		[self _uploadPersonalPointsOfInterest];
+		
+		
+		// Get the current location to filter the results from the server
+		CLLocationManager *manager = [[CLLocationManager alloc] init];
+		CLLocation *location = [manager location];
+		
+		//		[self _replacePrivateGeofencesWithFences:[NSMutableArray arrayWithObject:_geofenceRefreshLocation]];
+		
+		//	if(location) {
+		[ServiceAdapter getGeofencesForUser:_userId atLocation:location radius:GEOFENCE_DOWNLOAD_RADIUS success:^(NSArray *geofences)
+		 {
+			 [self _replacePrivateGeofencesWithFences:[NSMutableArray arrayWithArray:geofences]];
+		 }];
+		//    }
+		
+		//		[ServiceAdapter getGoogleSearchResultsForUser:_userId atLocation:location withName:nil withType:@"food" success:^(NSArray *results)
+		//		 {
+		//			 for (RadiiResultDTO *result in results)
+		//			 {
+		//				 NSLog(@"%@",result);
+		//			 }
+		//		 }];
+		
+		[self _updateGeofenceRefreshLocation];
+	}
+}
+
 // Set the ID that will be used in all server calls
 - (void)setUserId:(NSString *)userId
 {
 	@synchronized(self)
 	{
 		_userId = userId;
-		
-		[self performSelector:@selector(runStartUpSequence) withObject:nil afterDelay:0.1];
+		[NSKeyedArchiver archiveRootObject:_userId toFile:[self _userIdStoragePath]];
+		[self runStartUpSequence];
 	}
 }
 
@@ -160,23 +225,19 @@ static DataModel *_sharedInstance = nil;
 		return nil;
 }
 
-- (GeofenceLocation *)getInfoForPin:(CLLocationCoordinate2D)pin
-{
-	// Try to find the description that matches
-	for (GeofenceLocation *location in _privateFences)
-	{
-		if ([location containsPin:pin])
-			return location;
-	}
-	
-	// Otherwise return nil which is interpreted as zero
-	
-	return nil;
-}
-
 - (NSArray *)getAllGeofenceRegions
 {
 	return _privateFences;
+}
+
+- (GeofenceLocation *)geofenceRefreshLocation
+{
+	if ([_geofenceRefreshLocation isEmpty])
+	{
+		[self _updateGeofenceRefreshLocation];	
+	}
+
+	return _geofenceRefreshLocation;
 }
 
 - (void)close
@@ -185,7 +246,7 @@ static DataModel *_sharedInstance = nil;
 	_placeConnector = nil;
 	
 	[NSKeyedArchiver archiveRootObject:_privateFences toFile:[self _locationsStoragePath]];
-	
+	[NSKeyedArchiver archiveRootObject:_userId toFile:[self _userIdStoragePath]];
 }
 
 #pragma mark -
@@ -225,7 +286,7 @@ static DataModel *_sharedInstance = nil;
 			 {
 				 case QLPlaceEventTypeAt:				
 					 // Only add this place to the current location array if it isn't the flag for the geofence updates
-					 if (![currentLocation isEqual:_geofenceRefreshLocation])
+					 if (![currentLocation isEqual:_geofenceRefreshLocation] && ![_currentLocation containsObject:currentLocation])
 					 {
 						 [strongSelf -> _currentLocation insertObject:currentLocation atIndex:0];
 					 }
@@ -233,14 +294,20 @@ static DataModel *_sharedInstance = nil;
 					 break;
 					 
 				 case QLPlaceEventTypeLeft:
+					 // If you just left the refresh boundary get a new one as well as all the nearby geofences
 					 if ([currentLocation isEqual:_geofenceRefreshLocation])
 					 {
-						 NSLog(@"Create new Geofence for refresh and break");
 						 [self _updateGeofenceRefreshLocation];
+						 
+						 CLLocationManager *manager = [[CLLocationManager alloc] init];
+						 CLLocation *location = [manager location];
+						 [ServiceAdapter getGeofencesForUser:_userId atLocation:location radius:GEOFENCE_DOWNLOAD_RADIUS success:^(NSArray *geofences)
+						  {
+							  [self _replacePrivateGeofencesWithFences:[NSMutableArray arrayWithArray:geofences]];
+						  }];
 					 }
 					 else
 					 {
-						 
 						 [strongSelf -> _currentLocation removeObjectAtIndex:0];
 						 if ([strongSelf -> _currentLocation count])
 						 {
@@ -271,79 +338,13 @@ static DataModel *_sharedInstance = nil;
     NSLog(@"Interests permission did change to: %d", interestsPermission);
 }
 
-- (void)runStartUpSequence
-{
-	@synchronized(self)
-	{
-		if (_settingUp)
-		{
-			return;
-		}
-		
-		_settingUp = YES;
-		
-		// TODO: Removed some empty server calls to stop traffic. Complete them
-		// Update the current profile
-		PRProfile *profile = _interestsConnector.interests;
-		//	NSLog(@"%@ %@", profile, [profile.attrs.allValues objectAtIndex:0]);
-		
-		NSArray *profileArray = [self _flattenProfile:profile];
-//		[ServiceAdapter uploadUserProfile:profileArray forUser:_userId success:^(id result)
-//		 {
-//			 
-//		 }];
-		
-		// Add the new pois to the database
-//		[self _uploadPersonalPointsOfInterest];
-		
-		
-		// Get the current location to filter the results from the server
-		CLLocationManager *manager = [[CLLocationManager alloc] init];
-		CLLocation *location = [manager location];
-		
-		// TODO: decide if this actually does anything. Need to stop the location being updated constantly
-		[manager stopUpdatingLocation];
-		[manager stopUpdatingHeading];
-		manager = nil;
-		
-		// Create a place around the current location to be used to trigger the refresh
-		QLPlace *geofencePlace = [[QLPlace alloc] init];
-		QLGeoFenceCircle *circle = [[QLGeoFenceCircle alloc] init];
-		circle.latitude = location.coordinate.latitude;
-		circle.longitude = location.coordinate.longitude;
-		circle.radius = 1000;
-		geofencePlace.name = @"Refresh boundary";
-		geofencePlace.geoFence = circle;
-		
-		_geofenceRefreshLocation = [[GeofenceLocation alloc] initWithPlace:geofencePlace];
-		
-		[self _replacePrivateGeofencesWithFences:[NSMutableArray arrayWithObject:_geofenceRefreshLocation]];
-		
-		//	if(location) {
-//		[ServiceAdapter getGeofencesForUser:_userId atLocation:location success:^(NSArray *geofences)
-//		 {
-//			 [self _replacePrivateGeofencesWithFences:[NSMutableArray arrayWithArray:geofences]];
-//		 }];
-		//    }
-		
-		[ServiceAdapter getGoogleSearchResultsForUser:_userId atLocation:location withName:nil withType:@"food" success:^(NSArray *results)
-		 {
-			 for (NSObject *obj in results)
-			 {
-				 NSDictionary *result = (NSDictionary *)obj;
-				 NSLog(@"%@",result);
-			 }
-		 }];
-	}
-}
-
 #pragma mark -
 #pragma mark QLContextCorePermissionsDelegate
 - (void)subscriptionPermissionDidChange:(BOOL)subscriptionPermission
 {
     if (subscriptionPermission)
     {
-		[self setup];
+		[self runStartUpSequence];
     }
     else
     {
@@ -382,7 +383,6 @@ static DataModel *_sharedInstance = nil;
 	{
 		[_placeConnector allPlacesAndOnSuccess:^(NSArray *allPlaces)
 		 {
-//			 _privateFences = [NSMutableArray array];
 			 NSMutableArray *locations = [NSMutableArray array];
 			 
 			 for (QLPlace *place in allPlaces)
@@ -395,6 +395,7 @@ static DataModel *_sharedInstance = nil;
 		 } failure:^(NSError *err)
 		 {
 			 NSLog(@"%@", err);
+			 onComplete(nil);
 		 }];
 	}
 }
@@ -409,9 +410,8 @@ static DataModel *_sharedInstance = nil;
 		[_placeConnector allPlacesAndOnSuccess:^(NSArray *allPlaces)
 		 {
 			 DataModel *strongSelf = weakSelf;
-			 
-			 if (!strongSelf)
 			 {
+			 if (!strongSelf)
 				 return;
 			 }
 			 			 
@@ -423,6 +423,8 @@ static DataModel *_sharedInstance = nil;
 				 [allLocations addObject:newLocation];
 			 }
 			 
+			 _privateFences = [NSMutableArray arrayWithArray:allLocations];
+			 
 			 // Remove any from our local version that are not in the new list
 			 NSMutableArray *removedLocations = [NSMutableArray array];
 			 for (GeofenceLocation *location in allLocations)
@@ -433,6 +435,16 @@ static DataModel *_sharedInstance = nil;
 				 }
 			 }		 
 			 
+			 // Now work out what additional fences need to be added
+			 NSMutableArray *addedFences = [NSMutableArray array];
+			 for (GeofenceLocation *location in geofenceLocations)
+			 {
+				 if (![allLocations containsObject:location])
+				 {
+					 [addedFences addObject:location];
+				 }
+			 }
+			 		 
 			 // Only remove fences if there are some to remove
 			 if ([removedLocations count] > 0)
 			 {
@@ -441,17 +453,7 @@ static DataModel *_sharedInstance = nil;
 					  NSLog(@"Finished deleting");
 					  
 					  __weak DataModel *weakWeakSelf = strongSelf;
-					  
-					  // Now work out what additional fences need to be added
-					  NSMutableArray *addedFences = [NSMutableArray array];
-					  for (GeofenceLocation *location in geofenceLocations)
-					  {
-						  if (![strongSelf->_privateFences containsObject:location])
-						  {
-							  [addedFences addObject:location];
-						  }
-					  }
-					  
+					  					  
 					  [strongSelf _addAllFences:addedFences onCompletion:^()
 					   {
 						   DataModel *strongStrongSelf = weakWeakSelf;
@@ -461,15 +463,17 @@ static DataModel *_sharedInstance = nil;
 							   return;
 						   }
 						   strongStrongSelf->_settingUp = NO; 
+						   
+						   [self _checkCurrentLocation];
 						   NSLog(@"Finished!");
 					   }];
 				  }];
 			 }
-			 else
+			 else if (addedFences.count > 0)
 			 {	 
 				 __weak DataModel *weakWeakSelf = strongSelf;
 				 // If there aren't any to delete it will be a simple case of just adding all the ones we need
-				 [strongSelf _addAllFences:geofenceLocations onCompletion:^()
+				 [strongSelf _addAllFences:addedFences onCompletion:^()
 				  {
 					  NSLog(@"done");
 					  DataModel *strongStrongSelf = weakWeakSelf;
@@ -480,7 +484,13 @@ static DataModel *_sharedInstance = nil;
 					  }
 					  
 					  strongStrongSelf->_settingUp = NO;
+					  
+					  [self _checkCurrentLocation];
 				  }];
+			 }
+			 else
+			 {
+				 [self _checkCurrentLocation];
 			 }
 			 
 		 } failure:^(NSError *err)
@@ -494,28 +504,94 @@ static DataModel *_sharedInstance = nil;
 {
 	@synchronized(self)
 	{
-		// Dot the switch
+				
+		__weak DataModel *weakSelf = self;
+		
+		void (^createNewPlace)(void) = ^()
+		{
+			// Refresh the geofence to ensure if something doesn't work it still appears empty
+			[_geofenceRefreshLocation clear];
+			
+			CLLocationManager *manager = [[CLLocationManager alloc] init];
+			CLLocation *location = [manager location];
+			
+			QLPlace *geofencePlace = [[QLPlace alloc] init];
+			QLGeoFenceCircle *circle = [[QLGeoFenceCircle alloc] init];
+			circle.latitude = location.coordinate.latitude;
+			circle.longitude = location.coordinate.longitude;
+			circle.radius = REFRESH_RADIUS;
+			geofencePlace.name = @"Refresh boundary";
+			geofencePlace.geoFence = circle;
+			
+			[_placeConnector createPlace:geofencePlace success:^(QLPlace *place)
+			 {
+				 DataModel *strongSelf = weakSelf;
+				 
+				 if (strongSelf)
+				 {
+					 strongSelf -> _geofenceRefreshLocation = [[GeofenceLocation alloc] initWithPlace:place];
+				 }
+			 }
+								 failure:^(NSError *err)
+			 {
+				 NSLog(@"createPlace: %@", [err localizedDescription]);
+			 }];
+		};
+		
+		// If some already exist remove them first
+		if (![_geofenceRefreshLocation isEmpty])
+		{
+			[_placeConnector deletePlaceWithId:_geofenceRefreshLocation.placeId 
+									   success:^()
+			 {
+				 createNewPlace();	 
+			 }
+									   failure:^(NSError *err)
+			 {
+				 NSLog(@"deletePlace: %@", [err localizedDescription]);			 
+				 createNewPlace();
+			 }];
+		}
+		else
+		{ // Otherwise just add the new ones
+			createNewPlace();
+		}
 	}
 }
 
 // Go through each of the fences in the array and try to create them. Only add the next one after a successful add
 // They are only added to the iVar if the addition was successful so take care with it
 - (void)_addAllFences:(NSMutableArray *)geofenceLocations onCompletion:(void (^)(void))finished
-{
-//	if (_privateFences == nil)
-//	{
-		_privateFences = [NSMutableArray array];
-//	}
-	
+{	
+	if (geofenceLocations.count == 0)
+	{
+		finished();
+		return;
+	}
+			
 	GeofenceLocation *geofenceLocation = [geofenceLocations objectAtIndex:0];
 	QLPlace *fence = [geofenceLocation place];
-	
+		
 	[_placeConnector createPlace:fence
 						 success:^(QLPlace *newFence)
 	 {
 		 [geofenceLocations removeObject:geofenceLocation];
 		 
-		 [_privateFences addObject:geofenceLocation];
+		 GeofenceLocation *newLocation = [[GeofenceLocation alloc] initWithPlace:newFence];
+		 
+		 if (![newLocation isEqual:_geofenceRefreshLocation])		 
+			 [_privateFences addObject:newLocation];
+		 
+		 if (geofenceLocations.count == 0)
+			 finished();
+		 else
+			 [self _addAllFences:geofenceLocations onCompletion:finished];
+		 
+	 } 
+						 failure:^(NSError *err)
+	 {
+		 // If adding it failed then just remove it from the list to add and carry on
+		 [geofenceLocations removeObject:geofenceLocation];
 		 
 		 if (geofenceLocations.count == 0)
 		 {
@@ -525,9 +601,7 @@ static DataModel *_sharedInstance = nil;
 		 {
 			 [self _addAllFences:geofenceLocations onCompletion:finished];
 		 }
-	 } 
-						 failure:^(NSError *err)
-	 {
+		 
 		 NSLog(@"Error: %@", err);
 	 }];
 }
@@ -541,7 +615,7 @@ static DataModel *_sharedInstance = nil;
 							   success:^(void)
 	 {
 		 [geofenceLocations removeObject:fence];
-		 
+		 [_privateFences removeObject:fence];
 		 // If the stack is empty then return completed
 		 if ([geofenceLocations count] == 0)
 		 {
@@ -594,12 +668,37 @@ static DataModel *_sharedInstance = nil;
 	return profileArray;
 }
 
-- (NSString *)_locationsStoragePath
+- (void)_checkCurrentLocation
+{
+	CLLocationManager *locationManager = [[CLLocationManager alloc] init];
+	CLLocation *location = locationManager.location;
+	for (GeofenceLocation *fence in _privateFences)
+	{
+		if ([fence containsPin:location.coordinate] && ![_currentLocation containsObject:fence])
+		{
+			[_currentLocation addObject:fence];
+		}
+	}
+}
+
+#pragma mark -
+#pragma mark Persistent storgae filepath methods
+
+- (NSString *)_baseStoragePath
 {
 	NSArray *documentsDirectories = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-	NSString *documentDirectory = [documentsDirectories objectAtIndex:0];
 	
-	return [documentDirectory stringByAppendingPathComponent:@"profiles.archive"];
+	return [documentsDirectories objectAtIndex:0];
+}
+
+- (NSString *)_locationsStoragePath
+{
+	return [[self _baseStoragePath] stringByAppendingPathComponent:@"profiles.archive"];
+}
+															  
+- (NSString *)_userIdStoragePath
+{
+	return [[self _baseStoragePath] stringByAppendingPathComponent:@"userId.archive"];	
 }
 
 

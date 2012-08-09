@@ -9,21 +9,22 @@
 #import <Foundation/Foundation.h>
 #import <MapKit/MapKit.h>
 
-@class GeofenceLocation;
 @interface RadiiResultDTO : NSObject <MKAnnotation>
 {
 	NSString *_businessTitle;
-	NSString *_description;
+	NSString *_details;
 	
 	CGFloat _rating;
 	NSUInteger _peopleCount;
 	NSArray *_relatedInterests;
 	
 	CLLocationCoordinate2D _searchLocation;
+	
+	NSUInteger _historicalPeopleCount;
 }
 
 @property (nonatomic,strong) NSString *businessTitle;
-@property (nonatomic,strong) NSString *description;
+@property (nonatomic,strong) NSString *details;
 
 @property (nonatomic) CGFloat rating;
 @property (nonatomic) NSUInteger peopleCount;

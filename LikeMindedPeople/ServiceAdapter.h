@@ -7,8 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <CoreLocation/CoreLocation.h>
 
-@class CLLocation;
 @interface ServiceAdapter : NSObject {
     NSMutableData *responseData;
 }
@@ -17,9 +17,9 @@
 
 + (void)uploadPointsOfInterest:(NSArray *)pointsOfInterest forUser:(NSString *)userId success:(void (^)(id))success;
 
-+ (void)getGeofencesForUser:(NSString *)userId atLocation:(CLLocation *)location success:(void (^)(NSArray *))success;
++ (void)getGeofencesForUser:(NSString *)userId atLocation:(CLLocation *)location radius:(CGFloat)radius success:(void (^)(NSArray *))success;
 
-+ (void)getGoogleSearchResultsForUser:(NSString *)userId atLocation:(CLLocation *)location withName:(NSString *)name withType:(NSString *)type success:(void (^)(NSArray *))success;
++ (void)getGoogleSearchResultsForUser:(NSString *)userId atLocation:(CLLocationCoordinate2D)location withName:(NSString *)name withType:(NSString *)type success:(void (^)(NSArray *))success failure:(void (^)(void))failure;
 
 // Testing methods
 + (void)testService;

@@ -7,11 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <MapKit/MapKit.h>
 #import "SearchBarPanelDelegate.h"
-#import "GoogleLocalConnection.h"
 
-@class DataModel, SearchBarPanel, SearchView, SideBar;
-@interface MapViewController : UIViewController <SearchBarPanelDelegate, GoogleLocalConnectionDelegate, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, MKMapViewDelegate>
+@class DataModel, SearchBarPanel, SearchView, SideBar, GeofenceLocation;
+@interface MapViewController : UIViewController <SearchBarPanelDelegate, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, MKMapViewDelegate>
 {	
 	MKMapView *_mapView;
 	SearchView *_searchView;
@@ -23,7 +23,6 @@
 	UIButton *_keyboardCancelButton;
 	BOOL _isFullScreen;
 	
-	GoogleLocalConnection *_searchConnection;
 	NSArray *_searchResults;
 	
 	MKUserLocation *_userLocation;
@@ -34,6 +33,8 @@
 	
 	SideBar *_leftSideBar;
 	SideBar *_rightSideBar;
+	
+	GeofenceLocation *_refreshLocation;
 	
 	// The button that will be use to remove the slide over view
 	UIButton *_slideInCancelButton;
@@ -53,6 +54,9 @@
 
 - (IBAction)toggleFullScreen:(id)sender;
 
+// Test methods
 - (IBAction)debug:(id)sender;
+- (IBAction)printCurrentCenter;
+- (IBAction)currentLocation;
 
 @end
