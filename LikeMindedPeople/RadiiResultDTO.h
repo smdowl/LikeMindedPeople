@@ -9,10 +9,19 @@
 #import <Foundation/Foundation.h>
 #import <MapKit/MapKit.h>
 
+typedef enum 
+{
+	bar,
+	cafe,
+	club,
+	food
+} ResultType;
+
 @interface RadiiResultDTO : NSObject <MKAnnotation>
 {
 	NSString *_businessTitle;
 	NSString *_details;
+	ResultType _type;
 	
 	CGFloat _rating;
 	NSUInteger _peopleCount;
@@ -23,8 +32,9 @@
 	NSUInteger _historicalPeopleCount;
 }
 
-@property (nonatomic,strong) NSString *businessTitle;
-@property (nonatomic,strong) NSString *details;
+@property (nonatomic, strong) NSString *businessTitle;
+@property (nonatomic, strong) NSString *details;
+@property (nonatomic) ResultType type;
 
 @property (nonatomic) CGFloat rating;
 @property (nonatomic) NSUInteger peopleCount;

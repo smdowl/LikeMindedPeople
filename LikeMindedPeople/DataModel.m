@@ -6,6 +6,10 @@
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
+#ifdef __APPLE__
+#include "TargetConditionals.h"
+#endif
+
 #import "DataModel.h"
 #import <CoreLocation/CoreLocation.h>
 #import <ContextLocation/QLContentDescriptor.h>
@@ -28,14 +32,13 @@
 // TODO: at the moment loading and unloading private locations takes a long time due to all the server interaction that is required. Try and find a faster way.
 
 @interface DataModel()
-- (void)setup;
+- (void)_setup;
 
 - (void)_uploadPersonalPointsOfInterest;
 - (void)_getPrivateFencesOnCompletion:(void (^)(NSArray *))onComplete;
 - (NSArray *)_flattenProfile:(PRProfile *)profile;
 
 - (void)_replacePrivateGeofencesWithFences:(NSMutableArray *)geofenceLocations;
-- (void)_updateGeofenceRefreshLocation;
 
 // Persistent storage methods
 - (NSString *)_baseStoragePath;
@@ -51,6 +54,8 @@ static DataModel *_sharedInstance = nil;
 @synthesize coreConnector = _coreConnector;
 @synthesize placeConnector = _placeConnector;
 @synthesize interestsConnector = _interestsConnector;
+
+@synthesize locationManager = _locationManager;
 
 @synthesize userId = _userId;
 
@@ -68,17 +73,8 @@ static DataModel *_sharedInstance = nil;
 		if (!_sharedInstance)
 		{
 			_sharedInstance = [super allocWithZone:nil];
-			
-			_sharedInstance.coreConnector = [[QLContextCoreConnector alloc] init];
-			_sharedInstance.coreConnector.permissionsDelegate = _sharedInstance;
-			
-			_sharedInstance.placeConnector = [[QLContextPlaceConnector alloc] init];
-			_sharedInstance.placeConnector.delegate = _sharedInstance;
-			
-			_sharedInstance.interestsConnector = [[PRContextInterestsConnector alloc] init];
-			_sharedInstance.interestsConnector.delegate = _sharedInstance;
-			
-			[_sharedInstance setup];
+						
+			[_sharedInstance _setup];
 		}
 		
 		return _sharedInstance;
@@ -98,43 +94,33 @@ static DataModel *_sharedInstance = nil;
 #pragma mark -
 #pragma mark Setup Methods
 
-- (void)setup
+- (void)_setup
 {
 	@synchronized(self)
 	{			
+		_coreConnector = [[QLContextCoreConnector alloc] init];
+		_coreConnector.permissionsDelegate = _sharedInstance;
+		
+		_placeConnector = [[QLContextPlaceConnector alloc] init];
+		_placeConnector.delegate = _sharedInstance;
+		
+		_interestsConnector = [[PRContextInterestsConnector alloc] init];
+		_interestsConnector.delegate = _sharedInstance;
+		
+		_locationManager = [[CLLocationManager alloc] init];
+		_locationManager.delegate = self;
+		_locationManager.purpose = @"Let us use your location to give your personality to the places you go!";
+		[_locationManager startMonitoringSignificantLocationChanges];
+		
 		_userId = [NSKeyedUnarchiver unarchiveObjectWithFile:[self _userIdStoragePath]];
 		
+		_privateFences = [NSKeyedUnarchiver unarchiveObjectWithFile:[self _locationsStoragePath]];
+		
 		if (!_privateFences)
-		{
-			_privateFences = [NSKeyedUnarchiver unarchiveObjectWithFile:[self _locationsStoragePath]];
-		}
+			_privateFences = [NSMutableArray array];
 		
 		_currentLocation = [NSMutableArray array];
 		_geofenceRefreshLocation = [[GeofenceLocation alloc] init];
-		
-		[_coreConnector checkStatusAndOnEnabled:^(QLContextConnectorPermissions *contextConnectorPermissions) 
-		 {
-			 
-			 //			 // Get all the events that the user has recently been sent - NOT SURE IF WE NEED THIS
-			 //			 [self.contextPlaceConnector requestLatestPlaceEventsAndOnSuccess:^(NSArray *placeEvents) 
-			 //			  {
-			 //				  _placeEvents = placeEvents;
-			 //				  
-			 //			  } failure:^(NSError *error) {
-			 //				  NSLog(@"%@", [error localizedDescription]);
-			 //			  }];
-		 }	disabled:^(NSError *error) {
-			 NSLog(@"%@", error);
-			 if (error.code == QLContextCoreNonCompatibleOSVersion)
-			 {
-				 NSLog(@"%@", @"SDK Requires iOS 5.0 or higher");
-			 }
-			 else 
-			 {
-				 // Authentication, going to happen from 
-				 //          enableSDKButton.enabled = YES;
-			 }
-		 }];
 	}
 }
 
@@ -143,18 +129,17 @@ static DataModel *_sharedInstance = nil;
 	@synchronized(self)
 	{
 		if (_settingUp)
-		{
 			return;
-		}
 		
 		_settingUp = YES;
 		
 		// TODO: Removed some empty server calls to stop traffic. Complete them
 		// Update the current profile
-//		PRProfile *profile = _interestsConnector.interests;
+		PRProfile *profile = _interestsConnector.interests;
 		//	NSLog(@"%@ %@", profile, [profile.attrs.allValues objectAtIndex:0]);
 		
-//		NSArray *profileArray = [self _flattenProfile:profile];
+		NSArray *profileArray = [self _flattenProfile:profile];
+		
 		//		[ServiceAdapter uploadUserProfile:profileArray forUser:_userId success:^(id result)
 		//		 {
 		//			 
@@ -165,8 +150,13 @@ static DataModel *_sharedInstance = nil;
 		
 		
 		// Get the current location to filter the results from the server
-		CLLocationManager *manager = [[CLLocationManager alloc] init];
-		CLLocation *location = [manager location];
+		CLLocation *location = [_locationManager location];
+		
+		if (!location)
+		{
+			_settingUp = NO;
+			return;
+		}
 		
 		//		[self _replacePrivateGeofencesWithFences:[NSMutableArray arrayWithObject:_geofenceRefreshLocation]];
 		
@@ -185,7 +175,7 @@ static DataModel *_sharedInstance = nil;
 		//			 }
 		//		 }];
 		
-		[self _updateGeofenceRefreshLocation];
+		[self updateGeofenceRefreshLocation];
 	}
 }
 
@@ -200,7 +190,7 @@ static DataModel *_sharedInstance = nil;
 	}
 }
 
-- (void)getInfo
+- (void)getPPOIInfo
 {
 	[_placeConnector allPrivatePointsOfInterestAndOnSuccess:^(NSArray *ppoi)
 	 {
@@ -234,10 +224,78 @@ static DataModel *_sharedInstance = nil;
 {
 	if ([_geofenceRefreshLocation isEmpty])
 	{
-		[self _updateGeofenceRefreshLocation];	
+		[self updateGeofenceRefreshLocation];	
 	}
 
 	return _geofenceRefreshLocation;
+}
+
+- (void)updateGeofenceRefreshLocation
+{
+	@synchronized(self)
+	{
+		__weak DataModel *weakSelf = self;
+		
+		void (^createNewPlace)(void) = ^()
+		{
+			// Refresh the geofence to ensure if something doesn't work it still appears empty
+			[_geofenceRefreshLocation clear];
+			
+			CLLocation *location = [_locationManager location];
+			
+			QLPlace *geofencePlace = [[QLPlace alloc] init];
+			QLGeoFenceCircle *circle = [[QLGeoFenceCircle alloc] init];
+			circle.latitude = location.coordinate.latitude;
+			circle.longitude = location.coordinate.longitude;
+			circle.radius = REFRESH_RADIUS;
+			geofencePlace.name = @"Refresh boundary";
+			geofencePlace.geoFence = circle;
+			
+			[_placeConnector createPlace:geofencePlace success:^(QLPlace *place)
+			 {
+				 DataModel *strongSelf = weakSelf;
+				 
+				 if (strongSelf)
+				 {
+					 strongSelf -> _geofenceRefreshLocation = [[GeofenceLocation alloc] initWithPlace:place];
+				 }
+			 }
+								 failure:^(NSError *err)
+			 {
+				 NSLog(@"createPlace: %@", [err localizedDescription]);
+			 }];
+		};
+		
+		// If some already exist remove them first
+		if (![_geofenceRefreshLocation isEmpty])
+		{
+			[_placeConnector deletePlaceWithId:_geofenceRefreshLocation.placeId 
+									   success:^()
+			 {
+				 createNewPlace();	 
+			 }
+									   failure:^(NSError *err)
+			 {
+				 NSLog(@"deletePlace: %@", [err localizedDescription]);			 
+				 createNewPlace();
+			 }];
+		}
+		else
+		{ // Otherwise just add the new ones
+			createNewPlace();
+		}
+	}
+}
+
+- (void)addLocationListener:(id<CLLocationManagerDelegate>)listener
+{
+	[_locationListeners addObject:listener];
+}
+
+- (void)removeLocationListener:(id<CLLocationManagerDelegate>)listener
+{
+	if ([_locationListeners containsObject:listener])
+		[_locationListeners removeObject:listener];
 }
 
 - (void)close
@@ -297,10 +355,9 @@ static DataModel *_sharedInstance = nil;
 					 // If you just left the refresh boundary get a new one as well as all the nearby geofences
 					 if ([currentLocation isEqual:_geofenceRefreshLocation])
 					 {
-						 [self _updateGeofenceRefreshLocation];
+						 [self updateGeofenceRefreshLocation];
 						 
-						 CLLocationManager *manager = [[CLLocationManager alloc] init];
-						 CLLocation *location = [manager location];
+						 CLLocation *location = [_locationManager location];
 						 [ServiceAdapter getGeofencesForUser:_userId atLocation:location radius:GEOFENCE_DOWNLOAD_RADIUS success:^(NSArray *geofences)
 						  {
 							  [self _replacePrivateGeofencesWithFences:[NSMutableArray arrayWithArray:geofences]];
@@ -350,6 +407,21 @@ static DataModel *_sharedInstance = nil;
     {
 		// Wipe data maybe
     }
+}
+
+#pragma mark -
+#pragma mark CLLocationManagerDelegate
+
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
+{
+	if (status == kCLAuthorizationStatusAuthorized)
+		[self runStartUpSequence];
+}
+
+- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
+{
+	for (id<CLLocationManagerDelegate> listener in _locationListeners)
+		[listener locationManager:manager didUpdateToLocation:newLocation fromLocation:oldLocation];
 }
 
 #pragma mark -
@@ -422,9 +494,7 @@ static DataModel *_sharedInstance = nil;
 				 GeofenceLocation *newLocation = [[GeofenceLocation alloc] initWithPlace:place];
 				 [allLocations addObject:newLocation];
 			 }
-			 
-			 _privateFences = [NSMutableArray arrayWithArray:allLocations];
-			 
+			 			 
 			 // Remove any from our local version that are not in the new list
 			 NSMutableArray *removedLocations = [NSMutableArray array];
 			 for (GeofenceLocation *location in allLocations)
@@ -433,6 +503,9 @@ static DataModel *_sharedInstance = nil;
 				 {
 					 [removedLocations addObject:location];
 				 }
+				 
+				 if (![_privateFences containsObject:location] && ![location isEqual:_geofenceRefreshLocation])
+					 [_privateFences addObject:location];
 			 }		 
 			 
 			 // Now work out what additional fences need to be added
@@ -440,9 +513,7 @@ static DataModel *_sharedInstance = nil;
 			 for (GeofenceLocation *location in geofenceLocations)
 			 {
 				 if (![allLocations containsObject:location])
-				 {
 					 [addedFences addObject:location];
-				 }
 			 }
 			 		 
 			 // Only remove fences if there are some to remove
@@ -496,66 +567,8 @@ static DataModel *_sharedInstance = nil;
 		 } failure:^(NSError *err)
 		 {
 			 NSLog(@"%@", err);
+			 _settingUp = NO;
 		 }];
-	}
-}
-
-- (void)_updateGeofenceRefreshLocation
-{
-	@synchronized(self)
-	{
-				
-		__weak DataModel *weakSelf = self;
-		
-		void (^createNewPlace)(void) = ^()
-		{
-			// Refresh the geofence to ensure if something doesn't work it still appears empty
-			[_geofenceRefreshLocation clear];
-			
-			CLLocationManager *manager = [[CLLocationManager alloc] init];
-			CLLocation *location = [manager location];
-			
-			QLPlace *geofencePlace = [[QLPlace alloc] init];
-			QLGeoFenceCircle *circle = [[QLGeoFenceCircle alloc] init];
-			circle.latitude = location.coordinate.latitude;
-			circle.longitude = location.coordinate.longitude;
-			circle.radius = REFRESH_RADIUS;
-			geofencePlace.name = @"Refresh boundary";
-			geofencePlace.geoFence = circle;
-			
-			[_placeConnector createPlace:geofencePlace success:^(QLPlace *place)
-			 {
-				 DataModel *strongSelf = weakSelf;
-				 
-				 if (strongSelf)
-				 {
-					 strongSelf -> _geofenceRefreshLocation = [[GeofenceLocation alloc] initWithPlace:place];
-				 }
-			 }
-								 failure:^(NSError *err)
-			 {
-				 NSLog(@"createPlace: %@", [err localizedDescription]);
-			 }];
-		};
-		
-		// If some already exist remove them first
-		if (![_geofenceRefreshLocation isEmpty])
-		{
-			[_placeConnector deletePlaceWithId:_geofenceRefreshLocation.placeId 
-									   success:^()
-			 {
-				 createNewPlace();	 
-			 }
-									   failure:^(NSError *err)
-			 {
-				 NSLog(@"deletePlace: %@", [err localizedDescription]);			 
-				 createNewPlace();
-			 }];
-		}
-		else
-		{ // Otherwise just add the new ones
-			createNewPlace();
-		}
 	}
 }
 
@@ -661,6 +674,9 @@ static DataModel *_sharedInstance = nil;
 		for (PRAttributeCategory *cat in attr.attributeCategories)
 		{
 			NSDictionary *categoryDictionary = [NSMutableDictionary dictionaryWithObject:[NSNumber numberWithDouble:cat.likelihood] forKey:cat.key];
+#if TARGET_IPHONE_SIMULATOR
+			[categoryDictionary setValue:[NSNumber numberWithDouble:0.5] forKey:cat.key];
+#endif
 			[profileArray addObject:categoryDictionary];
 		}
 	}
@@ -670,8 +686,7 @@ static DataModel *_sharedInstance = nil;
 
 - (void)_checkCurrentLocation
 {
-	CLLocationManager *locationManager = [[CLLocationManager alloc] init];
-	CLLocation *location = locationManager.location;
+	CLLocation *location = _locationManager.location;
 	for (GeofenceLocation *fence in _privateFences)
 	{
 		if ([fence containsPin:location.coordinate] && ![_currentLocation containsObject:fence])

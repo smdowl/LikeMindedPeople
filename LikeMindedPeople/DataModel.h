@@ -14,13 +14,16 @@
 #import "GeofenceLocation.h"
 
 @class QLPlace;
-@interface DataModel : NSObject <QLContextCorePermissionsDelegate, QLContextPlaceConnectorDelegate, PRContextInterestsDelegate>
+@interface DataModel : NSObject <QLContextCorePermissionsDelegate, QLContextPlaceConnectorDelegate, PRContextInterestsDelegate, CLLocationManagerDelegate>
 {
 	NSString *_userId;	// In out app is going to be the fb ID. Used to identify you on the server
 	
 	QLContextCoreConnector *_coreConnector;
 	QLContextPlaceConnector *_placeConnector;
 	PRContextInterestsConnector *_interestsConnector;
+
+	CLLocationManager *_locationManager;
+	NSMutableArray *_locationListeners;
 
 	// An array basically being used as a stack, pushing and popping from index 0
 	NSMutableArray *_currentLocation;
@@ -41,6 +44,8 @@
 @property (nonatomic, strong) QLContextPlaceConnector *placeConnector;
 @property (nonatomic, strong) PRContextInterestsConnector *interestsConnector;
 
+@property (nonatomic, strong) CLLocationManager *locationManager;
+
 @property (nonatomic, readonly) QLPlace *currentLocation;
 
 @property (nonatomic, readonly) NSArray *personalPointsOfInterest;
@@ -48,11 +53,14 @@
 @property (nonatomic, readonly) GeofenceLocation *geofenceRefreshLocation;
 
 + (DataModel *)sharedInstance;
-- (void)getInfo;
+- (void)getPPOIInfo;
 - (void)runStartUpSequence;
 
-- (NSArray *)getAllGeofenceRegions;
+- (void)addLocationListener:(id<CLLocationManagerDelegate>)listener;
+- (void)removeLocationListener:(id<CLLocationManagerDelegate>)listener;
 
+- (NSArray *)getAllGeofenceRegions;
+- (void)updateGeofenceRefreshLocation;
 - (void)close;
 
 @end

@@ -18,7 +18,6 @@
 #import "SideBar.h"
 #import "GeofenceRegion.h"
 
-#define SHOW_GEOFENCE_LOCATIONS NO
 #define RESIZE_BUTTTON_PADDING 5
 #define MAX_BUTTON_ALPHA 0.4
 
@@ -32,6 +31,8 @@
 
 - (void)_inFromLeft:(UIPanGestureRecognizer *)recognizer;
 - (void)_inFromRight:(UIPanGestureRecognizer *)recognizer;
+
+- (void)_setMapVisible:(BOOL)visible;
 
 @end
 
@@ -48,6 +49,8 @@
 @synthesize slideInLeft = _slideInLeft;
 @synthesize slideInRight = _slideInRight;
 
+@synthesize locationDisabledView = _locationDisabledView;
+
 #pragma mark -
 #pragma mark View lifecycle
 
@@ -57,8 +60,7 @@
 	[_searchView.searchBarPanel setup];
 	
 	[_resizeButton setImage:[UIImage imageNamed:@"fullscreen.png"] forState:UIControlStateNormal];
-	// TODO: Need custom highlighted button
-	[_resizeButton setImage:[UIImage imageNamed:@"fullscreen.png"] forState:UIControlStateHighlighted];
+	[_resizeButton setImage:[UIImage imageNamed:@"fullscreenglow.png"] forState:UIControlStateHighlighted];
 	
 	UIPinchGestureRecognizer *pinchRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinchGesture:)];
 	
@@ -83,11 +85,15 @@
 	[_slideInRight addGestureRecognizer:rightSwipeGestureRecognizer];
 	
 	[_searchView.detailView.backButton addTarget:_searchView action:@selector(hideDetailView) forControlEvents:UIControlEventTouchUpInside];
+	
+	// TODO: Maybe take this out
+	[[DataModel sharedInstance] addLocationListener:self];	
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
+	[[DataModel sharedInstance] updateGeofenceRefreshLocation];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -113,6 +119,18 @@
     } disabled:^(NSError *err) {
 		[dataModel.coreConnector enableFromViewController:self success:nil failure:nil];
     }];
+	
+	if ([CLLocationManager authorizationStatus] != kCLAuthorizationStatusAuthorized)
+	{
+		[self _setMapVisible:NO];
+		
+		CLLocationManager *locationManager = [[CLLocationManager alloc] init];
+		locationManager.delegate = self;
+	}
+	else
+	{
+		[self _setMapVisible:YES];
+	}
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -148,9 +166,9 @@
 	}
 }
 
-- (IBAction)debug:(id)sender
+- (IBAction)enableLocationServices
 {
-	[[[DataModel sharedInstance] coreConnector] showPermissionsFromViewController:self];
+	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"prefs://"]];
 }
 
 #pragma mark -
@@ -163,8 +181,8 @@
 //		[_searchConnection getGoogleObjectsWithQuery:searchText andMapRegion:[_mapView region] andNumberOfResults:20 addressesOnly:YES andReferer:@"http://WWW.radii.com"];    
 		[ServiceAdapter getGoogleSearchResultsForUser:@"userId" atLocation:_mapView.centerCoordinate withName:name withType:type success:^(NSArray *results)
 		 {
-			 _searchingView.hidden = YES;
-			 [_indicatorView stopAnimating];
+//			 _searchingView.hidden = YES;
+//			 [_indicatorView stopAnimating];
 			 
 			 if ([results count] == 0)
 			 {
@@ -180,7 +198,6 @@
 				 // Add the repackaged results as annotations
 				 [_mapView addAnnotations:_searchResults];
 				 
-				 
 				 if (_userLocation)
 				 {
 					 [_mapView addAnnotation:_userLocation];
@@ -188,16 +205,6 @@
 				 
 				 [_searchView setData:_searchResults];
 			 }
-			 
-#ifdef SHOW_GEOFENCE_LOCATIONS
-			 [_mapView removeOverlays:[_mapView overlays]];
-			 			 
-			 NSArray *allGeofenceRegions = [[DataModel sharedInstance] getAllGeofenceRegions];
-			 [_mapView addOverlays:allGeofenceRegions];
-			 
-			 _refreshLocation = [[DataModel sharedInstance] geofenceRefreshLocation];
-			 [_mapView addOverlay:_refreshLocation];
-#endif
 		 }
 		 failure:^()
 		 {
@@ -211,8 +218,8 @@
 			 [_searchView.searchBarPanel selectButton:-1];
 		 }
 		 ];
-		_searchingView.hidden = NO;
-		[_indicatorView startAnimating];
+//		_searchingView.hidden = NO;
+//		[_indicatorView startAnimating];
 	}
 	else 
 	{
@@ -284,10 +291,11 @@
 
 - (MKAnnotationView *)mapView:(MKMapView *)mapView viewForAnnotation:(id<MKAnnotation>)annotation
 {
+	MKAnnotationView *annotationView;
 	if ([annotation isKindOfClass:[RadiiResultDTO class]])
 	{
 		RadiiResultDTO *radiiResult = (RadiiResultDTO *)annotation;
-		MKAnnotationView *annotationView = [_mapView dequeueReusableAnnotationViewWithIdentifier:@"radiiPin"];
+		annotationView = [_mapView dequeueReusableAnnotationViewWithIdentifier:@"radiiPin"];
 		
 		if (!annotationView)
 		{
@@ -298,21 +306,49 @@
 			annotationView.annotation = annotation;
 		}
 		
-		// TODO: use the type of the result to decide on the image for the annotationView
-		annotationView.image = [UIImage imageNamed:@"bars_pin.png"];
+		switch (radiiResult.type)
+		{
+			case food:
+				annotationView.image = [UIImage imageNamed:@"food_pin.png"];
+				break;
+			case cafe:
+				annotationView.image = [UIImage imageNamed:@"cafe_pin.png"];
+				break;
+			case bar:
+				annotationView.image = [UIImage imageNamed:@"bars_pin.png"];
+				break;
+			case club:
+				annotationView.image = [UIImage imageNamed:@"club_pin.png"];
+				break;
+			default:
+				break;
+				
+		}
 //		annotationView.centerOffset = CGPointMake(0,-annotationView.image.size.height);
 		
 		return annotationView;
 	}
-	else if (annotation == mapView.userLocation)
+//	else if ([annotation isKindOfClass:[MKUserLocation class]])
+	else if (annotation == _mapView.userLocation)
 	{
-		return nil;
-	}
-	else
-	{
-		return nil;
-	}
+		MKPinAnnotationView *annotationView = (MKPinAnnotationView *)[_mapView dequeueReusableAnnotationViewWithIdentifier:@"mePin"];
 
+		if (!annotationView)
+		{
+			annotationView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"mePin"];
+			annotationView.animatesDrop = NO;
+			annotationView.canShowCallout = NO;
+		}
+		else 
+		{
+			annotationView.annotation = annotation;
+		}
+		
+		// TODO: use the type of the result to decide on the image for the annotationView
+		annotationView.image = [UIImage imageNamed:@"me_pin.png"];
+	}
+	
+	return annotationView;
 }
 
 - (MKOverlayView *)mapView:(MKMapView *)mapView viewForOverlay:(id<MKOverlay>)overlay
@@ -321,15 +357,34 @@
 	if (overlay == _refreshLocation)
 	{
 		region.fillColor = [UIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:0.5];
-//		region.fillColor = [UIColor clearColor];
+		region.strokeColor = [UIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:0.8];		
+		region.lineWidth = 2.0;
 	}
 	else
 	{
-//	GeofenceRegion *region = [[GeofenceRegion alloc] initWithOverlay:overlay];
-	region.fillColor = [UIColor purpleColor];
-//	region.alpha = 0.5;
+		region.fillColor = [[UIColor purpleColor] colorWithAlphaComponent:0.5];
+		region.strokeColor = [[UIColor purpleColor] colorWithAlphaComponent:0.8];
+		region.lineWidth = 1.0;
 	}
 	return region;
+}
+#pragma mark -
+#pragma mark CLLocationManagerDelegate
+
+- (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
+{
+//	_userLocation = [[MKAnnotation alloc] init];
+	
+	
+}
+
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
+{
+	if (status == kCLAuthorizationStatusAuthorized)
+	{
+		[self _setMapVisible:YES];
+		[_mapView setCenterCoordinate:[[manager location] coordinate]];
+	}
 }
 
 #pragma mark -
@@ -395,8 +450,6 @@
 		_isFullScreen = YES;
 		[self _animateMap:YES];
 	}
-	
-//	[_mapView addAnnotation:_userLocation];
 }
 
 // Must call this so that our recognizers pinch insn't stolen by the map view
@@ -573,6 +626,7 @@
 {
 	CGFloat verticalShift = toFullScreen ? _searchView.searchResultsView.frame.size.height : -_searchView.searchResultsView.frame.size.height;
 	NSString *resizeButtonImageName = toFullScreen ? @"minimize.png" : @"fullscreen.png";
+	NSString *resizeGlowButtonImageName = toFullScreen ? @"minimizeglow.png" : @"fullscreenglow.png";
 	
 	CGFloat backButtonRotation = toFullScreen ? M_PI_2 : 0;
 	
@@ -588,28 +642,35 @@
 	{
 		[_searchView.detailView.backButton addTarget:_searchView action:@selector(hideDetailView) forControlEvents:UIControlEventTouchUpInside];
 	}
-	
-	[UIView beginAnimations:nil context:nil];
-		
-	CGRect mapFrame = _mapView.frame;
-	mapFrame.size.height += verticalShift;
-	_mapView.frame = mapFrame;
-	
-	CGRect searchViewFrame = _searchView.frame;
-	searchViewFrame.origin.y += verticalShift;
-	_searchView.frame = searchViewFrame;
-	
-	CGRect resizeButtonFrame = _resizeButton.frame;
-	resizeButtonFrame.origin.y += verticalShift;
-	_resizeButton.frame = resizeButtonFrame;
-	[_resizeButton setImage:[UIImage imageNamed:resizeButtonImageName] forState:UIControlStateNormal];
-	
-	CGAffineTransform rotation = CGAffineTransformMakeRotation(backButtonRotation);
-	[_searchView.detailView.backButton setTransform:rotation];
-	[UIView commitAnimations];
+	[UIView animateWithDuration:0.2 animations:^()
+	 {
+		 
+		 CGRect mapFrame = _mapView.frame;
+		 mapFrame.size.height += verticalShift;
+		 _mapView.frame = mapFrame;
+		 
+		 CGRect searchViewFrame = _searchView.frame;
+		 searchViewFrame.origin.y += verticalShift;
+		 _searchView.frame = searchViewFrame;
+		 
+		 CGRect resizeButtonFrame = _resizeButton.frame;
+		 resizeButtonFrame.origin.y += verticalShift;
+		 _resizeButton.frame = resizeButtonFrame;	 
+		 
+		 [_resizeButton setImage:[UIImage imageNamed:resizeButtonImageName] forState:UIControlStateNormal];
+		 [_resizeButton setImage:[UIImage imageNamed:resizeButtonImageName] forState:UIControlStateHighlighted];
+		 
+		 CGAffineTransform rotation = CGAffineTransformMakeRotation(backButtonRotation);
+		 [_searchView.detailView.backButton setTransform:rotation];
+	 }  completion:^(BOOL finished)
+	 {
+		 NSArray *annotations = [_mapView annotations];
+		 //		 [_mapView removeAnnotations:annotations];
+		 [_mapView addAnnotations:annotations];
+	 }];
 	
 	// Also move the map to be centered on the same point
-//	[_mapView setCenterCoordinate:_mapView.centerCoordinate];
+	//	[_mapView setCenterCoordinate:_mapView.centerCoordinate];
 }
 
 - (void)_hideKeyboard
@@ -618,7 +679,20 @@
 	[_searchView.searchBarPanel selectButton:-1];
 }
 
-// Test methods
+- (void)_setMapVisible:(BOOL)visible
+{
+	_locationDisabledView.hidden = visible;
+	_resizeButton.enabled = visible;	
+}
+
+#pragma mark -
+#pragma mark Test methods
+
+- (IBAction)debug:(id)sender
+{
+	[[[DataModel sharedInstance] coreConnector] showPermissionsFromViewController:self];
+}
+
 - (IBAction)printCurrentCenter
 {
 	CLLocationCoordinate2D position = _mapView.centerCoordinate;
@@ -628,6 +702,21 @@
 - (IBAction)currentLocation
 {
 	NSLog(@"Current location: %@", [[DataModel sharedInstance] currentLocation]);
+}
+
+- (IBAction)displayGeofences
+{
+	[_mapView removeOverlays:[_mapView overlays]];
+	if (!_showingGeofences)
+	{	
+		NSArray *allGeofenceRegions = [[DataModel sharedInstance] getAllGeofenceRegions];
+		[_mapView addOverlays:allGeofenceRegions];
+		
+		_refreshLocation = [[DataModel sharedInstance] geofenceRefreshLocation];
+		[_mapView addOverlay:_refreshLocation];
+	}
+	
+	_showingGeofences = !_showingGeofences;
 }
 
 - (void)dealloc

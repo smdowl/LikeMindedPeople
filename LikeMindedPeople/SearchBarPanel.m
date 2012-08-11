@@ -30,7 +30,7 @@
 		previousButton.enabled = YES;
 	}
 	
-	// If the previous button was the search button, hide the text field
+	// If the previous button was the search button, hide search box
 	if (_selectedIndex == 0)
 	{
 		CGRect searchButtonRect = _searchButton.frame;
@@ -126,7 +126,7 @@
 	[_foodButton setImage:[UIImage imageNamed:@"foodbtn2.png"] forState:UIControlStateHighlighted];
 
 	[_searchButton setImage:[UIImage imageNamed:@"searchbtn3.png"] forState:UIControlStateDisabled];
-	[_barButton setImage:[UIImage imageNamed:@"barsbtn2.png"] forState:UIControlStateDisabled];
+	[_barButton setImage:[UIImage imageNamed:@"barsbtn3.png"] forState:UIControlStateDisabled];
 	[_cafeButton setImage:[UIImage imageNamed:@"cafebtn3.png"] forState:UIControlStateDisabled];
 	[_clubButton setImage:[UIImage imageNamed:@"clubsbtn3.png"] forState:UIControlStateDisabled];
 	[_foodButton setImage:[UIImage imageNamed:@"foodbtn3.png"] forState:UIControlStateDisabled];

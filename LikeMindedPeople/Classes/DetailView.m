@@ -30,7 +30,7 @@
 	_titleLabel.text = data.businessTitle;
 	_detailsView.text = data.details;
 	_presentUsersLabel.text = [NSString stringWithFormat:@"%i", data.peopleCount];
-	_ratingLabel.text = [NSString stringWithFormat:@"%0.2f%", 100*data.rating];
+	_ratingLabel.text = [NSString stringWithFormat:@"%0.0f%%", 100*data.rating];
 	
 	// TODO: actually do this
 	_interestsLabel.text = @"";

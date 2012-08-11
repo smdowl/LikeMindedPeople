@@ -73,4 +73,5 @@
 		_detailView.isShowing = NO;
 	}
 }
+
 @end

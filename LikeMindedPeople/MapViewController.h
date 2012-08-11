@@ -11,7 +11,7 @@
 #import "SearchBarPanelDelegate.h"
 
 @class DataModel, SearchBarPanel, SearchView, SideBar, GeofenceLocation;
-@interface MapViewController : UIViewController <SearchBarPanelDelegate, CLLocationManagerDelegate, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, MKMapViewDelegate>
+@interface MapViewController : UIViewController <SearchBarPanelDelegate, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, MKMapViewDelegate, CLLocationManagerDelegate>
 {	
 	MKMapView *_mapView;
 	SearchView *_searchView;
@@ -38,6 +38,10 @@
 	
 	// The button that will be use to remove the slide over view
 	UIButton *_slideInCancelButton;
+	UIView *_locationDisabledView;
+		
+	// Test variables
+	BOOL _showingGeofences;
 }
 
 @property (nonatomic, strong) IBOutlet MKMapView *mapView;
@@ -52,11 +56,15 @@
 @property (nonatomic, strong) IBOutlet UIView *slideInLeft;
 @property (nonatomic, strong) IBOutlet UIView *slideInRight;
 
+@property (nonatomic, strong) IBOutlet UIView *locationDisabledView;
+
 - (IBAction)toggleFullScreen:(id)sender;
+- (IBAction)enableLocationServices;
 
 // Test methods
 - (IBAction)debug:(id)sender;
 - (IBAction)printCurrentCenter;
 - (IBAction)currentLocation;
+- (IBAction)displayGeofences;
 
 @end

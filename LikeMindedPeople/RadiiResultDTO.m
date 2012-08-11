@@ -11,6 +11,7 @@
 @implementation RadiiResultDTO
 @synthesize businessTitle = _businessTitle;
 @synthesize details = _details;
+@synthesize type = _type;
 
 @synthesize rating = _rating;
 @synthesize peopleCount = _peopleCount;
