@@ -7,78 +7,49 @@
 //
 
 #import "SearchBar.h"
-#define PADDING_WIDTH 20
 
 @implementation SearchBar
 @synthesize searchBox = _searchBox;
 @synthesize cancelButton = _cancelButton;
-@synthesize boxImage = _boxImage;
 
-- (IBAction)cancelSearch:(id)sender
-{
-	_searchBox.text = @"";
-	[_searchBox resignFirstResponder];
-}
-
-- (void)animateIn:(CGFloat)width
-{
-	[UIView animateWithDuration:0.25
-					 animations:^
-	 {
-		 self.hidden = NO;
-		 
-		 CGRect barFrame = self.frame;
-		 barFrame.size.width = width - PADDING_WIDTH - barFrame.origin.x;
-		 self.frame = barFrame;
-		 
-		 CGRect boxFrame = _searchBox.frame;
-		 boxFrame.size.width = barFrame.size.width - PADDING_WIDTH - boxFrame.origin.x;
-		 _searchBox.frame = boxFrame;
-		 
-		 CGRect buttonFrame = _cancelButton.frame;
-		 buttonFrame.origin.x = boxFrame.origin.x + boxFrame.size.width;
-		 _cancelButton.frame = buttonFrame;
-		 
-		 CGRect boxImageFrame = _boxImage.frame;
-		 boxImageFrame.size.width = boxFrame.size.width + buttonFrame.size.width;
-		 _boxImage.frame = boxImageFrame;
-	 }
-					 completion:^(BOOL finished) 
-	 {
-
-	 }];
-}
-
-- (void)animateOut
-{
-	// I think just making it disappear is better than having is shink down
-	self.hidden = YES;
-	[UIView animateWithDuration:0.25
-					 animations:^
-	 {		 
-		 CGRect barFrame = self.frame;
-		 barFrame.size.width = 0;
-		 self.frame = barFrame;
-		 
-		 CGRect boxFrame = _searchBox.frame;
-		 boxFrame.size.width = 0;
-		 _searchBox.frame = boxFrame;
-		 [_searchBox resignFirstResponder];
-		 
-		 CGRect boxImageFrame = _boxImage.frame;
-		 boxImageFrame.size.width = 0;
-		 _boxImage.frame = boxImageFrame;
-		 
-		 CGRect buttonFrame = _cancelButton.frame;
-		 buttonFrame.origin.x = 0;
-		 _cancelButton.frame = buttonFrame;
-		 
-	 }
-					 completion:^(BOOL finished) 
-	 {
-		 self.hidden = YES;
-	 }];
-}
+//- (void)animateIn
+//{
+//	CGRect barViewFrame = _barView.frame;
+//	barViewFrame.origin.y += _barView.frame.size.height;
+//	_barView.frame = barViewFrame;
+//	
+//	[UIView animateWithDuration:0.25
+//					 animations:^
+//	 {		 
+//		 _barView.hidden = NO;
+//		 CGRect newBarViewFrame = _barView.frame;
+//		 newBarViewFrame.origin.y -= _barView.frame.size.height;
+//		 _barView.frame = newBarViewFrame;	 
+//	 }
+//					 completion:^(BOOL finished) 
+//	 {
+//		 
+//	 }];
+//}
+//
+//- (void)animateOut
+//{		
+//	[UIView animateWithDuration:0.25
+//					 animations:^
+//	 {		 
+//		 CGRect newBarViewFrame = _barView.frame;
+//		 newBarViewFrame.origin.y += _barView.frame.size.height;
+//		 _barView.frame = newBarViewFrame;	 
+//	 }
+//					 completion:^(BOOL finished) 
+//	 {
+//		 _barView.hidden = YES;
+//		 
+//		 CGRect barViewFrame = _barView.frame;
+//		 barViewFrame.origin.y -= _barView.frame.size.height;
+//		 _barView.frame = barViewFrame;
+//	 }];
+//}
 
 #pragma mark -
 #pragma mark First Responder Chain Methods

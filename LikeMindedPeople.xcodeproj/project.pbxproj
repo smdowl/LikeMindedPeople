@@ -13,6 +13,9 @@
 		9253043E15D642B400BC7FEF /* searchfield.png in Resources */ = {isa = PBXBuildFile; fileRef = 9253043D15D642B400BC7FEF /* searchfield.png */; };
 		9253044215D643CF00BC7FEF /* cancel.png in Resources */ = {isa = PBXBuildFile; fileRef = 9253044015D643CF00BC7FEF /* cancel.png */; };
 		9253044315D643CF00BC7FEF /* cancelpress.png in Resources */ = {isa = PBXBuildFile; fileRef = 9253044115D643CF00BC7FEF /* cancelpress.png */; };
+		9253044715D7006000BC7FEF /* SearchView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9253044615D7006000BC7FEF /* SearchView.xib */; };
+		9253044915D7007E00BC7FEF /* DetailView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9253044815D7007E00BC7FEF /* DetailView.xib */; };
+		9253044C15D73D6900BC7FEF /* SearchBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9253044B15D73D6800BC7FEF /* SearchBar.xib */; };
 		925AE7B315C430F2008840D9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7AC15C430F2008840D9 /* UIKit.framework */; };
 		925AE7B415C430F2008840D9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7AD15C430F2008840D9 /* Foundation.framework */; };
 		925AE7B515C430F2008840D9 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7AE15C430F2008840D9 /* CoreGraphics.framework */; };
@@ -97,7 +100,6 @@
 		92EBF34F15C5C0990085C47E /* bg.png in Resources */ = {isa = PBXBuildFile; fileRef = 92EBF34E15C5C0990085C47E /* bg.png */; };
 		92EC3E4015C7A5DB0025E56C /* MapViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 92EC3E3E15C7A5DB0025E56C /* MapViewController.m */; };
 		92EC3E4115C7A5DB0025E56C /* MapViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 92EC3E3F15C7A5DB0025E56C /* MapViewController.xib */; };
-		92EC3E4415C7AD240025E56C /* SearchBarPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 92EC3E4315C7AD240025E56C /* SearchBarPanel.m */; };
 		92F0038715C46A7D00BE46C5 /* DataModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 92F0038615C46A7D00BE46C5 /* DataModel.m */; };
 		92FBED5315C3A85F000D1AE3 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 92FBED5115C3A85F000D1AE3 /* InfoPlist.strings */; };
 		92FBED5515C3A85F000D1AE3 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 92FBED5415C3A85F000D1AE3 /* main.m */; };
@@ -138,6 +140,10 @@
 		9253043D15D642B400BC7FEF /* searchfield.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = searchfield.png; sourceTree = "<group>"; };
 		9253044015D643CF00BC7FEF /* cancel.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cancel.png; sourceTree = "<group>"; };
 		9253044115D643CF00BC7FEF /* cancelpress.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cancelpress.png; sourceTree = "<group>"; };
+		9253044615D7006000BC7FEF /* SearchView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SearchView.xib; sourceTree = "<group>"; };
+		9253044815D7007E00BC7FEF /* DetailView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DetailView.xib; sourceTree = "<group>"; };
+		9253044B15D73D6800BC7FEF /* SearchBar.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = SearchBar.xib; path = Classes/SearchBar.xib; sourceTree = "<group>"; };
+		9253044D15D74A3F00BC7FEF /* SearchViewDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SearchViewDelegate.h; path = Classes/SearchViewDelegate.h; sourceTree = "<group>"; };
 		925AE7AC15C430F2008840D9 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		925AE7AD15C430F2008840D9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		925AE7AE15C430F2008840D9 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -246,9 +252,6 @@
 		92EC3E3D15C7A5DB0025E56C /* MapViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapViewController.h; sourceTree = "<group>"; };
 		92EC3E3E15C7A5DB0025E56C /* MapViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapViewController.m; sourceTree = "<group>"; };
 		92EC3E3F15C7A5DB0025E56C /* MapViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MapViewController.xib; sourceTree = "<group>"; };
-		92EC3E4215C7AD230025E56C /* SearchBarPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SearchBarPanel.h; sourceTree = "<group>"; };
-		92EC3E4315C7AD240025E56C /* SearchBarPanel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SearchBarPanel.m; sourceTree = "<group>"; };
-		92EC3E4915C7B2410025E56C /* SearchBarPanelDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SearchBarPanelDelegate.h; sourceTree = "<group>"; };
 		92F0038515C46A7D00BE46C5 /* DataModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataModel.h; sourceTree = "<group>"; };
 		92F0038615C46A7D00BE46C5 /* DataModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataModel.m; sourceTree = "<group>"; };
 		92FBED4415C3A85F000D1AE3 /* LikeMindedPeople.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LikeMindedPeople.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -339,6 +342,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9253044A15D73C6C00BC7FEF /* Search View */ = {
+			isa = PBXGroup;
+			children = (
+				9290AE8815C84C1500E91D61 /* SearchView.h */,
+				9290AE8915C84C1500E91D61 /* SearchView.m */,
+				9253044615D7006000BC7FEF /* SearchView.xib */,
+				9253044D15D74A3F00BC7FEF /* SearchViewDelegate.h */,
+				9290AE8415C837B800E91D61 /* SearchBar.h */,
+				9290AE8515C837B800E91D61 /* SearchBar.m */,
+				9253044B15D73D6800BC7FEF /* SearchBar.xib */,
+			);
+			name = "Search View";
+			sourceTree = "<group>";
+		};
 		925AE7C115C43212008840D9 /* context-beta-ios-sdk */ = {
 			isa = PBXGroup;
 			children = (
@@ -603,15 +620,10 @@
 				92EC3E3D15C7A5DB0025E56C /* MapViewController.h */,
 				92EC3E3E15C7A5DB0025E56C /* MapViewController.m */,
 				92EC3E3F15C7A5DB0025E56C /* MapViewController.xib */,
-				9290AE8815C84C1500E91D61 /* SearchView.h */,
-				9290AE8915C84C1500E91D61 /* SearchView.m */,
-				92EC3E4215C7AD230025E56C /* SearchBarPanel.h */,
-				92EC3E4315C7AD240025E56C /* SearchBarPanel.m */,
-				92EC3E4915C7B2410025E56C /* SearchBarPanelDelegate.h */,
-				9290AE8415C837B800E91D61 /* SearchBar.h */,
-				9290AE8515C837B800E91D61 /* SearchBar.m */,
+				9253044A15D73C6C00BC7FEF /* Search View */,
 				924FB9B515CAEAEF00E9E7C3 /* DetailView.h */,
 				924FB9B615CAEAEF00E9E7C3 /* DetailView.m */,
+				9253044815D7007E00BC7FEF /* DetailView.xib */,
 				92EBF32E15C5992D0085C47E /* TDBadgedCell.h */,
 				92EBF32F15C5992E0085C47E /* TDBadgedCell.m */,
 				921E91D415CC3D360033C8B1 /* SideBar.h */,
@@ -908,6 +920,9 @@
 				9253043E15D642B400BC7FEF /* searchfield.png in Resources */,
 				9253044215D643CF00BC7FEF /* cancel.png in Resources */,
 				9253044315D643CF00BC7FEF /* cancelpress.png in Resources */,
+				9253044715D7006000BC7FEF /* SearchView.xib in Resources */,
+				9253044915D7007E00BC7FEF /* DetailView.xib in Resources */,
+				9253044C15D73D6900BC7FEF /* SearchBar.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -974,7 +989,6 @@
 				92EBF32A15C593FB0085C47E /* SBJsonWriter.m in Sources */,
 				92EBF33015C5992E0085C47E /* TDBadgedCell.m in Sources */,
 				92EC3E4015C7A5DB0025E56C /* MapViewController.m in Sources */,
-				92EC3E4415C7AD240025E56C /* SearchBarPanel.m in Sources */,
 				9290AE8615C837B800E91D61 /* SearchBar.m in Sources */,
 				9290AE8A15C84C1600E91D61 /* SearchView.m in Sources */,
 				924FB9B715CAEAEF00E9E7C3 /* DetailView.m in Sources */,

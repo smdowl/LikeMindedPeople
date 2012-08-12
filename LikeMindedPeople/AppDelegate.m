@@ -34,7 +34,7 @@
 #pragma mark Application Lifecycle
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
-{
+{	
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];
@@ -68,7 +68,9 @@
 	
     [self.window makeKeyAndVisible];
 
-    return YES;
+//	[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
+    
+	return YES;
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
@@ -80,6 +82,11 @@
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
 	[[DataModel sharedInstance] close];
+
+	if (self.window.rootViewController == _mapViewController)
+	{
+		[_mapViewController viewDidDisappear:NO];
+	}
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application

@@ -10,7 +10,6 @@
 #import "DataModel.h"
 #import "ServiceAdapter.h"
 #import "SearchView.h"
-#import "SearchBarPanel.h"
 #import "TDBadgedCell.h"
 #import "SearchBar.h"
 #import "RAdiiResultDTO.h"
@@ -57,7 +56,21 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	[_searchView.searchBarPanel setup];
+	
+	[[NSBundle mainBundle] loadNibNamed:@"SearchView" owner:self options:nil];
+	
+	// Fit the frame in the gap between the map and the bottom of the view with the bar panel overlapping the map
+	CGRect searchViewFrame = _searchView.frame;
+	searchViewFrame.origin.y = CGRectGetMaxY(_mapView.frame) - _searchView.searchBarPanel.frame.size.height;
+	searchViewFrame.size.height = self.view.frame.size.height - searchViewFrame.origin.y;
+	_searchView.frame = searchViewFrame;
+	
+	CGRect resizeButtonFrame = _resizeButton.frame;
+	resizeButtonFrame.origin.y -= _searchView.searchBarPanel.frame.size.height;
+	_resizeButton.frame = resizeButtonFrame;
+	
+	[self.view addSubview:_searchView];
+	_searchView.delegate = self;
 	
 	[_resizeButton setImage:[UIImage imageNamed:@"fullscreen.png"] forState:UIControlStateNormal];
 	[_resizeButton setImage:[UIImage imageNamed:@"fullscreenglow.png"] forState:UIControlStateHighlighted];
@@ -84,16 +97,10 @@
 	UIPanGestureRecognizer *rightSwipeGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(_inFromRight:)];
 	[_slideInRight addGestureRecognizer:rightSwipeGestureRecognizer];
 	
-	[_searchView.detailView.backButton addTarget:_searchView action:@selector(hideDetailView) forControlEvents:UIControlEventTouchUpInside];
+//	[_searchView.detailView.backButton addTarget:_searchView action:@selector(hideDetailView) forControlEvents:UIControlEventTouchUpInside];
 	
 	// TODO: Maybe take this out
 	[[DataModel sharedInstance] addLocationListener:self];	
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-	[super viewWillAppear:animated];
-	[[DataModel sharedInstance] updateGeofenceRefreshLocation];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -131,11 +138,25 @@
 	{
 		[self _setMapVisible:YES];
 	}
+	
+	[[DataModel sharedInstance] updateGeofenceRefreshLocation];
+	
+	_mapView.showsUserLocation = YES;
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
+	[super viewWillDisappear:animated];
 	// Stop the SearchBarPanel recieving notifications
+	
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+	[super viewDidDisappear:animated];
+	
+	_mapView.showsUserLocation = NO;
 	
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 }
@@ -172,7 +193,18 @@
 }
 
 #pragma mark -
-#pragma mark SearchBarPanelDelegate
+#pragma mark SearchViewDelegate
+
+- (void)checkLayout
+{
+	[UIView beginAnimations:nil context:nil];
+	
+	CGRect resizeFrame = _resizeButton.frame;
+	resizeFrame.origin.y = _searchView.frame.origin.y - _resizeButton.frame.size.height;
+	_resizeButton.frame = resizeFrame;
+	
+	[UIView commitAnimations];
+}
 
 - (void)beginSearchForPlacesWithName:(NSString *)name type:(NSString *)type
 {
@@ -215,7 +247,7 @@
 			 [_indicatorView stopAnimating];
 			 
 			 // Deselect whatever row was selected when the error occured
-			 [_searchView.searchBarPanel selectButton:-1];
+			 [_searchView selectButton:-1];
 		 }
 		 ];
 //		_searchingView.hidden = NO;
@@ -229,8 +261,8 @@
 
 - (void)cancelSearch
 {
-	[self _removeAllNonUserAnnotations];
-	[_searchView.searchBarPanel selectButton:-1];
+	[_searchView selectButton:-1];
+//	[self _removeAllNonUserAnnotations];
 }
 
 #pragma mark -
@@ -238,22 +270,27 @@
 
 - (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation
 {
-	_userLocation = userLocation;
-	
-	// When the view appears, home in on our location
-	CLLocation *newLocation = _mapView.userLocation.location;
-    
-    double scalingFactor = ABS( (cos(2 * M_PI * newLocation.coordinate.latitude / 360.0) ));
-    
-	// Specify the amound of miles we want to see around our location
-	double miles = 0.5;
-	
-	MKCoordinateRegion region;
-    region.span.latitudeDelta = miles/69.0;
-	region.span.longitudeDelta = miles/(scalingFactor * 69.0); 
-    region.center = newLocation.coordinate;
-    
-    [_mapView setRegion:region animated:YES];
+	if (!_locationSet)
+	{
+		_userLocation = userLocation;
+		
+		// When the view appears, home in on our location
+		CLLocation *newLocation = _mapView.userLocation.location;
+		
+		double scalingFactor = ABS( (cos(2 * M_PI * newLocation.coordinate.latitude / 360.0) ));
+		
+		// Specify the amound of miles we want to see around our location
+		double miles = 0.5;
+		
+		MKCoordinateRegion region;
+		region.span.latitudeDelta = miles/69.0;
+		region.span.longitudeDelta = miles/(scalingFactor * 69.0); 
+		region.center = newLocation.coordinate;
+		
+		[_mapView setRegion:region animated:YES];
+		
+		_locationSet = YES;
+	}
 }
 
 - (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated
@@ -440,15 +477,32 @@
 
 - (void)handlePinchGesture:(UIPinchGestureRecognizer *)pinchGestureRecognizer
 {	
-	if (pinchGestureRecognizer.state != UIGestureRecognizerStateChanged) 
+	switch (pinchGestureRecognizer.state)
 	{
-        return;
-    }
-	
-    if([pinchGestureRecognizer scale] > 1 && !_isFullScreen) 
-	{
-		_isFullScreen = YES;
-		[self _animateMap:YES];
+		case UIGestureRecognizerStateChanged:
+			if([pinchGestureRecognizer scale] > 1 && !_isFullScreen) 
+			{
+				_transitioningToFullScreen = YES;
+				_isFullScreen = YES;
+				[self _animateMap:YES];
+			}
+			break;
+		case UIGestureRecognizerStateEnded:
+			if (_transitioningToFullScreen)
+			{
+				_transitioningToFullScreen = NO;
+				dispatch_async(dispatch_get_main_queue(), ^()
+							   {
+								   NSArray *annotations = [_mapView annotations];
+								   [_mapView removeAnnotations:annotations];
+								   [_mapView addAnnotations:annotations];								
+							   });
+				_mapView.showsUserLocation = NO;
+				_mapView.showsUserLocation = YES;
+			}
+			break;
+		default:
+			break;
 	}
 }
 
@@ -664,25 +718,39 @@
 		 [_searchView.detailView.backButton setTransform:rotation];
 	 }  completion:^(BOOL finished)
 	 {
-		 NSArray *annotations = [_mapView annotations];
-		 //		 [_mapView removeAnnotations:annotations];
-		 [_mapView addAnnotations:annotations];
+		 if (_transitioningToFullScreen)
+		 {
+			 dispatch_async(dispatch_get_main_queue(), ^()
+							{
+								NSArray *annotations = [_mapView annotations];
+								[_mapView removeAnnotations:annotations];
+								[_mapView addAnnotations:annotations];		
+							});
+		 _mapView.showsUserLocation = NO;
+		 _mapView.showsUserLocation = YES;
+		 }
 	 }];
-	
-	// Also move the map to be centered on the same point
-	//	[_mapView setCenterCoordinate:_mapView.centerCoordinate];
+}
+
+- (void)_refreshAnnotations
+{
+	[_mapView removeAnnotation:_mapView.userLocation];
+	[_mapView addAnnotation:_mapView.userLocation];
 }
 
 - (void)_hideKeyboard
 {
-	[_searchView.searchBarPanel.searchBar resignFirstResponder];
-	[_searchView.searchBarPanel selectButton:-1];
+	[_searchView.searchBar resignFirstResponder];
+	[_searchView selectButton:-1];
 }
 
 - (void)_setMapVisible:(BOOL)visible
 {
 	_locationDisabledView.hidden = visible;
 	_resizeButton.enabled = visible;	
+
+	if (visible)
+		[_mapView setCenterCoordinate:[[[[DataModel sharedInstance] locationManager] location] coordinate] animated:YES];
 }
 
 #pragma mark -

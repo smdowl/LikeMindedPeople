@@ -7,11 +7,27 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SearchViewDelegate.h"
 
-@class SearchBarPanel, DetailView;
-@interface SearchView : UIView
+@class SearchBar, SearchBarPanel, DetailView;
+@interface SearchView : UIView <UITextFieldDelegate>
 {
-	SearchBarPanel *_searchBarPanel;
+	__weak id<SearchViewDelegate> _delegate;
+	
+	NSUInteger _selectedIndex;
+	NSArray *_buttonsArray;	
+	
+	UIButton *_searchButton;
+	SearchBar *_searchBar;
+	UIView *_searchBarContainerView;
+	
+	UIView *_searchBarPanel;
+	UIButton *_barButton;
+	UIButton *_cafeButton;
+	UIButton *_clubButton;
+	UIButton *_foodButton;
+	
+	NSArray *_searchKeys;
 	
 	UITableView *_searchResultsView;
 	UIView *_noResultsView;
@@ -20,14 +36,28 @@
 	DetailView *_detailView;
 }
 
-@property (nonatomic, strong) IBOutlet SearchBarPanel *searchBarPanel;
+@property (nonatomic, weak) IBOutlet id<SearchViewDelegate> delegate;
+
+@property (nonatomic, strong) IBOutlet UIButton *searchButton;
+@property (nonatomic, strong) IBOutlet SearchBar *searchBar;
+
+@property (nonatomic, strong) IBOutlet UIView *searchBarPanel;
+@property (nonatomic, strong) IBOutlet UIButton *barButton;
+@property (nonatomic, strong) IBOutlet UIButton *cafeButton;
+@property (nonatomic, strong) IBOutlet UIButton *clubButton;
+@property (nonatomic, strong) IBOutlet UIButton *foodButton;
 
 @property (nonatomic, strong) IBOutlet UITableView *searchResultsView;
 @property (nonatomic, strong) IBOutlet UIView *noResultsView;
 
-@property (nonatomic, strong) IBOutlet DetailView *detailView;
+@property (nonatomic, strong) DetailView *detailView;
+
+- (void)selectButton:(NSUInteger)buttonIndex; // Use -1 for none
 
 - (void)setData:(NSArray *)data;
+
 - (void)showDetailView;
+
+- (IBAction)tabBarButtonSelected:(id)sender;
 
 @end

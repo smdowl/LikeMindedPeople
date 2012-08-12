@@ -8,10 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
-#import "SearchBarPanelDelegate.h"
+#import "SearchViewDelegate.h"
 
 @class DataModel, SearchBarPanel, SearchView, SideBar, GeofenceLocation;
-@interface MapViewController : UIViewController <SearchBarPanelDelegate, UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, MKMapViewDelegate, CLLocationManagerDelegate>
+@interface MapViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, MKMapViewDelegate, CLLocationManagerDelegate, SearchViewDelegate>
 {	
 	MKMapView *_mapView;
 	SearchView *_searchView;
@@ -22,6 +22,7 @@
 	UIButton *_resizeButton;
 	UIButton *_keyboardCancelButton;
 	BOOL _isFullScreen;
+	BOOL _transitioningToFullScreen;	// Used to refresh the annotations because they seem to disapear
 	
 	NSArray *_searchResults;
 	
@@ -39,7 +40,9 @@
 	// The button that will be use to remove the slide over view
 	UIButton *_slideInCancelButton;
 	UIView *_locationDisabledView;
-		
+
+	BOOL _locationSet;
+	
 	// Test variables
 	BOOL _showingGeofences;
 }

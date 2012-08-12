@@ -122,9 +122,6 @@
 		CGFloat approximateLatitudeChange = radius / 111000;
 		CGFloat approximateLongitudeChange = radius / (111000 * cosf(coordinate.latitude));
 		
-//		CGFloat latitudeStep = (SAN_FRAN_LATITUDE_MAX - SAN_FRAN_LATITUDE_MIN) / TEST_GRID_WIDTH;
-//		CGFloat longitudeStep = (SAN_FRAN_LONGITUDE_MAX - SAN_FRAN_LONGITUDE_MIN) / TEST_GRID_WIDTH;
-
 		CGFloat latitudeStep = approximateLatitudeChange / TEST_GRID_WIDTH;
 		CGFloat longitudeStep = approximateLongitudeChange / TEST_GRID_WIDTH;
 		
@@ -205,48 +202,44 @@
 	}
 	else
 	{			 
-//		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^()
-//					   {
-//						   [NSThread sleepForTimeInterval:0.01];
-						   NSMutableArray *resultsArray = [NSMutableArray array];
-						   for (int i=0; i<10; i++)
-						   {
-							   RadiiResultDTO *result = [[RadiiResultDTO alloc] init];
-							   result.businessTitle = [NSString stringWithFormat:@"%@ %i", type, i];
-							   
-							   result.rating = 0.01*(arc4random() % 100);
-							   
-							   result.peopleCount = random() % 20;
-							   
-							   CGFloat range = 0.01;
-														
-							   CLLocationCoordinate2D newLocation;
-							   newLocation.longitude = location.longitude + -range + 2 * range * 0.01 * (arc4random() % 100);
-							   newLocation.latitude = location.latitude + -range + 2 * range * 0.01 * (arc4random() % 100);
-							   
-							   result.searchLocation = newLocation;
-							   
-							   if ([type isEqualToString:@"bar"])
-							   {
-								   result.type = bar;
-							   }
-							   else if ([type isEqualToString:@"cafe"])
-							   {
-								   result.type = cafe;
-							   }
-							   else if ([type isEqualToString:@"club"])
-							   {
-								   result.type = club;
-							   }
-							   else if ([type isEqualToString:@"food"])
-							   {
-								   result.type = food;
-							   }
-							   
-							   [resultsArray addObject:result];
-						   }
-						   success(resultsArray);   
-//					   });
+		NSMutableArray *resultsArray = [NSMutableArray array];
+		for (int i=0; i<10; i++)
+		{
+			RadiiResultDTO *result = [[RadiiResultDTO alloc] init];
+			result.businessTitle = [NSString stringWithFormat:@"%@ %i", type, i];
+			
+			result.rating = 0.01*(arc4random() % 100);
+			
+			result.peopleCount = random() % 20;
+			
+			CGFloat range = 0.01;
+			
+			CLLocationCoordinate2D newLocation;
+			newLocation.longitude = location.longitude + -range + 2 * range * 0.01 * (arc4random() % 100);
+			newLocation.latitude = location.latitude + -range + 2 * range * 0.01 * (arc4random() % 100);
+			
+			result.searchLocation = newLocation;
+			
+			if ([type isEqualToString:@"bar"])
+			{
+				result.type = bar;
+			}
+			else if ([type isEqualToString:@"cafe"])
+			{
+				result.type = cafe;
+			}
+			else if ([type isEqualToString:@"club"])
+			{
+				result.type = club;
+			}
+			else if ([type isEqualToString:@"food"])
+			{
+				result.type = food;
+			}
+			
+			[resultsArray addObject:result];
+		}
+		success(resultsArray);   
 	}
 }
 #pragma mark -

@@ -12,16 +12,9 @@
 {
 	UITextField *_searchBox;
 	UIButton *_cancelButton;
-	UIImageView *_boxImage;
 }
 
 @property (nonatomic, strong) IBOutlet UITextField *searchBox;
 @property (nonatomic, strong) IBOutlet UIButton *cancelButton;
-@property (nonatomic, strong) IBOutlet UIImageView *boxImage;
-
-- (void)animateIn:(CGFloat)width;
-- (void)animateOut;
-
-- (IBAction)cancelSearch:(id)sender;
 
 @end
