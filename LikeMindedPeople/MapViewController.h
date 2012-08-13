@@ -47,6 +47,7 @@
 	BOOL _showingGeofences;
 	
 	UIView *_debugPanel;
+	CLLocationManager *_locationManager;
 }
 
 @property (nonatomic, strong) IBOutlet MKMapView *mapView;

@@ -14,8 +14,8 @@
 #import "RadiiResultDTO.h"
 #import "ServerKeys.h"
 
-#define DEBUG_MODE YES
-#define FAKE_SEARCH 1
+#define DEBUG_MODE 0
+#define FAKE_SEARCH 0
 
 #define SAN_FRAN_LATITUDE_MIN 37.755787
 #define SAN_FRAN_LATITUDE_MAX 37.797306
@@ -104,7 +104,7 @@
 + (void)getGeofencesForUser:(NSString *)userId atLocation:(CLLocation *)location radius:(CGFloat)radius success:(void (^)(NSArray *))success
 {    
     // Make "YES" for testing, "NO" to use servers.
-    if (!DEBUG_MODE) {
+#if !DEBUG_MODE
 		NSMutableDictionary *d = [[NSMutableDictionary alloc] init];
 		//[d setObject:userId forKey:@"uid"];
 		[d setObject:[NSString stringWithFormat:@"%f",location.coordinate.latitude] forKey:@"lattitude"];
@@ -113,7 +113,7 @@
 		[d setObject:@"500000" forKey:@"filter"];
 		
         [ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"filter_locations/%@.json",userId] httpMethod:@"POST" postPrefixString:@"location_filter=" dataObj:d success:success];
-    } else {
+#else
 		
         NSMutableArray *places = [NSMutableArray array];
 		
@@ -148,13 +148,12 @@
 			}
 		}
         success(places);
-    }
+#endif
 }
 
 + (void)getGoogleSearchResultsForUser:(NSString *)userId atLocation:(CLLocationCoordinate2D)location withName:(NSString *)name withType:(NSString *)type success:(void (^)(NSArray *))success failure:(void (^)(void))failure
 {
-	if (!FAKE_SEARCH)
-	{
+#if !FAKE_SEARCH
 		NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
 		[dictionary setObject:[NSString stringWithFormat:@"%f",location.latitude] forKey:@"latitude"];
 		[dictionary setObject:[NSString stringWithFormat:@"%f",location.longitude] forKey:@"longitude"];
@@ -199,9 +198,7 @@
 			 
 			 success(resultsArray);
 		 }];
-	}
-	else
-	{			 
+#else
 		NSMutableArray *resultsArray = [NSMutableArray array];
 		for (int i=0; i<10; i++)
 		{
@@ -244,7 +241,7 @@
 			[resultsArray addObject:result];
 		}
 		success(resultsArray);   
-	}
+#endif
 }
 #pragma mark -
 #pragma mark Private Methods

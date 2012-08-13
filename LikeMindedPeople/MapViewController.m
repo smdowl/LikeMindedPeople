@@ -138,8 +138,8 @@
 	{
 		[self _setMapVisible:NO];
 		
-		CLLocationManager *locationManager = [[CLLocationManager alloc] init];
-		locationManager.delegate = self;
+		_locationManager = [[CLLocationManager alloc] init];
+		_locationManager.delegate = self;
 	}
 	else
 	{

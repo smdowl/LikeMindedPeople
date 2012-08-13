@@ -37,6 +37,7 @@
 	
 	BOOL _settingUp; // Is the model in the process of setting up already?
 	BOOL _cancelUpdate;
+	BOOL _updatingPlaces;
 }
 
 @property (nonatomic, strong) NSString *userId;

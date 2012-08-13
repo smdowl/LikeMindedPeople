@@ -267,18 +267,25 @@ static DataModel *_sharedInstance = nil;
 			geofencePlace.name = REFRESH_BOUNDARY_KEY;
 			geofencePlace.geoFence = circle;
 			
-			[_placeConnector createPlace:geofencePlace success:^(QLPlace *place)
+			GeofenceLocation *newRefreshLocation = [[GeofenceLocation alloc] initWithPlace:geofencePlace];
+						
+			[self _addAllFences:[NSMutableArray arrayWithObject:newRefreshLocation] onCompletion:^(void)
 			 {
-				 DataModel *strongSelf = weakSelf;
+				 if (!weakSelf)
+					 return;
 				 
-				 if (strongSelf)
-				 {
-					 strongSelf -> _geofenceRefreshLocation = [[GeofenceLocation alloc] initWithPlace:place];
-				 }
-			 }
-								 failure:^(NSError *err)
-			 {
-				 NSLog(@"createPlace: %@", [err localizedDescription]);
+				 DataModel *strongSelf = weakSelf;
+					 
+				 if (strongSelf->_updatingPlaces)
+					 return;
+				 
+				 strongSelf -> _updatingPlaces = YES;
+				 
+				 CLLocation *location = [strongSelf->_locationManager location];
+				 [ServiceAdapter getGeofencesForUser:strongSelf->_userId atLocation:location radius:GEOFENCE_DOWNLOAD_RADIUS success:^(NSArray *geofences)
+				  {
+					  [strongSelf _replacePrivateGeofencesWithFences:[NSMutableArray arrayWithArray:geofences]];
+				  }];
 			 }];
 		};
 		
@@ -290,32 +297,25 @@ static DataModel *_sharedInstance = nil;
 				if ([place.name isEqualToString:REFRESH_BOUNDARY_KEY])
 					_geofenceRefreshLocation = [[GeofenceLocation alloc] initWithPlace:place];
 			}
+			 
+			 // If some already exist remove them first
+			 if (![_geofenceRefreshLocation isEmpty])
+			 {
+				 [self _removeAllFences:[NSMutableArray arrayWithObject:_geofenceRefreshLocation]
+											onCompletion:createNewPlace];
+
+			 }
+			 else
+			 { 
+				 
+				 createNewPlace();
+			 }
 		 }
 										   failure:^(NSError *err)
 		 {
 			 NSLog(@"%@", [err localizedDescription]);
 		 }];
 		
-		// If some already exist remove them first
-		if (![_geofenceRefreshLocation isEmpty])
-		{
-			[_placeConnector deletePlaceWithId:_geofenceRefreshLocation.placeId 
-									   success:^()
-			 {
-				 [_privateFences removeObject:_geofenceRefreshLocation];
-				 createNewPlace();	 
-			 }
-									   failure:^(NSError *err)
-			 {
-				 NSLog(@"deletePlace: %@", [err localizedDescription]);			 
-				 createNewPlace();
-			 }];
-		}
-		else
-		{ 
-			
-			createNewPlace();
-		}
 	}
 }
 
@@ -333,6 +333,7 @@ static DataModel *_sharedInstance = nil;
 - (void)close
 {
 	_cancelUpdate = YES;
+	_updatingPlaces = NO; 
 	
 	[NSKeyedArchiver archiveRootObject:_privateFences toFile:[self _locationsStoragePath]];
 	[NSKeyedArchiver archiveRootObject:_userId toFile:[self _userIdStoragePath]];
@@ -385,15 +386,9 @@ static DataModel *_sharedInstance = nil;
 					 
 				 case QLPlaceEventTypeLeft:
 					 // If you just left the refresh boundary get a new one as well as all the nearby geofences
-					 if ([currentLocation isEqual:_geofenceRefreshLocation])
+					 if ([currentLocation.geofenceName isEqualToString:REFRESH_BOUNDARY_KEY])
 					 {
 						 [self updateGeofenceRefreshLocation];
-						 
-						 CLLocation *location = [_locationManager location];
-						 [ServiceAdapter getGeofencesForUser:_userId atLocation:location radius:GEOFENCE_DOWNLOAD_RADIUS success:^(NSArray *geofences)
-						  {
-							  [self _replacePrivateGeofencesWithFences:[NSMutableArray arrayWithArray:geofences]];
-						  }];
 					 }
 					 else
 					 {
@@ -524,6 +519,8 @@ static DataModel *_sharedInstance = nil;
 				 _cancelUpdate = NO;
 				 return;
 			 }
+			 
+			 _updatingPlaces = YES;
 			 			 
 			 // Create an array of GeofenceLocations from what is returned by the place connector
 			 NSMutableArray *allLocations = [NSMutableArray array];
@@ -574,6 +571,7 @@ static DataModel *_sharedInstance = nil;
 							   return;
 						   }
 						   strongStrongSelf->_settingUp = NO; 
+						   strongStrongSelf->_updatingPlaces = NO; 
 						   if (strongStrongSelf->_cancelUpdate) 
 						   {
 							   strongStrongSelf->_cancelUpdate = NO; 
@@ -600,6 +598,7 @@ static DataModel *_sharedInstance = nil;
 					  }
 					  
 					  strongStrongSelf->_settingUp = NO;
+					  strongStrongSelf->_updatingPlaces = NO; 
 					  if (strongStrongSelf->_cancelUpdate) 
 					  {
 						  strongStrongSelf->_cancelUpdate = NO; 
@@ -618,6 +617,7 @@ static DataModel *_sharedInstance = nil;
 		 {
 			 NSLog(@"%@", err);
 			 _settingUp = NO;
+			 _updatingPlaces = NO; 
 			 _cancelUpdate = NO;
 		 }];
 	}
@@ -642,11 +642,17 @@ static DataModel *_sharedInstance = nil;
 							 success:^(QLPlace *newFence)
 		 {
 			 [geofenceLocations removeObject:geofenceLocation];
-			 
-			 GeofenceLocation *newLocation = [[GeofenceLocation alloc] initWithPlace:newFence];
-			 
-			 if (![newLocation isEqual:_geofenceRefreshLocation])		 
-				 [_privateFences addObject:newLocation];
+			 			 
+			 if (![newFence.name isEqualToString:REFRESH_BOUNDARY_KEY])		 
+			 {			 
+				 GeofenceLocation *newLocation = [[GeofenceLocation alloc] initWithPlace:newFence];
+				 if (![_privateFences containsObject:newLocation])
+					 [_privateFences addObject:newLocation];
+			 }
+			 else
+			 {
+				 _geofenceRefreshLocation = [[GeofenceLocation alloc] initWithPlace:newFence];
+			 }
 			 
 			 if (geofenceLocations.count == 0)
 				 finished();
@@ -709,6 +715,7 @@ static DataModel *_sharedInstance = nil;
 			 NSLog(@"ERROR: %@", err);
 			 NSLog(@"Geofence: %lli %@", fence.placeId, fence.geofenceName);
 			 [geofenceLocations removeObject:fence];
+			 [_privateFences removeObject:fence];
 			 //											  [fences insertObject:fence atIndex:[_privateFences count]];
 			 
 			 // Some times we are left with
