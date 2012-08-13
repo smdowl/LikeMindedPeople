@@ -64,21 +64,10 @@
 
 #pragma mark -
 #pragma mark External Methods
-
-- (void)setData:(NSArray *)data
+ -(CGFloat)panelHeight
 {
-	if ([data count])
-	{
-//		[_noResultsView removeFromSuperview];
-		_noResultsView.hidden = YES;
-	}
-	else
-	{
-//		[self insertSubview:_noResultsView aboveSubview:_searchResultsView];
-		_noResultsView.hidden = NO;
-	}
+	return _searchBar ? _searchBar.frame.size.height + _searchBarPanel.frame.size.height : _searchBarPanel.frame.size.height;
 	
-	[_searchResultsView reloadData];
 }
 
 - (void)selectButton:(NSUInteger)buttonIndex
@@ -116,15 +105,35 @@
 	}
 }
 
+- (void)setData:(NSArray *)data
+{
+	if ([data count])
+	{
+		//		[_noResultsView removeFromSuperview];
+		_noResultsView.hidden = YES;
+	}
+	else
+	{
+		//		[self insertSubview:_noResultsView aboveSubview:_searchResultsView];
+		_noResultsView.hidden = NO;
+	}
+	
+	[_searchResultsView reloadData];
+}
+
+
 - (void)showDetailView
 {
 	if (!_detailView.isShowing)
 	{
+		[[NSBundle mainBundle] loadNibNamed:@"DetailView" owner:self options:nil];
+		
 		CGRect detailFrame = _detailView.frame;
 		detailFrame.origin.x = self.frame.size.width;
 		_detailView.frame = detailFrame;
-		
 		_detailView.hidden = NO;
+		[self addSubview:_detailView];
+		
 		[UIView beginAnimations:nil context:nil];
 		
 		detailFrame = _detailView.frame;
@@ -137,7 +146,7 @@
 	}
 }
 
-- (void)hideDetailView
+- (IBAction)hideDetailView
 {	
 	if (_detailView.isShowing)
 	{
@@ -161,8 +170,6 @@
 	}
 }
 
-#pragma mark -
-#pragma mark SearchBarPanelDelegate
 #pragma mark -
 #pragma mark IBActions
 

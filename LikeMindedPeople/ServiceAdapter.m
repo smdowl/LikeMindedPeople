@@ -23,9 +23,9 @@
 #define SAN_FRAN_LONGITUDE_MIN -122.430439
 #define SAN_FRAN_LONGITUDE_MAX -122.378769
 
-#define TEST_GRID_WIDTH 15
+#define TEST_GRID_WIDTH 10
 
-#define TEST_RADIUS 50
+#define TEST_RADIUS 25
 
 @interface ServiceAdapter()
 + (void)_callServiceWithPath:(NSString *)path
@@ -206,7 +206,7 @@
 		for (int i=0; i<10; i++)
 		{
 			RadiiResultDTO *result = [[RadiiResultDTO alloc] init];
-			result.businessTitle = [NSString stringWithFormat:@"%@ %i", type, i];
+			result.businessTitle = [NSString stringWithFormat:@"%@ %i", name ? name : type, i];
 			
 			result.rating = 0.01*(arc4random() % 100);
 			
@@ -235,6 +235,10 @@
 			else if ([type isEqualToString:@"food"])
 			{
 				result.type = food;
+			}
+			else
+			{
+				result.type = arc4random() % 4;
 			}
 			
 			[resultsArray addObject:result];

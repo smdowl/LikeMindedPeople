@@ -36,6 +36,7 @@
 	GeofenceLocation *_geofenceRefreshLocation;
 	
 	BOOL _settingUp; // Is the model in the process of setting up already?
+	BOOL _cancelUpdate;
 }
 
 @property (nonatomic, strong) NSString *userId;

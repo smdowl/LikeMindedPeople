@@ -50,7 +50,9 @@
 @property (nonatomic, strong) IBOutlet UITableView *searchResultsView;
 @property (nonatomic, strong) IBOutlet UIView *noResultsView;
 
-@property (nonatomic, strong) DetailView *detailView;
+@property (nonatomic, strong) IBOutlet DetailView *detailView;
+
+- (CGFloat)panelHeight;	// The height of the tab bar or tab bar and search box depending
 
 - (void)selectButton:(NSUInteger)buttonIndex; // Use -1 for none
 
@@ -59,5 +61,6 @@
 - (void)showDetailView;
 
 - (IBAction)tabBarButtonSelected:(id)sender;
+- (IBAction)hideDetailView;
 
 @end

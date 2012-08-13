@@ -614,13 +614,13 @@
 			isa = PBXGroup;
 			children = (
 				9282BF4115D0EA030065984F /* Map Components */,
+				9253044A15D73C6C00BC7FEF /* Search View */,
 				925AE8C215C49075008840D9 /* LoginViewController.h */,
 				925AE8C315C49075008840D9 /* LoginViewController.m */,
 				925AE8C415C49075008840D9 /* LoginViewController.xib */,
 				92EC3E3D15C7A5DB0025E56C /* MapViewController.h */,
 				92EC3E3E15C7A5DB0025E56C /* MapViewController.m */,
 				92EC3E3F15C7A5DB0025E56C /* MapViewController.xib */,
-				9253044A15D73C6C00BC7FEF /* Search View */,
 				924FB9B515CAEAEF00E9E7C3 /* DetailView.h */,
 				924FB9B615CAEAEF00E9E7C3 /* DetailView.m */,
 				9253044815D7007E00BC7FEF /* DetailView.xib */,

@@ -55,11 +55,11 @@
 	_radius = 0;
 }
 
-- (BOOL)containsPin:(CLLocationCoordinate2D)pin
+- (BOOL)containsCoordinate:(CLLocationCoordinate2D)coordinate
 {		
 	CLRegion *region = [[CLRegion alloc] initCircularRegionWithCenter:_location radius:_radius identifier:@"region"];
 		
-	return [region containsCoordinate:pin];
+	return [region containsCoordinate:coordinate];
 }
 
 - (QLPlace *)place

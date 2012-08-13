@@ -32,7 +32,7 @@
 - (id)initWithPlace:(QLPlace *)place;
 - (void)clear;
 
-- (BOOL)containsPin:(CLLocationCoordinate2D)pin;
+- (BOOL)containsCoordinate:(CLLocationCoordinate2D)coordinate;
 
 - (QLPlace *)place;
 

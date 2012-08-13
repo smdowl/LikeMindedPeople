@@ -45,6 +45,8 @@
 	
 	// Test variables
 	BOOL _showingGeofences;
+	
+	UIView *_debugPanel;
 }
 
 @property (nonatomic, strong) IBOutlet MKMapView *mapView;
@@ -60,6 +62,7 @@
 @property (nonatomic, strong) IBOutlet UIView *slideInRight;
 
 @property (nonatomic, strong) IBOutlet UIView *locationDisabledView;
+@property (nonatomic, strong) IBOutlet UIView *debugPanel;
 
 - (IBAction)toggleFullScreen:(id)sender;
 - (IBAction)enableLocationServices;

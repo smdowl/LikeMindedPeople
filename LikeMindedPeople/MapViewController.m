@@ -22,6 +22,8 @@
 
 #define SIDE_BAR_WIDTH 180
 
+#define DEBUG_BUTTONS 1
+
 @interface MapViewController ()
 
 - (void)_removeAllNonUserAnnotations;
@@ -49,6 +51,7 @@
 @synthesize slideInRight = _slideInRight;
 
 @synthesize locationDisabledView = _locationDisabledView;
+@synthesize debugPanel = _debugPanel;
 
 #pragma mark -
 #pragma mark View lifecycle
@@ -101,6 +104,10 @@
 	
 	// TODO: Maybe take this out
 	[[DataModel sharedInstance] addLocationListener:self];	
+	
+#if DEBUG_BUTTONS
+	_debugPanel.hidden = NO;
+#endif
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -311,14 +318,14 @@
 	
 	// Move the table view if it is on screen
 	[_searchView.searchResultsView selectRowAtIndexPath:[NSIndexPath indexPathForRow:[_searchResults indexOfObject:result] inSection:0] animated:YES scrollPosition:UITableViewScrollPositionMiddle];
-	
-	// Update the detail view
-	[_searchView.detailView setData:result];
-	
+		
 	if (_isFullScreen)
 	{
 		[_searchView showDetailView];
 	}
+	
+	// Update the detail view
+	[_searchView.detailView setData:result];
 }
 
 - (void)mapView:(MKMapView *)mapView didDeselectAnnotationView:(MKAnnotationView *)view
@@ -456,8 +463,8 @@
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
 	
 	// Set the detail view's data. This fill in the UI
-	_searchView.detailView.data = [_searchResults objectAtIndex:indexPath.row];
 	[_searchView showDetailView];
+	_searchView.detailView.data = [_searchResults objectAtIndex:indexPath.row];
 }
 
 #pragma mark -
@@ -526,7 +533,7 @@
 	_searchView.frame = searchViewFrame;
 	
 	CGRect resizeButtonFrame = _resizeButton.frame;
-	resizeButtonFrame.origin.y = searchViewFrame.origin.y - _resizeButton.frame.size.height - RESIZE_BUTTTON_PADDING;
+	resizeButtonFrame.origin.y = searchViewFrame.origin.y - _resizeButton.frame.size.height;
 	_resizeButton.frame = resizeButtonFrame;
 	[UIView commitAnimations];
 	
@@ -539,11 +546,11 @@
 	
 	[UIView beginAnimations:nil context:nil];
 	CGRect searchViewFrame = _searchView.frame;	
-	searchViewFrame.origin.y = _isFullScreen ? viewSize.height - _searchView.searchBarPanel.frame.size.height : viewSize.height - _searchView.frame.size.height;
+	searchViewFrame.origin.y = _isFullScreen ? viewSize.height - [_searchView panelHeight] : viewSize.height - _searchView.frame.size.height;
 	_searchView.frame = searchViewFrame;
 	
 	CGRect resizeButtonFrame = _resizeButton.frame;
-	resizeButtonFrame.origin.y = searchViewFrame.origin.y - _resizeButton.frame.size.height - RESIZE_BUTTTON_PADDING;
+	resizeButtonFrame.origin.y = searchViewFrame.origin.y - _resizeButton.frame.size.height;
 	_resizeButton.frame = resizeButtonFrame;
 	[UIView commitAnimations];
 	
@@ -554,8 +561,6 @@
 {
 	CGFloat xPosition = [recognizer translationInView:self.view].x;
 	CGRect coveringFrame;
-	
-	
 	
 	UIGestureRecognizerState state = recognizer.state;
 	if (state == UIGestureRecognizerStateBegan)
@@ -712,7 +717,7 @@
 		 _resizeButton.frame = resizeButtonFrame;	 
 		 
 		 [_resizeButton setImage:[UIImage imageNamed:resizeButtonImageName] forState:UIControlStateNormal];
-		 [_resizeButton setImage:[UIImage imageNamed:resizeButtonImageName] forState:UIControlStateHighlighted];
+		 [_resizeButton setImage:[UIImage imageNamed:resizeGlowButtonImageName] forState:UIControlStateHighlighted];
 		 
 		 CGAffineTransform rotation = CGAffineTransformMakeRotation(backButtonRotation);
 		 [_searchView.detailView.backButton setTransform:rotation];
