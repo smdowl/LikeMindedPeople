@@ -218,7 +218,8 @@
 	if (name.length || type.length)
 	{
 //		[_searchConnection getGoogleObjectsWithQuery:searchText andMapRegion:[_mapView region] andNumberOfResults:20 addressesOnly:YES andReferer:@"http://WWW.radii.com"];    
-		[ServiceAdapter getGoogleSearchResultsForUser:[[DataModel sharedInstance] userId] atLocation:_mapView.centerCoordinate withName:name withType:type success:^(NSArray *results)
+//		[ServiceAdapter getGoogleSearchResultsForUser:[[DataModel sharedInstance] userId] atLocation:_mapView.centerCoordinate withName:name withType:type success:^(NSArray *results)
+		[ServiceAdapter getFourSquareSearchResultsForUser:[[DataModel sharedInstance] userId] atLocation:_mapView.centerCoordinate withQuery:name ? name : type success:^(NSArray *results)
 		 {
 			 _searchingView.hidden = YES;
 			 [_indicatorView stopAnimating];
@@ -292,6 +293,10 @@
 		 
 //		 DirectionsPathDTO *directionPath = [[DirectionsPathDTO alloc] initWithPath:path];
 		 CLLocationCoordinate2D locations[path.count];
+		 
+		 CGPoint minLatLong = CGPointMake(MAXFLOAT,MAXFLOAT);
+		 CGPoint maxLatLong = CGPointMake(-MAXFLOAT,-MAXFLOAT);
+		 
 		 for (int i=0; i<path.count; i++)
 		  {
 			  NSValue *pathValue = [path objectAtIndex:i];
@@ -300,12 +305,29 @@
 			  location.latitude = pathValue.CGPointValue.x;
 			  location.longitude = pathValue.CGPointValue.y;
 			  
+			  if (location.latitude < minLatLong.x)
+				  minLatLong.x = location.latitude;
+			  if (location.longitude < minLatLong.y)
+				  minLatLong.y = location.longitude;
+			  
+			  if (location.latitude > maxLatLong.x)
+				  maxLatLong.x = location.latitude;
+			  if (location.longitude > maxLatLong.y)
+				  maxLatLong.y = location.longitude;
+			  
 			  locations[i] = location;
 		  }
 		 
 		 [_mapView removeOverlay:_directionsLine];
 		 _directionsLine = [MKPolyline polylineWithCoordinates:locations count:path.count];
 		 [_mapView addOverlay:_directionsLine];
+		 
+		 MKCoordinateRegion region;
+		 region.span.latitudeDelta = maxLatLong.x - minLatLong.x;
+		 region.span.longitudeDelta = maxLatLong.y - minLatLong.y;
+		 region.center = CLLocationCoordinate2DMake((minLatLong.x + maxLatLong.x)/2, (minLatLong.y + maxLatLong.y)/2);
+		 
+		 [_mapView setRegion:region animated:YES]; 
 		 [_mapView setNeedsDisplay];
 	 }];
 }
@@ -454,24 +476,26 @@
 	id<MKAnnotation> annotation = annotationView.annotation;
 	if ([annotation isKindOfClass:[RadiiResultDTO class]])
 	{
+		// Stop the timer from hiding the view
+		[_detailViewTimer invalidate];
+		
 		RadiiResultDTO *radiiResult = (RadiiResultDTO *)annotationView.annotation;
-		
-		NSIndexPath *selectedIndex = [NSIndexPath indexPathForRow:[_searchResults indexOfObject:radiiResult] inSection:0];
-		
-		if (_searchView.detailView.isShowing)
+				
+		if (!_searchView.detailView.isShowing)
 		{
-			[_searchView.detailView setData:radiiResult];
-		}
-		else if (_isFullScreen)
-		{
-			[_searchView showDetailView];
-		}
-		else 
-		{
-			// Move the table view if it is on screen
-			[_searchView.searchResultsView selectRowAtIndexPath:selectedIndex
-													   animated:YES 
-												 scrollPosition:UITableViewScrollPositionMiddle];			
+			if (_isFullScreen)
+			{
+				[_searchView showDetailView];
+			}
+			else 
+			{
+				NSIndexPath *selectedIndex = [NSIndexPath indexPathForRow:[_searchResults indexOfObject:radiiResult] inSection:0];
+				
+				// Move the table view if it is on screen
+				[_searchView.searchResultsView selectRowAtIndexPath:selectedIndex
+														   animated:YES 
+													 scrollPosition:UITableViewScrollPositionMiddle];			
+			}
 		}
 			
 		// Update the detail view
@@ -528,7 +552,8 @@
 		}
 	}
 	
-	[_searchView hideDetailView];
+	_detailViewTimer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:_searchView selector:@selector(hideDetailView) userInfo:nil repeats:NO];
+//	[_searchView hideDetailView];
 	[_searchView.searchResultsView deselectRowAtIndexPath:[_searchView.searchResultsView indexPathForSelectedRow] animated:YES];
 }
 
@@ -598,8 +623,6 @@
 
 - (MKOverlayView *)mapView:(MKMapView *)mapView viewForOverlay:(id<MKOverlay>)overlay
 {
-	NSLog(@"overlay class: %@", overlay.class);
-
 	if ([overlay isKindOfClass:[GeofenceLocation class]])
 	{
 		MKCircleView *region = [[MKCircleView alloc] initWithOverlay:overlay];

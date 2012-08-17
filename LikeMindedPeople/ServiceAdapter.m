@@ -108,10 +108,10 @@
     // Make "YES" for testing, "NO" to use servers.
 #if !DEBUG_MODE
 	NSMutableDictionary *d = [[NSMutableDictionary alloc] init];
-	[d setObject:[NSString stringWithFormat:@"%f",location.coordinate.latitude] forKey:@"lattitude"];
+	[d setObject:[NSString stringWithFormat:@"%f",location.coordinate.latitude] forKey:@"latitude"];
 	[d setObject:[NSString stringWithFormat:@"%f",location.coordinate.longitude] forKey:@"longitude"];
 	// Filter in miles
-	[d setObject:@"5000" forKey:@"filter"];
+	[d setObject:@"100" forKey:@"filter"];
 	
 	[ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"filter_locations/%@.json",userId] httpMethod:@"POST" postPrefixString:@"location_filter=" dataObj:d success:^(NSArray *results)
 	 {
@@ -188,100 +188,197 @@
 	[geofenceDictionary setValue:[NSString stringWithFormat:@"%f",geofence.location.latitude] forKey:@"latitude"];
 	[geofenceDictionary setValue:[NSString stringWithFormat:@"%f",geofence.location.longitude] forKey:@"longitude"];
 	[geofenceDictionary setValue:geofence.geofenceName forKey:@"name"];
+	[geofenceDictionary setValue:@"00:10:30" forKey:@"stay"];
 
-	[ServiceAdapter _callServiceWithPath:@"visits.json" httpMethod:@"POST" postPrefixString:@"visit=" dataObj:geofenceDictionary success:success];
+	[ServiceAdapter _callServiceWithPath:@"exit.json" httpMethod:@"POST" postPrefixString:@"exit=" dataObj:geofenceDictionary success:success];
 }
+//
+//+ (void)getGoogleSearchResultsForUser:(NSString *)userId atLocation:(CLLocationCoordinate2D)location withName:(NSString *)name withType:(NSString *)type success:(void (^)(NSArray *))success failure:(void (^)(void))failure
+//{
+//#if !FAKE_SEARCH
+//		NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+//		[dictionary setObject:[NSString stringWithFormat:@"%f",location.latitude] forKey:@"latitude"];
+//		[dictionary setObject:[NSString stringWithFormat:@"%f",location.longitude] forKey:@"longitude"];
+//		
+//		[dictionary setObject:name ? name : @"" forKey:@"name"];
+//		
+//		[dictionary setObject:type ? type : @"" forKey:@"type"];
+//		if (!userId)
+//		{
+//			// Should never happen but if it does just break out
+//			return;
+//		}
+//		[ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"google_locations/%@.json",userId] httpMethod:@"POST" postPrefixString:@"location_google=" dataObj:dictionary success:^(id results)
+//		 {
+//			 // Here we must build the Geofence objects from the returned dictionary
+//			 NSMutableArray *resultsArray = [NSMutableArray array];
+//			 for (NSDictionary *resultDictionary in results)
+//			 {
+//				 
+//				 RadiiResultDTO *result = [[RadiiResultDTO alloc] init];
+//				 result.businessTitle = [resultDictionary objectForKey:BUSINESS_TITLE_KEY];
+//				 
+//				 NSNumber *rating = [resultDictionary objectForKey:RATING_KEY];
+//				 result.rating = rating ? [rating floatValue] : 0;
+//				 
+//				 NSString *peopleCount = [resultDictionary objectForKey:PEOPLE_COUNT_KEY];
+//				 result.peopleCount = peopleCount ? [peopleCount floatValue] : 0;
+//				 
+//				 NSString *description = [resultDictionary objectForKey:DESCRIPTION_KEY];
+//				 result.details = description;
+//				 
+//				 CLLocationCoordinate2D location;
+//				 NSNumber *longitude = [resultDictionary objectForKey:@"longitude"];
+//				 location.longitude = [longitude floatValue];
+//				 
+//				 NSNumber *latitude = [resultDictionary objectForKey:@"latitude"];
+//				 location.latitude = [latitude floatValue];
+//				 result.searchLocation = location;
+//				 
+//				 [resultsArray addObject:result];
+//			 }
+//			 
+//			 success(resultsArray);
+//		 }];
+//#else
+//		NSMutableArray *resultsArray = [NSMutableArray array];
+//		for (int i=0; i<10; i++)
+//		{
+//			RadiiResultDTO *result = [[RadiiResultDTO alloc] init];
+//			result.businessTitle = [NSString stringWithFormat:@"%@ %i", name ? name : type, i];
+//			
+//			result.rating = 0.01*(arc4random() % 100);
+//			
+//			result.peopleCount = random() % 20;
+//			
+//			CGFloat range = 0.01;
+//			
+//			CLLocationCoordinate2D newLocation;
+//			newLocation.longitude = location.longitude + -range + 2 * range * 0.01 * (arc4random() % 100);
+//			newLocation.latitude = location.latitude + -range + 2 * range * 0.01 * (arc4random() % 100);
+//			
+//			result.searchLocation = newLocation;
+//			
+//			if ([type isEqualToString:@"bar"])
+//			{
+//				result.type = bar;
+//			}
+//			else if ([type isEqualToString:@"cafe"])
+//			{
+//				result.type = cafe;
+//			}
+//			else if ([type isEqualToString:@"club"])
+//			{
+//				result.type = club;
+//			}
+//			else if ([type isEqualToString:@"food"])
+//			{
+//				result.type = food;
+//			}
+//			else
+//			{
+//				result.type = arc4random() % 4;
+//			}
+//			
+//			[resultsArray addObject:result];
+//		}
+//		success(resultsArray);   
+//#endif
+//}
 
-+ (void)getGoogleSearchResultsForUser:(NSString *)userId atLocation:(CLLocationCoordinate2D)location withName:(NSString *)name withType:(NSString *)type success:(void (^)(NSArray *))success failure:(void (^)(void))failure
++ (void)getFourSquareSearchResultsForUser:(NSString *)userId atLocation:(CLLocationCoordinate2D)location withQuery:(NSString *)query success:(void (^)(NSArray *))success failure:(void (^)(void))failure
 {
 #if !FAKE_SEARCH
-		NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-		[dictionary setObject:[NSString stringWithFormat:@"%f",location.latitude] forKey:@"latitude"];
-		[dictionary setObject:[NSString stringWithFormat:@"%f",location.longitude] forKey:@"longitude"];
-		
-		[dictionary setObject:name ? name : @"" forKey:@"name"];
-		
-		[dictionary setObject:type ? type : @"" forKey:@"type"];
-		if (!userId)
-		{
-			// Should never happen but if it does just break out
-			return;
-		}
-		[ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"google_locations/%@.json",userId] httpMethod:@"POST" postPrefixString:@"location_google=" dataObj:dictionary success:^(id results)
+	NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+	[dictionary setObject:[NSString stringWithFormat:@"%f",location.latitude] forKey:@"latitude"];
+	[dictionary setObject:[NSString stringWithFormat:@"%f",location.longitude] forKey:@"longitude"];
+	
+//	[dictionary setObject:name ? name : @"" forKey:@"name"];
+//	
+//	[dictionary setObject:type ? type : @"" forKey:@"type"];
+	
+	[dictionary setValue:query forKey:@"query"];
+	
+	if (!userId)
+	{
+		// Should never happen but if it does just break out
+		return;
+	}
+	[ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"foursquare_venues/%@.json",userId] httpMethod:@"POST" postPrefixString:@"foursquare_query=" dataObj:dictionary success:^(id results)
+	 {
+		 // Here we must build the Geofence objects from the returned dictionary
+		 NSMutableArray *resultsArray = [NSMutableArray array];
+		 for (NSDictionary *resultDictionary in results)
 		 {
-			 // Here we must build the Geofence objects from the returned dictionary
-			 NSMutableArray *resultsArray = [NSMutableArray array];
-			 for (NSDictionary *resultDictionary in results)
-			 {
-				 
-				 RadiiResultDTO *result = [[RadiiResultDTO alloc] init];
-				 result.businessTitle = [resultDictionary objectForKey:BUSINESS_TITLE_KEY];
-				 
-				 NSNumber *rating = [resultDictionary objectForKey:RATING_KEY];
-				 result.rating = rating ? [rating floatValue] : 0;
-				 
-				 NSString *peopleCount = [resultDictionary objectForKey:PEOPLE_COUNT_KEY];
-				 result.peopleCount = peopleCount ? [peopleCount floatValue] : 0;
-				 
-				 NSString *description = [resultDictionary objectForKey:DESCRIPTION_KEY];
-				 result.details = description;
-				 
-				 CLLocationCoordinate2D location;
-				 NSNumber *longitude = [resultDictionary objectForKey:@"longitude"];
-				 location.longitude = [longitude floatValue];
-				 
-				 NSNumber *latitude = [resultDictionary objectForKey:@"latitude"];
-				 location.latitude = [latitude floatValue];
-				 result.searchLocation = location;
-				 
-				 [resultsArray addObject:result];
-			 }
 			 
-			 success(resultsArray);
-		 }];
+			 RadiiResultDTO *result = [[RadiiResultDTO alloc] init];
+			 result.businessTitle = [resultDictionary objectForKey:BUSINESS_TITLE_KEY];
+			 
+			 NSNumber *rating = [resultDictionary objectForKey:RATING_KEY];
+			 result.rating = rating ? [rating floatValue] : 0;
+			 
+			 NSString *peopleCount = [resultDictionary objectForKey:PEOPLE_COUNT_KEY];
+			 result.peopleCount = peopleCount ? [peopleCount floatValue] : 0;
+			 
+			 NSString *description = [resultDictionary objectForKey:DESCRIPTION_KEY];
+			 result.details = description;
+			 
+			 CLLocationCoordinate2D location;
+			 NSNumber *longitude = [resultDictionary objectForKey:@"longitude"];
+			 location.longitude = [longitude floatValue];
+			 
+			 NSNumber *latitude = [resultDictionary objectForKey:@"latitude"];
+			 location.latitude = [latitude floatValue];
+			 result.searchLocation = location;
+			 
+			 [resultsArray addObject:result];
+		 }
+		 
+		 success(resultsArray);
+	 }];
 #else
-		NSMutableArray *resultsArray = [NSMutableArray array];
-		for (int i=0; i<10; i++)
+	NSMutableArray *resultsArray = [NSMutableArray array];
+	for (int i=0; i<10; i++)
+	{
+		RadiiResultDTO *result = [[RadiiResultDTO alloc] init];
+		result.businessTitle = [NSString stringWithFormat:@"%@ %i", name ? name : type, i];
+		
+		result.rating = 0.01*(arc4random() % 100);
+		
+		result.peopleCount = random() % 20;
+		
+		CGFloat range = 0.01;
+		
+		CLLocationCoordinate2D newLocation;
+		newLocation.longitude = location.longitude + -range + 2 * range * 0.01 * (arc4random() % 100);
+		newLocation.latitude = location.latitude + -range + 2 * range * 0.01 * (arc4random() % 100);
+		
+		result.searchLocation = newLocation;
+		
+		if ([type isEqualToString:@"bar"])
 		{
-			RadiiResultDTO *result = [[RadiiResultDTO alloc] init];
-			result.businessTitle = [NSString stringWithFormat:@"%@ %i", name ? name : type, i];
-			
-			result.rating = 0.01*(arc4random() % 100);
-			
-			result.peopleCount = random() % 20;
-			
-			CGFloat range = 0.01;
-			
-			CLLocationCoordinate2D newLocation;
-			newLocation.longitude = location.longitude + -range + 2 * range * 0.01 * (arc4random() % 100);
-			newLocation.latitude = location.latitude + -range + 2 * range * 0.01 * (arc4random() % 100);
-			
-			result.searchLocation = newLocation;
-			
-			if ([type isEqualToString:@"bar"])
-			{
-				result.type = bar;
-			}
-			else if ([type isEqualToString:@"cafe"])
-			{
-				result.type = cafe;
-			}
-			else if ([type isEqualToString:@"club"])
-			{
-				result.type = club;
-			}
-			else if ([type isEqualToString:@"food"])
-			{
-				result.type = food;
-			}
-			else
-			{
-				result.type = arc4random() % 4;
-			}
-			
-			[resultsArray addObject:result];
+			result.type = bar;
 		}
-		success(resultsArray);   
+		else if ([type isEqualToString:@"cafe"])
+		{
+			result.type = cafe;
+		}
+		else if ([type isEqualToString:@"club"])
+		{
+			result.type = club;
+		}
+		else if ([type isEqualToString:@"food"])
+		{
+			result.type = food;
+		}
+		else
+		{
+			result.type = arc4random() % 4;
+		}
+		
+		[resultsArray addObject:result];
+	}
+	success(resultsArray);   
 #endif
 }
 

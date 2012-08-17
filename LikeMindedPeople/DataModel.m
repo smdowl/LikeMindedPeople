@@ -181,7 +181,11 @@ static DataModel *_sharedInstance = nil;
 				 // Testing the enter/exit fence
 				 [ServiceAdapter enterGeofence:geofence userId:_userId success:^(id success)
 				  {
-					  NSLog(@"success: %@", success);
+					  NSLog(@"success enter: %@", success);
+					  [ServiceAdapter exitGeofence:geofence userId:_userId success:^(id success)
+					   {
+						   NSLog(@"success exit: %@", success);
+					   }];
 				  }];
 				 
 			 }
@@ -566,8 +570,8 @@ static DataModel *_sharedInstance = nil;
 					 [removedLocations addObject:location];
 				 }
 				 
-				 if (![_privateFences containsObject:location] && ![location.geofenceName isEqual:REFRESH_BOUNDARY_KEY])
-					 [_privateFences addObject:location];
+//				 if ([_privateFences containsObject:location])
+//					 [_privateFences removeObject:location];
 			 }		 
 			 
 			 // Now work out what additional fences need to be added
@@ -576,6 +580,9 @@ static DataModel *_sharedInstance = nil;
 			 {
 				 if (![allLocations containsObject:location])
 					 [addedFences addObject:location];
+				 
+				 if (![_privateFences containsObject:location] && ![location.geofenceName isEqual:REFRESH_BOUNDARY_KEY])
+					 [_privateFences addObject:location];
 			 }
 			 
 			 

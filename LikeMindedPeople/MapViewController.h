@@ -35,13 +35,15 @@
 	SideBar *_leftSideBar;
 	SideBar *_rightSideBar;
 	
-	GeofenceLocation *_refreshLocation;
+	GeofenceLocation *_refreshLocation;	// The geofence that, if exited, will begin refreshing the geofences
 	
 	// The button that will be use to remove the slide over view
 	UIButton *_slideInCancelButton;
 	UIView *_locationDisabledView;
 
 	BOOL _locationSet;
+	
+	NSTimer *_detailViewTimer;	// A timer to be started when an annotation is deselected and which will be invalidated when a new pin is selected. This means the details view can stay visible but without a ui glitch
 	
 	// Test variables
 	BOOL _showingGeofences;
