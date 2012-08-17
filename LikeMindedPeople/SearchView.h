@@ -62,5 +62,6 @@
 
 - (IBAction)tabBarButtonSelected:(id)sender;
 - (IBAction)hideDetailView;
+- (IBAction)getDirections;
 
 @end

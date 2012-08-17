@@ -167,10 +167,11 @@
 	MKMapPoint origin = MKMapPointForCoordinate(_location);
 	
 	CLLocationDistance distance = MKMetersPerMapPointAtLatitude(_location.latitude);
-	MKMapSize size = MKMapSizeMake(_radius * distance, _radius * distance);
+	MKMapSize size = MKMapSizeMake(2 * _radius * distance,2 * _radius * distance);
 	
 	MKMapRect mapRect;
-	mapRect.origin = origin;
+	mapRect.origin.x = origin.x + _radius;
+	mapRect.origin.y = origin.y + _radius;
 	mapRect.size = size;
 	
 	return mapRect;

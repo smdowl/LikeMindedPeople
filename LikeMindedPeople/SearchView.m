@@ -57,9 +57,11 @@
 	[_clubButton setImage:[UIImage imageNamed:@"clubsbtn3.png"] forState:UIControlStateDisabled];
 	[_foodButton setImage:[UIImage imageNamed:@"foodbtn3.png"] forState:UIControlStateDisabled];
 	
-	_searchKeys = [NSArray arrayWithObjects:@"", @"bar", @"cafe", @"club", @"food", nil];
+	_searchKeys = [NSArray arrayWithObjects:@"", @"bar", @"cafe", @"nightclub", @"food", nil];
 		
 	_selectedIndex = -1;
+	
+	_searchResultsView.rowHeight = 35.0;
 }
 
 #pragma mark -
@@ -134,15 +136,24 @@
 		_detailView.hidden = NO;
 		[self addSubview:_detailView];
 		
-		[UIView beginAnimations:nil context:nil];
+//		[UIView beginAnimations:nil context:nil];
 		
-		detailFrame = _detailView.frame;
-		detailFrame.origin.x -= _detailView.frame.size.width;
-		_detailView.frame = detailFrame;
-		
-		[UIView commitAnimations];	
-		
-		_detailView.isShowing = YES;
+		[UIView animateWithDuration:0.2
+						 animations:^()
+		 {
+			 
+			 CGRect detailFrame = _detailView.frame;
+			 detailFrame.origin.x -= _detailView.frame.size.width;
+			 _detailView.frame = detailFrame;
+			 
+			 _searchBarPanel.alpha = 0.0;
+			 //		[UIView commitAnimations];	
+		 } 
+						 completion:^(BOOL finished)
+		 {
+			 _detailView.isShowing = YES;		 
+		 }];
+	
 	}
 }
 
@@ -157,16 +168,20 @@
 			 detailFrame.origin.x += _detailView.frame.size.width;
 			 _detailView.frame = detailFrame;
 			 
+			 _searchBarPanel.alpha = 0.8;
+			 
 			 [UIView commitAnimations];	
 		 } 
 						 completion:^(BOOL finished)
 		 {
 			 _detailView.hidden = YES;
+			 _detailView.isShowing = NO;
 		 }];	 
 		
 		[_searchResultsView deselectRowAtIndexPath:[_searchResultsView indexPathForSelectedRow] animated:YES];
 		
-		_detailView.isShowing = NO;
+		
+		[_delegate deselectPin];
 	}
 }
 
@@ -178,6 +193,11 @@
 	NSUInteger buttonIndex = [_buttonsArray indexOfObject:sender];
 	
 	[self selectButton:buttonIndex];
+}
+
+- (IBAction)getDirections
+{
+	[_delegate getDirectionsToLocation:_detailView.data];
 }
 
 

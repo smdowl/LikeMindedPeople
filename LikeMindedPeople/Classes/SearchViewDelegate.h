@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+@class RadiiResultDTO;
 @protocol SearchViewDelegate <NSObject>
 
 - (void)checkLayout;	// Called when the SearchView's size has changed so that an UI adjustments can be made
@@ -15,5 +16,9 @@
 - (void)beginSearchForPlacesWithName:(NSString *)name type:(NSString *)type;
 
 - (void)cancelSearch;
+
+- (void)deselectPin;
+
+- (void)getDirectionsToLocation:(RadiiResultDTO *)location;
 
 @end

@@ -15,7 +15,7 @@
 #import "RAdiiResultDTO.h"
 #import "DetailView.h"
 #import "SideBar.h"
-#import "GeofenceRegion.h"
+#import "DirectionsPathDTO.h"
 
 #define RESIZE_BUTTTON_PADDING 5
 #define MAX_BUTTON_ALPHA 0.4
@@ -91,7 +91,7 @@
 		
 	_searchView.searchResultsView.delegate = self;
 	_searchView.searchResultsView.dataSource = self;
-	
+		
 	// Recognizing gestures on the left side of the screen
 	UIPanGestureRecognizer *leftSwipeGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(_inFromLeft:)];
 	[_slideInLeft addGestureRecognizer:leftSwipeGestureRecognizer];
@@ -218,10 +218,10 @@
 	if (name.length || type.length)
 	{
 //		[_searchConnection getGoogleObjectsWithQuery:searchText andMapRegion:[_mapView region] andNumberOfResults:20 addressesOnly:YES andReferer:@"http://WWW.radii.com"];    
-		[ServiceAdapter getGoogleSearchResultsForUser:@"userId" atLocation:_mapView.centerCoordinate withName:name withType:type success:^(NSArray *results)
+		[ServiceAdapter getGoogleSearchResultsForUser:[[DataModel sharedInstance] userId] atLocation:_mapView.centerCoordinate withName:name withType:type success:^(NSArray *results)
 		 {
-//			 _searchingView.hidden = YES;
-//			 [_indicatorView stopAnimating];
+			 _searchingView.hidden = YES;
+			 [_indicatorView stopAnimating];
 			 
 			 if ([results count] == 0)
 			 {
@@ -257,8 +257,8 @@
 			 [_searchView selectButton:-1];
 		 }
 		 ];
-//		_searchingView.hidden = NO;
-//		[_indicatorView startAnimating];
+		_searchingView.hidden = NO;
+		[_indicatorView startAnimating];
 	}
 	else 
 	{
@@ -269,7 +269,144 @@
 - (void)cancelSearch
 {
 	[_searchView selectButton:-1];
-//	[self _removeAllNonUserAnnotations];
+}
+
+- (void)deselectPin
+{
+	for (id<MKAnnotation> annotation in _mapView.selectedAnnotations)
+	{
+		[_mapView deselectAnnotation:annotation animated:YES];
+	}
+}
+
+- (void)getDirectionsToLocation:(RadiiResultDTO *)location
+{
+	[ServiceAdapter getDirectionsFromLocation:_mapView.userLocation.coordinate toLocation:location.coordinate onSuccess:^(NSDictionary *result)
+	 {
+		 NSLog(@"%@", result);
+		 NSLog(@"keys: %@", [[result objectForKey:@"routes"] objectAtIndex:0]);
+		 NSDictionary *route = [[result objectForKey:@"routes"] objectAtIndex:0];
+		 NSString *polylineString = [[route objectForKey:@"overview_polyline"] objectForKey:@"points"];
+		 NSArray *path = [MapViewController decodePolylineOfGoogleMaps:polylineString];
+		 NSLog(@"%@", path);
+		 
+//		 DirectionsPathDTO *directionPath = [[DirectionsPathDTO alloc] initWithPath:path];
+		 CLLocationCoordinate2D locations[path.count];
+		 for (int i=0; i<path.count; i++)
+		  {
+			  NSValue *pathValue = [path objectAtIndex:i];
+			  
+			  CLLocationCoordinate2D location;
+			  location.latitude = pathValue.CGPointValue.x;
+			  location.longitude = pathValue.CGPointValue.y;
+			  
+			  locations[i] = location;
+		  }
+		 
+		 [_mapView removeOverlay:_directionsLine];
+		 _directionsLine = [MKPolyline polylineWithCoordinates:locations count:path.count];
+		 [_mapView addOverlay:_directionsLine];
+		 [_mapView setNeedsDisplay];
+	 }];
+}
+
+/**
+ * Decode polyline of google maps.
+ *
+ * @param encodedPolyline: Polyline encoded of google maps.
+ * @return An array that contain all coordinates.
+ */
++ (NSArray *)decodePolylineOfGoogleMaps:(NSString *)encodedPolyline {
+    
+    NSUInteger length = [encodedPolyline length];
+    NSInteger index = 0;
+    NSMutableArray *points = [NSMutableArray array];
+    CGFloat lat = 0.0f;
+    CGFloat lng = 0.0f;
+    
+    while (index < length) 
+	{
+        
+        // Temorary variable to hold each ASCII byte.
+        int b = 0;
+        
+        // The encoded polyline consists of a latitude value followed by a
+        // longitude value. They should always come in pair. Read the
+        // latitude value first.
+        int shift = 0;
+        int result = 0;
+        
+        do {
+            
+            // If index exceded lenght of encoding, finish 'chunk'
+            if (index >= length) {
+                
+                b = 0;
+                
+            } else {
+				
+                // The '[encodedPolyline characterAtIndex:index++]' statement resturns the ASCII
+                // code for the characted at index. Subtract 63 to get the original
+                // value. (63 was added to ensure proper ASCII characters are displayed
+                // in the encoded plyline string, wich id 'human' readable)
+                b = [encodedPolyline characterAtIndex:index++] - 63;
+                
+            }
+            
+            // AND the bits of the byte with 0x1f to get the original 5-bit 'chunk'.
+            // Then left shift the bits by the required amount, wich increases
+            // by 5 bits each time.
+            // OR the value into results, wich sums up the individual 5-bit chunks
+            // into the original value. Since the 5-bit chunks were reserved in 
+            // order during encoding, reading them in this way ensures proper
+            // summation.
+            result |= (b & 0x1f) << shift;
+            shift += 5;
+            
+        } while (b >= 0x20); // Continue while the read byte is >= 0x20 since the last 'chunk'
+		// was nor OR'd with 0x20 during the conversion process. (Signals the end).
+		
+        // check if negative, and convert. (All negative values have the last bit set)
+        CGFloat dlat = (result & 1) ? ~(result >> 1) : (result >> 1);
+        
+        //Compute actual latitude since value is offset from previous value.
+        lat += dlat;
+        
+        // The next value will correspond to the longitude for this point.
+        shift = 0;
+        result = 0;
+        
+        do {
+            
+            // If index exceded lenght of encoding, finish 'chunk'
+            if (index >= length) {
+                
+                b = 0;
+                
+            } else {
+				
+                b = [encodedPolyline characterAtIndex:index++] - 63;
+                
+            }
+            result |= (b & 0x1f) << shift;
+            shift += 5;
+            
+        } while (b >= 0x20);
+        
+        CGFloat dlng = (result & 1) ? ~(result >> 1) : (result >> 1);
+        lng += dlng;
+        
+        // The actual latitude and longitude values were multiplied by 
+        // 1e5 before encoding so that they could be converted to a 32-bit
+        //integer representation. (With a decimal accuracy of 5 places)
+        // Convert back to original value.
+//        [points addObject:[NSString stringWithFormat:@"%f", (lat * 1e-5)]];
+//        [points addObject:[NSString stringWithFormat:@"%f", (lng * 1e-5)]];
+        [points addObject:[NSValue valueWithCGPoint:CGPointMake((lat * 1e-5),(lng * 1e-5))]];
+    }
+    
+    return points;
+    
 }
 
 #pragma mark -
@@ -309,27 +446,89 @@
 	}
 }
 
-- (void)mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)view
+- (void)mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)annotationView
 {
-	if (view.annotation == _userLocation)
+	if (annotationView.annotation == _userLocation)
 		return;
 	
-	RadiiResultDTO *result = (RadiiResultDTO *)view.annotation;
-	
-	// Move the table view if it is on screen
-	[_searchView.searchResultsView selectRowAtIndexPath:[NSIndexPath indexPathForRow:[_searchResults indexOfObject:result] inSection:0] animated:YES scrollPosition:UITableViewScrollPositionMiddle];
-		
-	if (_isFullScreen)
+	id<MKAnnotation> annotation = annotationView.annotation;
+	if ([annotation isKindOfClass:[RadiiResultDTO class]])
 	{
-		[_searchView showDetailView];
+		RadiiResultDTO *radiiResult = (RadiiResultDTO *)annotationView.annotation;
+		
+		NSIndexPath *selectedIndex = [NSIndexPath indexPathForRow:[_searchResults indexOfObject:radiiResult] inSection:0];
+		
+		if (_searchView.detailView.isShowing)
+		{
+			[_searchView.detailView setData:radiiResult];
+		}
+		else if (_isFullScreen)
+		{
+			[_searchView showDetailView];
+		}
+		else 
+		{
+			// Move the table view if it is on screen
+			[_searchView.searchResultsView selectRowAtIndexPath:selectedIndex
+													   animated:YES 
+												 scrollPosition:UITableViewScrollPositionMiddle];			
+		}
+			
+		// Update the detail view
+		[_searchView.detailView setData:radiiResult];
+		
+		id<MKAnnotation> annotation = annotationView.annotation;
+		if ([annotation isKindOfClass:[RadiiResultDTO class]])
+		{
+			switch (radiiResult.type)
+			{
+				case food:
+					annotationView.image = [UIImage imageNamed:@"food2.png"];
+					break;
+				case cafe:
+					annotationView.image = [UIImage imageNamed:@"cafe2.png"];
+					break;
+				case bar:
+					annotationView.image = [UIImage imageNamed:@"bars2.png"];
+					break;
+				case club:
+					annotationView.image = [UIImage imageNamed:@"club2.png"];
+					break;
+				default:
+					annotationView.image = [UIImage imageNamed:@"shop2.png"];
+					break;
+			}
+		}
 	}
-	
-	// Update the detail view
-	[_searchView.detailView setData:result];
 }
 
-- (void)mapView:(MKMapView *)mapView didDeselectAnnotationView:(MKAnnotationView *)view
+- (void)mapView:(MKMapView *)mapView didDeselectAnnotationView:(MKAnnotationView *)annotationView
 {
+	id<MKAnnotation> annotation = annotationView.annotation;
+	if ([annotation isKindOfClass:[RadiiResultDTO class]])
+	{
+		RadiiResultDTO *radiiResult = (RadiiResultDTO *)annotation;
+		switch (radiiResult.type)
+		{
+			case food:
+				annotationView.image = [UIImage imageNamed:@"food_pin.png"];
+				break;
+			case cafe:
+				annotationView.image = [UIImage imageNamed:@"cafe_pin.png"];
+				break;
+			case bar:
+				annotationView.image = [UIImage imageNamed:@"bars_pin.png"];
+				break;
+			case club:
+				annotationView.image = [UIImage imageNamed:@"club_pin.png"];
+				break;
+			default:
+				annotationView.image = [UIImage imageNamed:@"shop_pin.png"];
+				break;
+		}
+	}
+	
+	[_searchView hideDetailView];
 	[_searchView.searchResultsView deselectRowAtIndexPath:[_searchView.searchResultsView indexPathForSelectedRow] animated:YES];
 }
 
@@ -365,9 +564,11 @@
 				annotationView.image = [UIImage imageNamed:@"club_pin.png"];
 				break;
 			default:
+				annotationView.image = [UIImage imageNamed:@"shop_pin.png"];
 				break;
-				
 		}
+		
+		annotationView.centerOffset = CGPointMake(0,-[annotationView.image size].height / 2);
 //		annotationView.centerOffset = CGPointMake(0,-annotationView.image.size.height);
 		
 		return annotationView;
@@ -397,20 +598,47 @@
 
 - (MKOverlayView *)mapView:(MKMapView *)mapView viewForOverlay:(id<MKOverlay>)overlay
 {
-	MKCircleView *region = [[MKCircleView alloc] initWithOverlay:overlay];
-	if (overlay == _refreshLocation)
+	NSLog(@"overlay class: %@", overlay.class);
+
+	if ([overlay isKindOfClass:[GeofenceLocation class]])
 	{
-		region.fillColor = [UIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:0.5];
-		region.strokeColor = [UIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:0.8];		
-		region.lineWidth = 2.0;
+		MKCircleView *region = [[MKCircleView alloc] initWithOverlay:overlay];
+		
+		if (overlay == _refreshLocation)
+		{
+			region.fillColor = [UIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:0.5];
+			region.strokeColor = [UIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:0.8];		
+			region.lineWidth = 2.0;
+		}
+		else
+		{
+			region.fillColor = [[UIColor purpleColor] colorWithAlphaComponent:0.5];
+			region.strokeColor = [[UIColor purpleColor] colorWithAlphaComponent:0.8];
+			region.lineWidth = 1.0;
+		}
+		return region;
+	}
+//	else if ([overlay isKindOfClass:[DirectionsPathDTO class]])
+//	{
+//		DirectionsPathDTO *directionsPath = (DirectionsPathDTO *)overlay;
+//		MKOverlayPathView *pathView = [[MKOverlayPathView alloc] initWithOverlay:overlay];
+//		pathView.path = directionsPath.mapKitPath;
+//		pathView.strokeColor = [UIColor blackColor];
+//		return pathView;
+//	}
+	else if ([overlay isKindOfClass:[MKPolyline class]])
+	{
+		MKPolyline *polyline = (MKPolyline *)overlay;
+		MKPolylineView *polylineView = [[MKPolylineView alloc] initWithPolyline:polyline];
+		polylineView.strokeColor = [UIColor blackColor];
+		polylineView.fillColor = [UIColor blackColor];
+		polylineView.lineWidth = 4;
+		return polylineView;
 	}
 	else
 	{
-		region.fillColor = [[UIColor purpleColor] colorWithAlphaComponent:0.5];
-		region.strokeColor = [[UIColor purpleColor] colorWithAlphaComponent:0.8];
-		region.lineWidth = 1.0;
+		return nil;
 	}
-	return region;
 }
 #pragma mark -
 #pragma mark CLLocationManagerDelegate
@@ -418,8 +646,8 @@
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {
 //	_userLocation = [[MKAnnotation alloc] init];
-	
-	
+	[_mapView setCenterCoordinate:[[manager location] coordinate]];	
+	[manager stopUpdatingLocation];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
@@ -427,7 +655,11 @@
 	if (status == kCLAuthorizationStatusAuthorized)
 	{
 		[self _setMapVisible:YES];
-		[_mapView setCenterCoordinate:[[manager location] coordinate]];
+		
+		if ([[manager location] coordinate].longitude != 0 && [[manager location] coordinate].longitude != 0)
+			[_mapView setCenterCoordinate:[[manager location] coordinate]];	
+		else
+			[manager startUpdatingLocation];
 	}
 }
 
@@ -461,6 +693,12 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
+	
+	for (id<MKAnnotation> annotation in _mapView.annotations)
+	{
+		if ([annotation isEqual:[_searchResults objectAtIndex:indexPath.row]])
+			[_mapView selectAnnotation:annotation animated:YES];
+	}
 	
 	// Set the detail view's data. This fill in the UI
 	[_searchView showDetailView];
@@ -731,9 +969,9 @@
 								[_mapView removeAnnotations:annotations];
 								[_mapView addAnnotations:annotations];		
 							});
+		 }
 		 _mapView.showsUserLocation = NO;
 		 _mapView.showsUserLocation = YES;
-		 }
 	 }];
 }
 

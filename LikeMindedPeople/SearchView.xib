@@ -44,7 +44,7 @@
 							<object class="IBUITableView" id="370280256">
 								<reference key="NSNextResponder" ref="244964773"/>
 								<int key="NSvFlags">282</int>
-								<string key="NSFrameSize">{320, 130}</string>
+								<string key="NSFrameSize">{320, 140}</string>
 								<reference key="NSSuperview" ref="244964773"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="687829166"/>
@@ -79,7 +79,7 @@
 									<object class="IBUILabel" id="978288794">
 										<reference key="NSNextResponder" ref="687829166"/>
 										<int key="NSvFlags">301</int>
-										<string key="NSFrame">{{82, 54}, {156, 21}}</string>
+										<string key="NSFrame">{{82, 59}, {156, 21}}</string>
 										<reference key="NSSuperview" ref="687829166"/>
 										<reference key="NSWindow"/>
 										<reference key="NSNextKeyView"/>
@@ -108,7 +108,7 @@
 										</object>
 									</object>
 								</array>
-								<string key="NSFrameSize">{320, 130}</string>
+								<string key="NSFrameSize">{320, 140}</string>
 								<reference key="NSSuperview" ref="244964773"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="978288794"/>
@@ -123,7 +123,7 @@
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 							</object>
 						</array>
-						<string key="NSFrame">{{0, 30}, {320, 130}}</string>
+						<string key="NSFrame">{{0, 40}, {320, 140}}</string>
 						<reference key="NSSuperview" ref="382233767"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="370280256"/>
@@ -141,8 +141,8 @@
 						<array class="NSMutableArray" key="NSSubviews">
 							<object class="IBUIButton" id="988739247">
 								<reference key="NSNextResponder" ref="348154825"/>
-								<int key="NSvFlags">294</int>
-								<string key="NSFrameSize">{65, 30}</string>
+								<int key="NSvFlags">262</int>
+								<string key="NSFrame">{{0, 5}, {65, 28}}</string>
 								<reference key="NSSuperview" ref="348154825"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="707947940"/>
@@ -171,8 +171,8 @@
 							</object>
 							<object class="IBUIButton" id="707947940">
 								<reference key="NSNextResponder" ref="348154825"/>
-								<int key="NSvFlags">294</int>
-								<string key="NSFrame">{{65, 0}, {65, 30}}</string>
+								<int key="NSvFlags">262</int>
+								<string key="NSFrame">{{62, 5}, {63, 28}}</string>
 								<reference key="NSSuperview" ref="348154825"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="822905943"/>
@@ -194,8 +194,8 @@
 							</object>
 							<object class="IBUIButton" id="822905943">
 								<reference key="NSNextResponder" ref="348154825"/>
-								<int key="NSvFlags">294</int>
-								<string key="NSFrame">{{130, 0}, {65, 30}}</string>
+								<int key="NSvFlags">262</int>
+								<string key="NSFrame">{{124, 5}, {71, 28}}</string>
 								<reference key="NSSuperview" ref="348154825"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="727491292"/>
@@ -218,8 +218,8 @@
 							</object>
 							<object class="IBUIButton" id="727491292">
 								<reference key="NSNextResponder" ref="348154825"/>
-								<int key="NSvFlags">294</int>
-								<string key="NSFrame">{{195, 0}, {65, 30}}</string>
+								<int key="NSvFlags">262</int>
+								<string key="NSFrame">{{194, 5}, {68, 29}}</string>
 								<reference key="NSSuperview" ref="348154825"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="351152694"/>
@@ -240,8 +240,8 @@
 							</object>
 							<object class="IBUIButton" id="351152694">
 								<reference key="NSNextResponder" ref="348154825"/>
-								<int key="NSvFlags">294</int>
-								<string key="NSFrame">{{260, 0}, {65, 30}}</string>
+								<int key="NSvFlags">262</int>
+								<string key="NSFrame">{{259, 5}, {55, 28}}</string>
 								<reference key="NSSuperview" ref="348154825"/>
 								<reference key="NSWindow"/>
 								<reference key="NSNextKeyView" ref="244964773"/>
@@ -263,7 +263,7 @@
 								<reference key="IBUIFont" ref="364300934"/>
 							</object>
 						</array>
-						<string key="NSFrameSize">{320, 30}</string>
+						<string key="NSFrameSize">{320, 40}</string>
 						<reference key="NSSuperview" ref="382233767"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="988739247"/>
@@ -276,7 +276,7 @@
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 					</object>
 				</array>
-				<string key="NSFrameSize">{320, 160}</string>
+				<string key="NSFrameSize">{320, 180}</string>
 				<reference key="NSSuperview"/>
 				<reference key="NSWindow"/>
 				<reference key="NSNextKeyView" ref="348154825"/>
@@ -541,6 +541,48 @@
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
 				<object class="IBPartialClassDescription">
+					<string key="className">DetailView</string>
+					<string key="superclassName">UIView</string>
+					<dictionary class="NSMutableDictionary" key="outlets">
+						<string key="backButton">UIButton</string>
+						<string key="detailsView">UITextView</string>
+						<string key="interestsLabel">UILabel</string>
+						<string key="presentUsersLabel">UILabel</string>
+						<string key="ratingLabel">UILabel</string>
+						<string key="titleLabel">UILabel</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<object class="IBToOneOutletInfo" key="backButton">
+							<string key="name">backButton</string>
+							<string key="candidateClassName">UIButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="detailsView">
+							<string key="name">detailsView</string>
+							<string key="candidateClassName">UITextView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="interestsLabel">
+							<string key="name">interestsLabel</string>
+							<string key="candidateClassName">UILabel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="presentUsersLabel">
+							<string key="name">presentUsersLabel</string>
+							<string key="candidateClassName">UILabel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="ratingLabel">
+							<string key="name">ratingLabel</string>
+							<string key="candidateClassName">UILabel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="titleLabel">
+							<string key="name">titleLabel</string>
+							<string key="candidateClassName">UILabel</string>
+						</object>
+					</dictionary>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/DetailView.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">MapViewController</string>
 					<string key="superclassName">UIViewController</string>
 					<dictionary class="NSMutableDictionary" key="actions">
@@ -578,6 +620,7 @@
 						</object>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="outlets">
+						<string key="debugPanel">UIView</string>
 						<string key="indicatorView">UIActivityIndicatorView</string>
 						<string key="keyboardCancelButton">UIButton</string>
 						<string key="locationDisabledView">UIView</string>
@@ -589,6 +632,10 @@
 						<string key="slideInRight">UIView</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<object class="IBToOneOutletInfo" key="debugPanel">
+							<string key="name">debugPanel</string>
+							<string key="candidateClassName">UIView</string>
+						</object>
 						<object class="IBToOneOutletInfo" key="indicatorView">
 							<string key="name">indicatorView</string>
 							<string key="candidateClassName">UIActivityIndicatorView</string>
@@ -632,25 +679,58 @@
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
+					<string key="className">SearchBar</string>
+					<string key="superclassName">UIView</string>
+					<dictionary class="NSMutableDictionary" key="outlets">
+						<string key="cancelButton">UIButton</string>
+						<string key="searchBox">UITextField</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<object class="IBToOneOutletInfo" key="cancelButton">
+							<string key="name">cancelButton</string>
+							<string key="candidateClassName">UIButton</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="searchBox">
+							<string key="name">searchBox</string>
+							<string key="candidateClassName">UITextField</string>
+						</object>
+					</dictionary>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/SearchBar.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
 					<string key="className">SearchView</string>
 					<string key="superclassName">UIView</string>
-					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">tabBarButtonSelected:</string>
-						<string key="NS.object.0">id</string>
-					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<string key="NS.key.0">tabBarButtonSelected:</string>
-						<object class="IBActionInfo" key="NS.object.0">
+					<dictionary class="NSMutableDictionary" key="actions">
+						<string key="getDirections">id</string>
+						<string key="hideDetailView">id</string>
+						<string key="tabBarButtonSelected:">id</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="actionInfosByName">
+						<object class="IBActionInfo" key="getDirections">
+							<string key="name">getDirections</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="hideDetailView">
+							<string key="name">hideDetailView</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="tabBarButtonSelected:">
 							<string key="name">tabBarButtonSelected:</string>
 							<string key="candidateClassName">id</string>
 						</object>
-					</object>
+					</dictionary>
 					<dictionary class="NSMutableDictionary" key="outlets">
 						<string key="barButton">UIButton</string>
 						<string key="cafeButton">UIButton</string>
 						<string key="clubButton">UIButton</string>
+						<string key="delegate">id</string>
+						<string key="detailView">DetailView</string>
 						<string key="foodButton">UIButton</string>
 						<string key="noResultsView">UIView</string>
+						<string key="searchBar">SearchBar</string>
 						<string key="searchBarPanel">UIView</string>
 						<string key="searchButton">UIButton</string>
 						<string key="searchResultsView">UITableView</string>
@@ -668,6 +748,14 @@
 							<string key="name">clubButton</string>
 							<string key="candidateClassName">UIButton</string>
 						</object>
+						<object class="IBToOneOutletInfo" key="delegate">
+							<string key="name">delegate</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="detailView">
+							<string key="name">detailView</string>
+							<string key="candidateClassName">DetailView</string>
+						</object>
 						<object class="IBToOneOutletInfo" key="foodButton">
 							<string key="name">foodButton</string>
 							<string key="candidateClassName">UIButton</string>
@@ -675,6 +763,10 @@
 						<object class="IBToOneOutletInfo" key="noResultsView">
 							<string key="name">noResultsView</string>
 							<string key="candidateClassName">UIView</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="searchBar">
+							<string key="name">searchBar</string>
+							<string key="candidateClassName">SearchBar</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="searchBarPanel">
 							<string key="name">searchBarPanel</string>

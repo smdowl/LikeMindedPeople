@@ -46,6 +46,8 @@
 	// Test variables
 	BOOL _showingGeofences;
 	
+	MKPolyline *_directionsLine;
+	
 	UIView *_debugPanel;
 	CLLocationManager *_locationManager;
 }

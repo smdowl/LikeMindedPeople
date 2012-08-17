@@ -153,10 +153,10 @@ static DataModel *_sharedInstance = nil;
 		
 		NSArray *profileArray = [self _flattenProfile:profile];
 		
-		//		[ServiceAdapter uploadUserProfile:profileArray forUser:_userId success:^(id result)
-		//		 {
-		//			 
-		//		 }];
+		[ServiceAdapter uploadUserProfile:profileArray forUser:_userId success:^(id result)
+		 {
+			 
+		 }];
 		
 		// Add the new pois to the database
 		//		[self _uploadPersonalPointsOfInterest];
@@ -176,6 +176,16 @@ static DataModel *_sharedInstance = nil;
 		//	if(location) {
 		[ServiceAdapter getGeofencesForUser:_userId atLocation:location radius:GEOFENCE_DOWNLOAD_RADIUS success:^(NSArray *geofences)
 		 {
+			 for (GeofenceLocation *geofence in geofences)
+			 {
+				 // Testing the enter/exit fence
+				 [ServiceAdapter enterGeofence:geofence userId:_userId success:^(id success)
+				  {
+					  NSLog(@"success: %@", success);
+				  }];
+				 
+			 }
+			 
 			 [self _replacePrivateGeofencesWithFences:[NSMutableArray arrayWithArray:geofences]];
 		 }];
 		//    }
@@ -225,6 +235,8 @@ static DataModel *_sharedInstance = nil;
 
 - (QLPlace *)currentLocation
 {
+	NSLog(@"%@", _currentLocation);
+	
 	if ([_currentLocation count] > 0)
 		return [_currentLocation objectAtIndex:0];
 	else
@@ -297,6 +309,9 @@ static DataModel *_sharedInstance = nil;
 				if ([place.name isEqualToString:REFRESH_BOUNDARY_KEY])
 					_geofenceRefreshLocation = [[GeofenceLocation alloc] initWithPlace:place];
 			}
+			 
+			 if ([_geofenceRefreshLocation containsCoordinate:[[_locationManager location] coordinate]])
+				 return;
 			 
 			 // If some already exist remove them first
 			 if (![_geofenceRefreshLocation isEmpty])
@@ -371,7 +386,7 @@ static DataModel *_sharedInstance = nil;
 			 {
 				 return;
 			 }
-			 
+
 			 // Depending on what happened, change the current locatoin
 			 switch (event.eventType)
 			 {
@@ -380,6 +395,10 @@ static DataModel *_sharedInstance = nil;
 					 if (![currentLocation isEqual:_geofenceRefreshLocation] && ![_currentLocation containsObject:currentLocation])
 					 {
 						 [strongSelf -> _currentLocation insertObject:currentLocation atIndex:0];
+						 [ServiceAdapter enterGeofence:currentLocation userId:_userId success:^(id success)
+						  {
+							  
+						  }];
 					 }
 					 
 					 break;
@@ -392,7 +411,15 @@ static DataModel *_sharedInstance = nil;
 					 }
 					 else
 					 {
-						 [strongSelf -> _currentLocation removeObjectAtIndex:0];
+						 if ([strongSelf -> _currentLocation containsObject:currentLocation])
+						 {
+							 [strongSelf -> _currentLocation removeObject:currentLocation];
+							 [ServiceAdapter exitGeofence:currentLocation userId:_userId success:^(id result)
+							  {
+								  
+							  }];
+						 }
+						 
 						 if ([strongSelf -> _currentLocation count])
 						 {
 							 currentLocation = [strongSelf -> _currentLocation objectAtIndex:0];

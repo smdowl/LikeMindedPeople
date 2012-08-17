@@ -27,6 +27,8 @@
 
 #define TEST_RADIUS 25
 
+#define GOOGLE_DIRECTIONS_URL @"http://maps.googleapis.com/maps/api/directions/json?"
+
 @interface ServiceAdapter()
 + (void)_callServiceWithPath:(NSString *)path
 				  httpMethod:(NSString *)method
@@ -105,14 +107,31 @@
 {    
     // Make "YES" for testing, "NO" to use servers.
 #if !DEBUG_MODE
-		NSMutableDictionary *d = [[NSMutableDictionary alloc] init];
-		//[d setObject:userId forKey:@"uid"];
-		[d setObject:[NSString stringWithFormat:@"%f",location.coordinate.latitude] forKey:@"lattitude"];
-		[d setObject:[NSString stringWithFormat:@"%f",location.coordinate.longitude] forKey:@"longitude"];
-		// Filter in miles
-		[d setObject:@"500000" forKey:@"filter"];
-		
-        [ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"filter_locations/%@.json",userId] httpMethod:@"POST" postPrefixString:@"location_filter=" dataObj:d success:success];
+	NSMutableDictionary *d = [[NSMutableDictionary alloc] init];
+	[d setObject:[NSString stringWithFormat:@"%f",location.coordinate.latitude] forKey:@"lattitude"];
+	[d setObject:[NSString stringWithFormat:@"%f",location.coordinate.longitude] forKey:@"longitude"];
+	// Filter in miles
+	[d setObject:@"5000" forKey:@"filter"];
+	
+	[ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"filter_locations/%@.json",userId] httpMethod:@"POST" postPrefixString:@"location_filter=" dataObj:d success:^(NSArray *results)
+	 {
+		 NSMutableArray *geofences = [NSMutableArray array];
+		 for (NSDictionary *geofenceDictionary in results)
+		 {
+			 GeofenceLocation *geofence = [[GeofenceLocation alloc] init];
+			 geofence.geofenceName = [geofenceDictionary objectForKey:GEOFENCE_NAME];
+			 
+			 CLLocationCoordinate2D location;
+			 location.latitude = [[geofenceDictionary objectForKey:LATITUDE_KEY] floatValue];
+			 location.longitude = [[geofenceDictionary objectForKey:LONGITUDE_KEY] floatValue];
+			 geofence.location = location;
+			 
+			 geofence.radius = [[geofenceDictionary objectForKey:RADIUS_KEY] floatValue];
+			 [geofences addObject:geofence];
+		 }
+	 
+	 success(geofences);
+	 }];
 #else
 		
         NSMutableArray *places = [NSMutableArray array];
@@ -149,6 +168,28 @@
 		}
         success(places);
 #endif
+}
+
++ (void)enterGeofence:(GeofenceLocation *)geofence userId:(NSString *)userId success:(void (^)(id))success
+{
+	NSMutableDictionary *geofenceDictionary = [NSMutableDictionary dictionary];
+	[geofenceDictionary setValue:userId forKey:@"fb_id"];
+	[geofenceDictionary setValue:[NSString stringWithFormat:@"%f",geofence.location.latitude] forKey:@"latitude"];
+	[geofenceDictionary setValue:[NSString stringWithFormat:@"%f",geofence.location.longitude] forKey:@"longitude"];
+	[geofenceDictionary setValue:geofence.geofenceName forKey:@"name"];
+	
+	[ServiceAdapter _callServiceWithPath:@"visits.json" httpMethod:@"POST" postPrefixString:@"visit=" dataObj:geofenceDictionary success:success];
+}
+
++ (void)exitGeofence:(GeofenceLocation *)geofence userId:(NSString *)userId success:(void (^)(id))success
+{
+	NSMutableDictionary *geofenceDictionary = [NSMutableDictionary dictionary];
+	[geofenceDictionary setValue:userId forKey:@"fb_id"];
+	[geofenceDictionary setValue:[NSString stringWithFormat:@"%f",geofence.location.latitude] forKey:@"latitude"];
+	[geofenceDictionary setValue:[NSString stringWithFormat:@"%f",geofence.location.longitude] forKey:@"longitude"];
+	[geofenceDictionary setValue:geofence.geofenceName forKey:@"name"];
+
+	[ServiceAdapter _callServiceWithPath:@"visits.json" httpMethod:@"POST" postPrefixString:@"visit=" dataObj:geofenceDictionary success:success];
 }
 
 + (void)getGoogleSearchResultsForUser:(NSString *)userId atLocation:(CLLocationCoordinate2D)location withName:(NSString *)name withType:(NSString *)type success:(void (^)(NSArray *))success failure:(void (^)(void))failure
@@ -243,6 +284,23 @@
 		success(resultsArray);   
 #endif
 }
+
++ (void)getDirectionsFromLocation:(CLLocationCoordinate2D)from toLocation:(CLLocationCoordinate2D)to onSuccess:(void(^)(NSDictionary *))success
+{
+	NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@origin=%f,%f&destination=%f,%f&sensor=true&mode=walking",GOOGLE_DIRECTIONS_URL,from.latitude,from.longitude,to.latitude,to.longitude]];
+	NSURLRequest *urlRequest = [NSURLRequest requestWithURL:url];
+	
+	AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:urlRequest success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+		//        NSLog(@"ServiceAdapter.callService: Received type=%@, response=%@", [JSON class], JSON);
+		success(JSON);
+    } failure:^(NSURLRequest *request , NSHTTPURLResponse *response , NSError *error , id JSON ) {
+        NSString *errorMsg = [NSString stringWithFormat:@"ServiceAdapter.callService error: %@", error];
+        NSLog(@"%@",errorMsg);
+        //[errFuncs callWithErrorCode:@"DefaultError" errorMessage:errorMsg];
+    }];
+    [operation start];
+}
+
 #pragma mark -
 #pragma mark Private Methods
 
@@ -295,6 +353,7 @@
     // Make request to server    
     AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
 		//        NSLog(@"ServiceAdapter.callService: Received type=%@, response=%@", [JSON class], JSON);
+		NSLog(@"%@", JSON);
         success(JSON);
     } failure:^(NSURLRequest *request , NSHTTPURLResponse *response , NSError *error , id JSON ) {
         NSString *errorMsg = [NSString stringWithFormat:@"ServiceAdapter.callService error: %@", error];

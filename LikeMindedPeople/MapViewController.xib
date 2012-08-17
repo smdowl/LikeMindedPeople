@@ -72,7 +72,7 @@
 					<object class="IBMKMapView" id="602721901">
 						<reference key="NSNextResponder" ref="778802374"/>
 						<int key="NSvFlags">268</int>
-						<string key="NSFrame">{{0, 30}, {320, 300}}</string>
+						<string key="NSFrame">{{0, 30}, {320, 290}}</string>
 						<reference key="NSSuperview" ref="778802374"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="652236534"/>
@@ -84,7 +84,7 @@
 					<object class="IBUIButton" id="652236534">
 						<reference key="NSNextResponder" ref="778802374"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{271, 282}, {49, 46}}</string>
+						<string key="NSFrame">{{271, 274}, {49, 46}}</string>
 						<reference key="NSSuperview" ref="778802374"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="813891646"/>
@@ -171,7 +171,7 @@
 								</object>
 							</object>
 						</array>
-						<string key="NSFrame">{{0, 28}, {320, 300}}</string>
+						<string key="NSFrame">{{0, 28}, {320, 290}}</string>
 						<reference key="NSSuperview" ref="778802374"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="967168176"/>
@@ -226,6 +226,7 @@
 						<string key="NSFrame">{{306, 0}, {14, 460}}</string>
 						<reference key="NSSuperview" ref="778802374"/>
 						<reference key="NSWindow"/>
+						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<reference key="IBUIBackgroundColor" ref="769918487"/>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -848,10 +849,15 @@
 					<string key="className">SearchView</string>
 					<string key="superclassName">UIView</string>
 					<dictionary class="NSMutableDictionary" key="actions">
+						<string key="getDirections">id</string>
 						<string key="hideDetailView">id</string>
 						<string key="tabBarButtonSelected:">id</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="actionInfosByName">
+						<object class="IBActionInfo" key="getDirections">
+							<string key="name">getDirections</string>
+							<string key="candidateClassName">id</string>
+						</object>
 						<object class="IBActionInfo" key="hideDetailView">
 							<string key="name">hideDetailView</string>
 							<string key="candidateClassName">id</string>
