@@ -111,7 +111,7 @@
 	[d setObject:[NSString stringWithFormat:@"%f",location.coordinate.latitude] forKey:@"latitude"];
 	[d setObject:[NSString stringWithFormat:@"%f",location.coordinate.longitude] forKey:@"longitude"];
 	// Filter in miles
-	[d setObject:@"0.5" forKey:@"filter"];
+	[d setObject:[NSString stringWithFormat:@"%f",radius]  forKey:@"filter"];
 	
 	[ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"filter_locations/%@.json",userId] httpMethod:@"POST" postPrefixString:@"location_filter=" dataObj:d success:^(NSArray *results)
 	 {

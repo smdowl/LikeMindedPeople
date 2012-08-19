@@ -25,8 +25,7 @@
 #import "GeofenceLocation.h"
 #import "RadiiResultDTO.h"
 
-#define REFRESH_RADIUS 1000
-#define GEOFENCE_DOWNLOAD_RADIUS 3000
+#define GEOFENCE_DOWNLOAD_RADIUS 0.5
 
 #define REFRESH_BOUNDARY_KEY @"Refresh Boundary"
 
@@ -43,6 +42,8 @@
 - (void)_replacePrivateGeofencesWithFences:(NSMutableArray *)geofenceLocations;
 
 - (void)_checkCurrentLocation;
+
+- (void)_refreshPrivateFences;	// Calls the gimbal sdk and replaces the private fences with that list
 
 // Persistent storage methods
 - (NSString *)_baseStoragePath;
@@ -149,10 +150,8 @@ static DataModel *_sharedInstance = nil;
 		if (!_userId)
 			return;
 		
-		// TODO: Removed some empty server calls to stop traffic. Complete them
 		// Update the current profile
 		PRProfile *profile = _interestsConnector.interests;
-		//	NSLog(@"%@ %@", profile, [profile.attrs.allValues objectAtIndex:0]);
 		
 		NSArray *profileArray = [self _flattenProfile:profile];
 		
@@ -173,10 +172,7 @@ static DataModel *_sharedInstance = nil;
 			_settingUp = NO;
 			return;
 		}
-		
-		//		[self _replacePrivateGeofencesWithFences:[NSMutableArray arrayWithObject:_geofenceRefreshLocation]];
-		
-		//	if(location) {
+				
 		[ServiceAdapter getGeofencesForUser:_userId atLocation:location radius:GEOFENCE_DOWNLOAD_RADIUS success:^(NSArray *geofences)
 		 {
 //			 for (GeofenceLocation *geofence in geofences)
@@ -192,20 +188,13 @@ static DataModel *_sharedInstance = nil;
 //				  }];
 //				 
 //			 }
-			 
-			 [self _replacePrivateGeofencesWithFences:[NSMutableArray arrayWithArray:geofences]];
+			 if (!_updatingPlaces)
+				 [self _replacePrivateGeofencesWithFences:[NSMutableArray arrayWithArray:geofences]];
 		 }];
-		//    }
 		
-		//		[ServiceAdapter getGoogleSearchResultsForUser:_userId atLocation:location withName:nil withType:@"food" success:^(NSArray *results)
-		//		 {
-		//			 for (RadiiResultDTO *result in results)
-		//			 {
-		//				 NSLog(@"%@",result);
-		//			 }
-		//		 }];
-		
-		if (!_geofenceRefreshLocation)
+				
+		// Check to see if the refresh location hasn't been set up yet and whether the user is now outside of it
+		if ([_geofenceRefreshLocation isEmpty])
 			[self updateGeofenceRefreshLocation];
 		else if (![_geofenceRefreshLocation containsCoordinate:location.coordinate])
 			[self updateGeofenceRefreshLocation];
@@ -282,7 +271,7 @@ static DataModel *_sharedInstance = nil;
 			QLGeoFenceCircle *circle = [[QLGeoFenceCircle alloc] init];
 			circle.latitude = location.coordinate.latitude;
 			circle.longitude = location.coordinate.longitude;
-			circle.radius = REFRESH_RADIUS;
+			circle.radius = GEOFENCE_DOWNLOAD_RADIUS / 2 * 1000;
 			geofencePlace.name = REFRESH_BOUNDARY_KEY;
 			geofencePlace.geoFence = circle;
 			
@@ -296,7 +285,11 @@ static DataModel *_sharedInstance = nil;
 				 DataModel *strongSelf = weakSelf;
 					 
 				 if (strongSelf->_updatingPlaces)
-					 return;
+				 {
+					 strongSelf->_cancelUpdate = YES;
+				 }
+				 
+				 while (strongSelf->_cancelUpdate){}
 				 
 				 strongSelf -> _updatingPlaces = YES;
 				 
@@ -403,7 +396,8 @@ static DataModel *_sharedInstance = nil;
 					 {
 						 [ServiceAdapter enterGeofence:currentLocation userId:_userId success:^(id success)
 						  {
-							  [strongSelf -> _currentLocation insertObject:currentLocation atIndex:0];
+							  if (![strongSelf->_currentLocation containsObject:currentLocation])
+								  [strongSelf -> _currentLocation insertObject:currentLocation atIndex:0];
 						  }];
 					 }
 					 
@@ -523,7 +517,8 @@ static DataModel *_sharedInstance = nil;
 			 }
 			 
 			 onComplete(locations);
-		 } failure:^(NSError *err)
+		 } 
+									   failure:^(NSError *err)
 		 {
 			 NSLog(@"%@", err);
 			 onComplete(nil);
@@ -613,7 +608,8 @@ static DataModel *_sharedInstance = nil;
 							   return;
 						   }
 						   
-						   [self _checkCurrentLocation];
+						   [strongStrongSelf _checkCurrentLocation];
+						   [strongStrongSelf _refreshPrivateFences];
 						   NSLog(@"Finished!");
 					   }];
 				  }];
@@ -640,7 +636,8 @@ static DataModel *_sharedInstance = nil;
 						  return;
 					  }
 					  
-					  [self _checkCurrentLocation];
+					  [strongStrongSelf _checkCurrentLocation];
+					  [strongStrongSelf _refreshPrivateFences];
 				  }];
 			 }
 			 else
@@ -805,6 +802,22 @@ static DataModel *_sharedInstance = nil;
 			[_currentLocation addObject:fence];
 		}
 	}
+}
+
+- (void)_refreshPrivateFences
+{
+	[_placeConnector allPlacesAndOnSuccess:^(NSArray *places)
+	 {
+		 _privateFences = [NSMutableArray array];
+		 for (QLPlace *place in places)
+		 {
+			 [_privateFences addObject:[[GeofenceLocation alloc] initWithPlace:place]];
+		 }
+	 }
+	 failure:^(NSError *err)
+	 {
+		 NSLog(@"%@", [err localizedDescription]);
+	 }];
 }
 
 #pragma mark -

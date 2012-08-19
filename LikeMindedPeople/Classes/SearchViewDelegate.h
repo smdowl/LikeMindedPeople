@@ -25,4 +25,6 @@
 
 - (void)toggleFullScreen;
 
+- (void)showMenu:(NSString *)urlString;
+
 @end

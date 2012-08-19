@@ -9,7 +9,6 @@
 #import "SearchView.h"
 #import "SearchBar.h"
 #import "DetailView.h"
-#import "SearchViewTabBarOverlay.h"
 
 @interface SearchView (PrivateUtilities)
 - (void)_showSearchBar;
@@ -32,8 +31,6 @@
 @synthesize noResultsView = _noResultsView;
 
 @synthesize detailView = _detailView;
-
-@synthesize tabBarOverlay = _tabBarOverlay;
 
 @synthesize fullScreen = _fullScreen;
 
@@ -66,8 +63,6 @@
 	_selectedIndex = -1;
 	
 	_searchResultsView.rowHeight = 35.0;
-	
-	_tabBarOverlay.siblingViews = _buttonsArray;
 }
 
 - (void)setDelegate:(id<SearchViewDelegate>)delegate
@@ -289,6 +284,10 @@
 	[_delegate getDirectionsToLocation:_detailView.data];
 }
 
+- (IBAction)showMenu
+{
+	[_delegate showMenu:@"http://www.google.com"];
+}
 
 #pragma mark -
 #pragma mark UITextFieldDelegate

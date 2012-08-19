@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "SearchViewDelegate.h"
 
-@class SearchBar, SearchBarPanel, DetailView, SearchViewTabBarOverlay;
+@class SearchBar, SearchBarPanel, DetailView;
 @interface SearchView : UIView <UITextFieldDelegate, UIGestureRecognizerDelegate>
 {
 	__weak id<SearchViewDelegate> _delegate;
@@ -35,9 +35,7 @@
 	
 	// A detail view that can be created and animated across
 	DetailView *_detailView;
-	
-	SearchViewTabBarOverlay *_tabBarOverlay;
-	
+		
 	BOOL _fullScreen;
 }
 
@@ -57,8 +55,6 @@
 
 @property (nonatomic, strong) IBOutlet DetailView *detailView;
 
-@property (nonatomic, strong) IBOutlet SearchViewTabBarOverlay *tabBarOverlay;
-
 @property (nonatomic) BOOL fullScreen;
 
 - (CGFloat)panelHeight;	// The height of the tab bar or tab bar and search box depending
@@ -69,12 +65,10 @@
 
 - (void)showDetailView;
 
-- (void)showSearchBar;
-- (void)hideSearchBar;
-
 - (IBAction)cancelSearch:(id)sender;
 - (IBAction)tabBarButtonSelected:(id)sender;
 - (IBAction)hideDetailView;
 - (IBAction)getDirections;
+- (IBAction)showMenu;
 
 @end

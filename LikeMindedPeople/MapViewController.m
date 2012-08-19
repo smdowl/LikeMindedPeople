@@ -16,6 +16,7 @@
 #import "DetailView.h"
 #import "SideBar.h"
 #import "DirectionsPathDTO.h"
+#import "MenuViewController.h"
 
 #define RESIZE_BUTTTON_PADDING 5
 #define MAX_BUTTON_ALPHA 0.4
@@ -307,6 +308,12 @@
 		_isFullScreen = YES;
 		[self _animateMap:YES];
 	}
+}
+
+- (void)showMenu:(NSString *)urlString
+{
+	MenuViewController *menuController = [[MenuViewController alloc] initWithNibName:nil bundle:nil];
+	[self presentModalViewController:menuController animated:YES];
 }
 
 - (void)getDirectionsToLocation:(RadiiResultDTO *)location
@@ -707,8 +714,11 @@
 		MKPolylineView *polylineView = [[MKPolylineView alloc] initWithPolyline:polyline];
 		
 		UIColor *orangeColor = [UIColor colorWithRed:0.984375 green:0.5625 blue:0.0859375 alpha:0.9];
-		polylineView.strokeColor = orangeColor;
-		polylineView.fillColor = orangeColor;
+//		polylineView.strokeColor = orangeColor;
+//		polylineView.fillColor = orangeColor;
+		UIColor *blue = [UIColor colorWithRed:0.27734375 green:0.11328125 blue:1.0 alpha:0.8];
+		polylineView.strokeColor = blue;
+		polylineView.fillColor = blue;
 		polylineView.lineWidth = 3;
 		return polylineView;
 	}
@@ -828,6 +838,7 @@
 								   if (_directionsLine)
 									   [_mapView addOverlay:_directionsLine];
 							   });
+				
 				_mapView.showsUserLocation = NO;
 				_mapView.showsUserLocation = YES;
 			}
@@ -1056,8 +1067,13 @@
 								[_mapView addAnnotations:annotations];		
 							});
 		 }
-		 _mapView.showsUserLocation = NO;
-		 _mapView.showsUserLocation = YES;
+
+		 // Had this in because the users locations seemed to disappear sometimes
+//		 if (![[_mapView annotations] containsObject:_userLocation])
+//		 {
+//			 _mapView.showsUserLocation = NO;
+//			 _mapView.showsUserLocation = YES;
+//		 }
 		 
 		 _searchView.fullScreen = toFullScreen;
 	 }];
@@ -1123,7 +1139,12 @@
 
 - (IBAction)displayGeofences
 {
-	[_mapView removeOverlays:[_mapView overlays]];
+	for (id<MKOverlay> overlay in [_mapView overlays])
+	{
+		if (overlay != _directionsLine)
+			[_mapView removeOverlay:overlay];
+	}
+	
 	if (!_showingGeofences)
 	{	
 		NSArray *allGeofenceRegions = [[DataModel sharedInstance] getAllGeofenceRegions];
