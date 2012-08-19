@@ -17,8 +17,12 @@
 
 - (void)cancelSearch;
 
+- (void)clearResults;
+
 - (void)deselectPin;
 
 - (void)getDirectionsToLocation:(RadiiResultDTO *)location;
+
+- (void)toggleFullScreen;
 
 @end

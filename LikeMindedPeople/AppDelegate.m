@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import <QuartzCore/QuartzCore.h>
 #import "FBConnect.h"
 #import "Facebook+iCatalog.h"
 #import "NSObject+DTRuntime.h"
@@ -38,7 +39,11 @@
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];
-    
+	
+	// Round the corners of the window. The rounded top corners are hidden by the status bar so need to be done separately
+    [self.window.layer setCornerRadius:5.0];
+	[self.window.layer setMasksToBounds:YES];
+	
     // Just for testing the service adapter through NSLogs
     //[ServiceAdapter testService];
     

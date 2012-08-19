@@ -24,6 +24,16 @@
 
 #define DEBUG_BUTTONS 1
 
+#define ROUTE_BOUNDING_MULTIPLIER 1.5
+
+#define LOW_CORRELATION_RED 0.0
+#define LOW_CORRELATION_GREEN 0.6796875
+#define LOW_CORRELATION_BLUE 0.93359375
+
+#define HIGH_CORRELATION_RED 0.433
+#define HIGH_CORRELATION_GREEN 0.875
+#define HIGH_CORRELATION_BLUE 0.433
+
 @interface MapViewController ()
 
 - (void)_removeAllNonUserAnnotations;
@@ -34,6 +44,9 @@
 - (void)_inFromRight:(UIPanGestureRecognizer *)recognizer;
 
 - (void)_setMapVisible:(BOOL)visible;
+
+- (void)_removeAndStoreAllOtherResults:(RadiiResultDTO *)resultToKeep;
+- (void)_restoreResults;	// Add the radii results that were removed back to the map
 
 @end
 
@@ -72,7 +85,7 @@
 	resizeButtonFrame.origin.y -= _searchView.searchBarPanel.frame.size.height;
 	_resizeButton.frame = resizeButtonFrame;
 	
-	[self.view addSubview:_searchView];
+	[self.view insertSubview:_searchView belowSubview:_searchingView];
 	_searchView.delegate = self;
 	
 	[_resizeButton setImage:[UIImage imageNamed:@"fullscreen.png"] forState:UIControlStateNormal];
@@ -91,7 +104,9 @@
 		
 	_searchView.searchResultsView.delegate = self;
 	_searchView.searchResultsView.dataSource = self;
-		
+	
+	_searchView.fullScreen = NO;
+	
 	// Recognizing gestures on the left side of the screen
 	UIPanGestureRecognizer *leftSwipeGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(_inFromLeft:)];
 	[_slideInLeft addGestureRecognizer:leftSwipeGestureRecognizer];
@@ -108,6 +123,8 @@
 #if DEBUG_BUTTONS
 	_debugPanel.hidden = NO;
 #endif
+	
+	_storedResults = [NSMutableArray array];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -177,26 +194,14 @@
 	_resizeButton = nil;
 }
 
-#pragma mark -
-#pragma mark IBOutlet Methods
-
-- (IBAction)toggleFullScreen:(id)sender
-{
-	if (_isFullScreen)
-	{
-		_isFullScreen = NO;
-		[self _animateMap:NO];
-	}
-	else
-	{
-		_isFullScreen = YES;
-		[self _animateMap:YES];
-	}
-}
-
 - (IBAction)enableLocationServices
 {
 	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"prefs://"]];
+}
+
+- (IBAction)toggleFullScreen:(id)sender
+{
+	[self toggleFullScreen];
 }
 
 #pragma mark -
@@ -217,6 +222,9 @@
 {
 	if (name.length || type.length)
 	{
+		[_mapView removeOverlay:_directionsLine];
+		_directionsLine = nil;
+		
 //		[_searchConnection getGoogleObjectsWithQuery:searchText andMapRegion:[_mapView region] andNumberOfResults:20 addressesOnly:YES andReferer:@"http://WWW.radii.com"];    
 //		[ServiceAdapter getGoogleSearchResultsForUser:[[DataModel sharedInstance] userId] atLocation:_mapView.centerCoordinate withName:name withType:type success:^(NSArray *results)
 		[ServiceAdapter getFourSquareSearchResultsForUser:[[DataModel sharedInstance] userId] atLocation:_mapView.centerCoordinate withQuery:name ? name : type success:^(NSArray *results)
@@ -267,6 +275,13 @@
 	}
 }
 
+- (void)clearResults
+{
+	_searchResults = nil;
+	[self _removeAllNonUserAnnotations];
+	[_searchView setData:nil];
+}
+
 - (void)cancelSearch
 {
 	[_searchView selectButton:-1];
@@ -280,13 +295,38 @@
 	}
 }
 
+- (void)toggleFullScreen
+{
+	if (_isFullScreen)
+	{
+		_isFullScreen = NO;
+		[self _animateMap:NO];
+	}
+	else
+	{
+		_isFullScreen = YES;
+		[self _animateMap:YES];
+	}
+}
+
 - (void)getDirectionsToLocation:(RadiiResultDTO *)location
 {
 	[ServiceAdapter getDirectionsFromLocation:_mapView.userLocation.coordinate toLocation:location.coordinate onSuccess:^(NSDictionary *result)
 	 {
+		 [self _removeAndStoreAllOtherResults:location];
+		 
 		 NSLog(@"%@", result);
 		 NSLog(@"keys: %@", [[result objectForKey:@"routes"] objectAtIndex:0]);
 		 NSDictionary *route = [[result objectForKey:@"routes"] objectAtIndex:0];
+		 
+		 NSDictionary *leg = [[route objectForKey:@"legs"] objectAtIndex:0];
+		 NSString *distance = [[leg objectForKey:@"distance"] objectForKey:@"text"];
+		 NSString *duration = [[leg objectForKey:@"duration"] objectForKey:@"text"];
+
+		 NSDictionary *directionsDictionary = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:distance,duration,nil] 
+																		  forKeys:[NSArray arrayWithObjects:@"distance", @"duration", nil]];
+		 _searchView.detailView.directionsDictionary = directionsDictionary;
+		 
 		 NSString *polylineString = [[route objectForKey:@"overview_polyline"] objectForKey:@"points"];
 		 NSArray *path = [MapViewController decodePolylineOfGoogleMaps:polylineString];
 		 NSLog(@"%@", path);
@@ -323,12 +363,12 @@
 		 [_mapView addOverlay:_directionsLine];
 		 
 		 MKCoordinateRegion region;
-		 region.span.latitudeDelta = maxLatLong.x - minLatLong.x;
-		 region.span.longitudeDelta = maxLatLong.y - minLatLong.y;
-		 region.center = CLLocationCoordinate2DMake((minLatLong.x + maxLatLong.x)/2, (minLatLong.y + maxLatLong.y)/2);
+		 region.span.latitudeDelta = ROUTE_BOUNDING_MULTIPLIER * (maxLatLong.x - minLatLong.x);
+		 region.span.longitudeDelta = ROUTE_BOUNDING_MULTIPLIER * (maxLatLong.y - minLatLong.y);
+		 region.center = CLLocationCoordinate2DMake(minLatLong.x + region.span.latitudeDelta/(2 * ROUTE_BOUNDING_MULTIPLIER), minLatLong.y + region.span.longitudeDelta / (2 * ROUTE_BOUNDING_MULTIPLIER));
 		 
 		 [_mapView setRegion:region animated:YES]; 
-		 [_mapView setNeedsDisplay];
+		 [_mapView setNeedsDisplay];		 
 	 }];
 }
 
@@ -480,12 +520,18 @@
 		[_detailViewTimer invalidate];
 		
 		RadiiResultDTO *radiiResult = (RadiiResultDTO *)annotationView.annotation;
-				
+		
 		if (!_searchView.detailView.isShowing)
 		{
 			if (_isFullScreen)
 			{
 				[_searchView showDetailView];
+				
+				// After adding the detail view, remove the targets and then add self
+				[_searchView.detailView.backButton removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
+				[_searchView.detailView.backButton addTarget:self action:@selector(toggleFullScreen:) forControlEvents:UIControlEventTouchUpInside];
+				CGAffineTransform rotation = CGAffineTransformMakeRotation(M_PI_2);
+				[_searchView.detailView.backButton setTransform:rotation];
 			}
 			else 
 			{
@@ -528,6 +574,11 @@
 
 - (void)mapView:(MKMapView *)mapView didDeselectAnnotationView:(MKAnnotationView *)annotationView
 {
+	[_mapView removeOverlay:_directionsLine];
+	_directionsLine = nil;
+	
+	[self _restoreResults];
+	
 	id<MKAnnotation> annotation = annotationView.annotation;
 	if ([annotation isKindOfClass:[RadiiResultDTO class]])
 	{
@@ -594,6 +645,7 @@
 		}
 		
 		annotationView.centerOffset = CGPointMake(0,-[annotationView.image size].height / 2);
+
 //		annotationView.centerOffset = CGPointMake(0,-annotationView.image.size.height);
 		
 		return annotationView;
@@ -653,9 +705,11 @@
 	{
 		MKPolyline *polyline = (MKPolyline *)overlay;
 		MKPolylineView *polylineView = [[MKPolylineView alloc] initWithPolyline:polyline];
-		polylineView.strokeColor = [UIColor blackColor];
-		polylineView.fillColor = [UIColor blackColor];
-		polylineView.lineWidth = 4;
+		
+		UIColor *orangeColor = [UIColor colorWithRed:0.984375 green:0.5625 blue:0.0859375 alpha:0.9];
+		polylineView.strokeColor = orangeColor;
+		polylineView.fillColor = orangeColor;
+		polylineView.lineWidth = 3;
 		return polylineView;
 	}
 	else
@@ -705,11 +759,17 @@
 	cell.textLabel.text = radiiResult.businessTitle;
 	cell.detailTextLabel.text = radiiResult.details;
 	
-	NSString *badgeString = [NSString stringWithFormat:@"%.0f%@",radiiResult.rating*100,@"%"];    
+//	radiiResult.rating = 0.1 * indexPath.row < 1 ? 0.1 * indexPath.row : 1.0;
+	
+	NSString *badgeString = [NSString stringWithFormat:@"%.0f%@",radiiResult.rating*100,@"%"];
 	
     cell.badgeString = badgeString;
-    cell.badgeColor = [UIColor colorWithRed:0 green:0.6796875 blue:0.93359375 alpha:radiiResult.rating];
-
+	
+    cell.badgeColor = [UIColor colorWithRed:radiiResult.rating * HIGH_CORRELATION_RED + (1 - radiiResult.rating) * LOW_CORRELATION_RED 
+									  green:radiiResult.rating * HIGH_CORRELATION_GREEN + (1 - radiiResult.rating) * LOW_CORRELATION_GREEN 
+									   blue:radiiResult.rating * HIGH_CORRELATION_BLUE + (1 - radiiResult.rating) * LOW_CORRELATION_BLUE 
+									  alpha:1.0];
+	
     return cell;
 }
 
@@ -763,7 +823,10 @@
 							   {
 								   NSArray *annotations = [_mapView annotations];
 								   [_mapView removeAnnotations:annotations];
-								   [_mapView addAnnotations:annotations];								
+								   [_mapView addAnnotations:annotations];	
+								   
+								   if (_directionsLine)
+									   [_mapView addOverlay:_directionsLine];
 							   });
 				_mapView.showsUserLocation = NO;
 				_mapView.showsUserLocation = YES;
@@ -790,7 +853,7 @@
 	
 	[UIView beginAnimations:nil context:nil];
 	CGRect searchViewFrame = _searchView.frame;
-	searchViewFrame.origin.y = viewSize.height - keyboardSize.height - _searchView.searchBarPanel.frame.size.height;	
+	searchViewFrame.origin.y = viewSize.height - keyboardSize.height - _searchView.searchBar.frame.size.height;	
 	_searchView.frame = searchViewFrame;
 	
 	CGRect resizeButtonFrame = _resizeButton.frame;
@@ -995,6 +1058,8 @@
 		 }
 		 _mapView.showsUserLocation = NO;
 		 _mapView.showsUserLocation = YES;
+		 
+		 _searchView.fullScreen = toFullScreen;
 	 }];
 }
 
@@ -1017,6 +1082,24 @@
 
 	if (visible)
 		[_mapView setCenterCoordinate:[[[[DataModel sharedInstance] locationManager] location] coordinate] animated:YES];
+}
+
+- (void)_removeAndStoreAllOtherResults:(RadiiResultDTO *)resultToKeep
+{
+	for (id<MKAnnotation> annotation in _searchResults)
+	{
+		if (annotation != resultToKeep && annotation != _userLocation)
+		{
+			[_mapView removeAnnotation:annotation];
+			[_storedResults addObject:annotation];
+		}
+	}
+}
+
+- (void)_restoreResults
+{
+	for (id<MKAnnotation> annotation in _storedResults)
+		[_mapView addAnnotation:annotation];
 }
 
 #pragma mark -

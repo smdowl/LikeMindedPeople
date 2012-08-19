@@ -14,7 +14,8 @@ typedef enum
 	bar,
 	cafe,
 	club,
-	food
+	food,
+	other
 } ResultType;
 
 @interface RadiiResultDTO : NSObject <MKAnnotation>

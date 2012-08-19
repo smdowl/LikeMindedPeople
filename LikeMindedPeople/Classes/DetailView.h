@@ -23,6 +23,12 @@
 	
 	UIButton *_backButton;
 	
+	UIView *_gestureRecognizerView;
+	
+	UIButton *_directionsButton;
+	UILabel *_directionsLabel;
+	NSDictionary *_directionsDictionary;
+	
 	BOOL _isShowing;
 }
 
@@ -37,6 +43,12 @@
 @property (nonatomic,strong) IBOutlet UILabel *interestsLabel;
 
 @property (nonatomic,strong) IBOutlet UIButton *backButton;
+
+@property (nonatomic,strong) IBOutlet UIView *gestureRecognizerView;
+
+@property (nonatomic,strong) IBOutlet UIButton *directionsButton;
+@property (nonatomic,strong) IBOutlet UILabel *directionsLabel;
+@property (nonatomic,strong) NSDictionary *directionsDictionary;
 
 @property (nonatomic) BOOL isShowing;
 

@@ -58,7 +58,6 @@
 						<string key="NSFrame">{{46, 244}, {228, 40}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -108,7 +107,7 @@
 					<object class="IBUITextView" id="625800990">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{20, 123}, {280, 113}}</string>
+						<string key="NSFrame">{{20, 138}, {280, 74}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="750720656"/>
@@ -120,10 +119,7 @@
 						<bool key="IBUIClipsSubviews">YES</bool>
 						<bool key="IBUIMultipleTouchEnabled">YES</bool>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
-						<string type="base64-UTF8" key="IBUIText">Q29ubmVjdCB3aXRoIGZhY2Vib29rIG5vdyBzbyB0aGF0IHdlIGNhbiBmaW5kIHRoZSBwbGFjZXMgdGhh
-dCBtYXRjaCB5b3VyIHBlcnNvbmFsaXR5IQoKSnVzdCBlbmpveSEgTm8gbmVlZCBmb3IgY2hlY2staW5z
-LCByZXZpZXdzLCBvciBwcm9maWxlIHNpZ251cHMuIFJhZGlpIGRvZXMgZXZlcnl0aGluZyBmb3IgeW91
-LiA</string>
+						<string key="IBUIText">Connecting with Facebook will allow us to provide more accurate and relevant recommendations that match your personality &amp; style!</string>
 						<object class="NSColor" key="IBUITextColor">
 							<int key="NSColorSpace">3</int>
 							<bytes key="NSWhite">MC4zMzMzMzMzMzMzAA</bytes>

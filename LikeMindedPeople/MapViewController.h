@@ -25,6 +25,7 @@
 	BOOL _transitioningToFullScreen;	// Used to refresh the annotations because they seem to disapear
 	
 	NSArray *_searchResults;
+	NSMutableArray *_storedResults;		// An array to be used to temporarily store results that have been removed when presenting directions
 	
 	MKUserLocation *_userLocation;
 	

@@ -113,7 +113,7 @@ static DataModel *_sharedInstance = nil;
 		
 		_locationManager = [[CLLocationManager alloc] init];
 		_locationManager.delegate = self;
-		_locationManager.purpose = @"Let us use your location to give your personality to the places you go!";
+		_locationManager.purpose = @"Providing your location will allow you to influence the personality of the places you go";
 		[_locationManager startMonitoringSignificantLocationChanges];
 		
 		_userId = [NSKeyedUnarchiver unarchiveObjectWithFile:[self _userIdStoragePath]];
@@ -146,6 +146,9 @@ static DataModel *_sharedInstance = nil;
 			_placeConnector.delegate = _sharedInstance;
 		}
 		
+		if (!_userId)
+			return;
+		
 		// TODO: Removed some empty server calls to stop traffic. Complete them
 		// Update the current profile
 		PRProfile *profile = _interestsConnector.interests;
@@ -176,19 +179,19 @@ static DataModel *_sharedInstance = nil;
 		//	if(location) {
 		[ServiceAdapter getGeofencesForUser:_userId atLocation:location radius:GEOFENCE_DOWNLOAD_RADIUS success:^(NSArray *geofences)
 		 {
-			 for (GeofenceLocation *geofence in geofences)
-			 {
-				 // Testing the enter/exit fence
-				 [ServiceAdapter enterGeofence:geofence userId:_userId success:^(id success)
-				  {
-					  NSLog(@"success enter: %@", success);
-					  [ServiceAdapter exitGeofence:geofence userId:_userId success:^(id success)
-					   {
-						   NSLog(@"success exit: %@", success);
-					   }];
-				  }];
-				 
-			 }
+//			 for (GeofenceLocation *geofence in geofences)
+//			 {
+//				 // Testing the enter/exit fence
+//				 [ServiceAdapter enterGeofence:geofence userId:_userId success:^(id success)
+//				  {
+//					  NSLog(@"success enter: %@", success);
+//					  [ServiceAdapter exitGeofence:geofence userId:_userId success:^(id success)
+//					   {
+//						   NSLog(@"success exit: %@", success);
+//					   }];
+//				  }];
+//				 
+//			 }
 			 
 			 [self _replacePrivateGeofencesWithFences:[NSMutableArray arrayWithArray:geofences]];
 		 }];
@@ -398,10 +401,9 @@ static DataModel *_sharedInstance = nil;
 					 // Only add this place to the current location array if it isn't the flag for the geofence updates
 					 if (![currentLocation isEqual:_geofenceRefreshLocation] && ![_currentLocation containsObject:currentLocation])
 					 {
-						 [strongSelf -> _currentLocation insertObject:currentLocation atIndex:0];
 						 [ServiceAdapter enterGeofence:currentLocation userId:_userId success:^(id success)
 						  {
-							  
+							  [strongSelf -> _currentLocation insertObject:currentLocation atIndex:0];
 						  }];
 					 }
 					 
@@ -417,10 +419,9 @@ static DataModel *_sharedInstance = nil;
 					 {
 						 if ([strongSelf -> _currentLocation containsObject:currentLocation])
 						 {
-							 [strongSelf -> _currentLocation removeObject:currentLocation];
 							 [ServiceAdapter exitGeofence:currentLocation userId:_userId success:^(id result)
 							  {
-								  
+								  [strongSelf -> _currentLocation removeObject:currentLocation];
 							  }];
 						 }
 						 

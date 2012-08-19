@@ -9,6 +9,7 @@
 #import "SearchView.h"
 #import "SearchBar.h"
 #import "DetailView.h"
+#import "SearchViewTabBarOverlay.h"
 
 @interface SearchView (PrivateUtilities)
 - (void)_showSearchBar;
@@ -32,12 +33,15 @@
 
 @synthesize detailView = _detailView;
 
+@synthesize tabBarOverlay = _tabBarOverlay;
+
+@synthesize fullScreen = _fullScreen;
+
 - (void)awakeFromNib
 {
 	// Store the buttons in an array for easy index reference
 	_buttonsArray = [NSArray arrayWithObjects:_searchButton, _barButton, _cafeButton, _clubButton, _foodButton, nil];
 	
-	// TODO: One set of these button images should be different. I'm thinking darker for highlighted?
 	// When a selected button is selected it has another image
 	[_searchButton setImage:[UIImage imageNamed:@"searchbtn.png"] forState:UIControlStateNormal];
 	[_barButton setBackgroundImage:[UIImage imageNamed:@"barsbtn.png"] forState:UIControlStateNormal];
@@ -51,18 +55,68 @@
 	[_clubButton setImage:[UIImage imageNamed:@"clubsbtn2.png"] forState:UIControlStateHighlighted];
 	[_foodButton setImage:[UIImage imageNamed:@"foodbtn2.png"] forState:UIControlStateHighlighted];
 	
-	[_searchButton setImage:[UIImage imageNamed:@"searchbtn3.png"] forState:UIControlStateDisabled];
-	[_barButton setImage:[UIImage imageNamed:@"barsbtn3.png"] forState:UIControlStateDisabled];
-	[_cafeButton setImage:[UIImage imageNamed:@"cafebtn3.png"] forState:UIControlStateDisabled];
-	[_clubButton setImage:[UIImage imageNamed:@"clubsbtn3.png"] forState:UIControlStateDisabled];
-	[_foodButton setImage:[UIImage imageNamed:@"foodbtn3.png"] forState:UIControlStateDisabled];
+	[_searchButton setImage:[UIImage imageNamed:@"searchbtn3.png"] forState:UIControlStateSelected];
+	[_barButton setImage:[UIImage imageNamed:@"barsbtn3.png"] forState:UIControlStateSelected];
+	[_cafeButton setImage:[UIImage imageNamed:@"cafebtn3.png"] forState:UIControlStateSelected];
+	[_clubButton setImage:[UIImage imageNamed:@"clubsbtn3.png"] forState:UIControlStateSelected];
+	[_foodButton setImage:[UIImage imageNamed:@"foodbtn3.png"] forState:UIControlStateSelected];
 	
 	_searchKeys = [NSArray arrayWithObjects:@"", @"bar", @"cafe", @"nightclub", @"food", nil];
 		
 	_selectedIndex = -1;
 	
 	_searchResultsView.rowHeight = 35.0;
+	
+	_tabBarOverlay.siblingViews = _buttonsArray;
 }
+
+- (void)setDelegate:(id<SearchViewDelegate>)delegate
+{
+	_delegate = delegate;
+	
+	// We need a separate recognizer for each button (apparently)
+	for (UIButton *button in _buttonsArray)
+	{
+		UISwipeGestureRecognizer *recognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:_delegate action:@selector(toggleFullScreen)];
+		[button addGestureRecognizer:recognizer];
+	}
+}
+
+#pragma mark -
+#pragma mark UISwipeGestureRecognizer methods
+
+- (void)setFullScreen:(BOOL)fullScreen
+{
+	_fullScreen = fullScreen;
+	
+	if (fullScreen)
+		[self setTabBarGestureDirection:UISwipeGestureRecognizerDirectionUp];
+	else
+		[self setTabBarGestureDirection:UISwipeGestureRecognizerDirectionDown];
+}
+
+- (void)setTabBarGestureDirection:(UISwipeGestureRecognizerDirection) direction
+{
+	for (UIButton *button in _buttonsArray)
+	{
+		for (UISwipeGestureRecognizer *recognizer in button.gestureRecognizers)
+		{
+			if ([recognizer isKindOfClass:[UISwipeGestureRecognizer class]])
+				recognizer.direction = direction;
+		}
+	}
+	
+	if (_detailView)
+	{
+		for (UISwipeGestureRecognizer *recognizer in _detailView.gestureRecognizerView.gestureRecognizers)
+		{
+			if ([recognizer isKindOfClass:[UISwipeGestureRecognizer class]])
+				recognizer.direction = _fullScreen ? UISwipeGestureRecognizerDirectionUp :UISwipeGestureRecognizerDirectionDown;
+		}
+	}
+		
+}
+		
 
 #pragma mark -
 #pragma mark External Methods
@@ -73,17 +127,31 @@
 }
 
 - (void)selectButton:(NSUInteger)buttonIndex
-{	
-	// Disabled is taking the meaning of selected
-	if (_selectedIndex != -1)
+{		
+	// Dese;ect the previous button unless its the same button again
+	if (_selectedIndex != -1 && _selectedIndex != buttonIndex)
 	{
 		UIButton *previousButton = [_buttonsArray objectAtIndex:_selectedIndex];
-		previousButton.enabled = YES;
+		previousButton.selected = NO;
+		
+		[_delegate clearResults];
 	}
 	
 	// If the previous button was the search button, hide search box
 	if (_selectedIndex == 0)
+	{
 		[self _hideSearchBar];
+		_searchButton.selected = NO;
+		
+		if (buttonIndex == 0)
+		{
+			_selectedIndex = -1;
+			return;
+		}
+	}
+	
+	// Clear the string that was previoiusly searched for so it doesn't appear in the search box
+	_previousSearch = nil;
 	
 	// Update the selected index
 	_selectedIndex = buttonIndex;
@@ -92,7 +160,7 @@
 	{
 		UIButton *selectedButton = [_buttonsArray objectAtIndex:_selectedIndex];
 		
-		selectedButton.enabled = NO;
+		selectedButton.selected = YES;
 		
 		// If this button is the search button, show the text field
 		if (_selectedIndex == 0)
@@ -126,12 +194,26 @@
 
 - (void)showDetailView
 {
+	
 	if (!_detailView.isShowing)
 	{
 		[[NSBundle mainBundle] loadNibNamed:@"DetailView" owner:self options:nil];
 		
+		// Add the gesture recognizer to toggle between full screen
+		
+		UISwipeGestureRecognizer *recognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:_delegate action:@selector(toggleFullScreen)];
+		recognizer.direction = _fullScreen ? UISwipeGestureRecognizerDirectionUp :UISwipeGestureRecognizerDirectionDown;
+		[_detailView.gestureRecognizerView addGestureRecognizer:recognizer];
+		
 		CGRect detailFrame = _detailView.frame;
 		detailFrame.origin.x = self.frame.size.width;
+		
+		if (_searchBar)
+		{
+			detailFrame.origin.y += _searchBar.frame.size.height;
+			[self selectButton:0];
+		}
+		
 		_detailView.frame = detailFrame;
 		_detailView.hidden = NO;
 		[self addSubview:_detailView];
@@ -144,6 +226,7 @@
 			 
 			 CGRect detailFrame = _detailView.frame;
 			 detailFrame.origin.x -= _detailView.frame.size.width;
+			 detailFrame.origin.y = 0;
 			 _detailView.frame = detailFrame;
 			 
 			 _searchBarPanel.alpha = 0.0;
@@ -188,6 +271,12 @@
 #pragma mark -
 #pragma mark IBActions
 
+- (IBAction)cancelSearch:(id)sender
+{
+	[_delegate cancelSearch];
+	_previousSearch = nil;
+}
+
 - (IBAction)tabBarButtonSelected:(id)sender
 {
 	NSUInteger buttonIndex = [_buttonsArray indexOfObject:sender];
@@ -208,7 +297,7 @@
 {
 	NSString *searchText = textField.text;
 	[_delegate beginSearchForPlacesWithName:searchText type:nil];
-	
+	_previousSearch = searchText;
 	[textField resignFirstResponder];
 	
 	return YES;
@@ -224,9 +313,9 @@
 	[[NSBundle mainBundle] loadNibNamed:@"SearchBar" owner:self options:nil];
 	
 	_searchBar.searchBox.delegate = self;
-	
-	[_searchBar.cancelButton addTarget:_delegate action:@selector(cancelSearch) forControlEvents:UIControlEventTouchUpInside];
-	
+	if (_previousSearch)
+		_searchBar.searchBox.text = _previousSearch;
+		
 	// Make the SearchView larger and add a UIView in the extra space which clips to its bounds then animate the bar in
 	CGRect searchViewFrame = self.frame;
 	searchViewFrame.origin.y -= _searchBar.frame.size.height;
@@ -254,8 +343,7 @@
 }
 
 - (void)_hideSearchBar
-{			
-	
+{				
 	[UIView animateWithDuration:0.2 animations:^()
 	 {
 		 CGRect searchViewFrame = self.frame;

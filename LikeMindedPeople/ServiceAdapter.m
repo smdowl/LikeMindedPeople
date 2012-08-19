@@ -111,7 +111,7 @@
 	[d setObject:[NSString stringWithFormat:@"%f",location.coordinate.latitude] forKey:@"latitude"];
 	[d setObject:[NSString stringWithFormat:@"%f",location.coordinate.longitude] forKey:@"longitude"];
 	// Filter in miles
-	[d setObject:@"100" forKey:@"filter"];
+	[d setObject:@"0.5" forKey:@"filter"];
 	
 	[ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"filter_locations/%@.json",userId] httpMethod:@"POST" postPrefixString:@"location_filter=" dataObj:d success:^(NSArray *results)
 	 {
@@ -178,7 +178,14 @@
 	[geofenceDictionary setValue:[NSString stringWithFormat:@"%f",geofence.location.longitude] forKey:@"longitude"];
 	[geofenceDictionary setValue:geofence.geofenceName forKey:@"name"];
 	
-	[ServiceAdapter _callServiceWithPath:@"visits.json" httpMethod:@"POST" postPrefixString:@"visit=" dataObj:geofenceDictionary success:success];
+	[ServiceAdapter _callServiceWithPath:@"visits.json" httpMethod:@"POST" postPrefixString:@"visit=" dataObj:geofenceDictionary success:^(id result)
+	 {
+		 for (NSDictionary *resultDictionary in result)
+		 {
+//			 BOOL wasSuccessful = [[resultDictionary objectForKey:@"success"] boolValue];
+			 success(result);
+		 }
+	 }];
 }
 
 + (void)exitGeofence:(GeofenceLocation *)geofence userId:(NSString *)userId success:(void (^)(id))success
@@ -190,7 +197,14 @@
 	[geofenceDictionary setValue:geofence.geofenceName forKey:@"name"];
 	[geofenceDictionary setValue:@"00:10:30" forKey:@"stay"];
 
-	[ServiceAdapter _callServiceWithPath:@"exit.json" httpMethod:@"POST" postPrefixString:@"exit=" dataObj:geofenceDictionary success:success];
+	[ServiceAdapter _callServiceWithPath:@"exit.json" httpMethod:@"POST" postPrefixString:@"exit=" dataObj:geofenceDictionary success:^(id result)
+	 {
+		 for (NSDictionary *resultDictionary in result)
+		 {
+//			 BOOL wasSuccessful = [[resultDictionary objectForKey:@"success"] boolValue];
+			 success(result);
+		 }
+	 }];
 }
 //
 //+ (void)getGoogleSearchResultsForUser:(NSString *)userId atLocation:(CLLocationCoordinate2D)location withName:(NSString *)name withType:(NSString *)type success:(void (^)(NSArray *))success failure:(void (^)(void))failure
@@ -331,6 +345,27 @@
 			 location.latitude = [latitude floatValue];
 			 result.searchLocation = location;
 			 
+			 if ([query isEqualToString:@"bar"])
+			 {
+				 result.type = bar;
+			 }
+			 else if ([query isEqualToString:@"cafe"])
+			 {
+				 result.type = cafe;
+			 }
+			 else if ([query isEqualToString:@"nightclub"])
+			 {
+				 result.type = club;
+			 }
+			 else if ([query isEqualToString:@"food"])
+			 {
+				 result.type = food;
+			 }
+			 else
+			 {
+				 result.type = other;
+			 }
+			 
 			 [resultsArray addObject:result];
 		 }
 		 
@@ -448,7 +483,8 @@
     NSLog(@"ServiceAdapter.callService: Making request=%@", request);
     
     // Make request to server    
-    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request 
+																						success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
 		//        NSLog(@"ServiceAdapter.callService: Received type=%@, response=%@", [JSON class], JSON);
 		NSLog(@"%@", JSON);
         success(JSON);
