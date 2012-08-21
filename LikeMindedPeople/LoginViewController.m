@@ -7,6 +7,7 @@
 //
 
 #import "LoginViewController.h"
+#import <QuartzCore/QuartzCore.h>
 #import "AppDelegate.h"
 
 @interface LoginViewController ()
@@ -22,6 +23,12 @@
 	[super viewDidLoad];
 	
 	[_fbButton addTarget:self action:@selector(authorizeFacebook) forControlEvents:UIControlEventTouchUpInside];
+	
+	_fbButton.layer.shadowColor = [[UIColor grayColor] CGColor];
+	_fbButton.layer.shadowOpacity = 0.9;
+	_fbButton.layer.shadowRadius = 2;
+	_fbButton.layer.shadowOffset = CGSizeMake(2.0, 2.0);
+	_fbButton.layer.masksToBounds = NO;
 }
 
 -(void)authorizeFacebook

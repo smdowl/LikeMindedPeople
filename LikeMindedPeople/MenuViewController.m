@@ -14,6 +14,7 @@
 
 @implementation MenuViewController
 @synthesize menuView = _menuView;
+@synthesize menuURLString = _menuURLString;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -28,6 +29,9 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+	
+	NSURLRequest *urlRequest = [[NSURLRequest alloc] initWithURL:[NSURL URLWithString:_menuURLString]];
+	[_menuView loadRequest:urlRequest];
 }
 
 - (void)viewDidUnload
@@ -37,9 +41,28 @@
     // e.g. self.myOutlet = nil;
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+- (void)setMenuURLString:(NSString *)menuURLString
 {
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+	_menuURLString = menuURLString;
+	
+	NSURLRequest *urlRequest = [[NSURLRequest alloc] initWithURL:[NSURL URLWithString:menuURLString]];
+	[_menuView loadRequest:urlRequest];
+}
+
+#pragma mark -
+#pragma mark UIWebViewDelegate
+
+- (void)webViewDidStartLoad:(UIWebView *)webView
+{
+	NSLog(@"%@", webView);
+}
+
+#pragma mark -
+#pragma mark IBActions
+
+- (IBAction)hideMenu
+{
+	[self dismissModalViewControllerAnimated:YES];
 }
 
 @end

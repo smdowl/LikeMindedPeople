@@ -8,9 +8,11 @@
 
 #import "DetailView.h"
 #import "RadiiResultDTO.h"
+#import "LocationDetailsDTO.h"
 
 @implementation DetailView
 @synthesize data = _data;
+@synthesize locationDetails = _locationDetails;
 
 @synthesize titleLabel = _titleLabel;
 @synthesize detailsView = _detailsView;
@@ -23,6 +25,8 @@
 
 @synthesize gestureRecognizerView = _gestureRecognizerView;
 
+@synthesize menuButton = _menuButton;
+
 @synthesize directionsButton = _directionsButton;
 @synthesize directionsLabel = _directionsLabel;
 @synthesize directionsDictionary = _directionsDictionary;
@@ -32,6 +36,8 @@
 - (void)setData:(RadiiResultDTO *)data
 {
 	_data = data;
+	
+	_locationDetails = nil;
 	
 	_titleLabel.text = data.businessTitle;
 	_detailsView.text = data.details;
@@ -44,6 +50,8 @@
 	// Reset the directions button
 	_directionsButton.hidden = NO;
 	_directionsLabel.hidden = YES;
+	
+	_menuButton.hidden = YES;
 }
 
 - (void)setDirectionsDictionary:(NSDictionary *)directionsDictionary
@@ -54,6 +62,14 @@
 	
 	_directionsButton.hidden = YES;
 	_directionsLabel.hidden = NO;
+}
+
+- (void)setLocationDetails:(LocationDetailsDTO *)locationDetails
+{
+	_locationDetails = locationDetails;
+	
+	if (locationDetails.menuURL)
+		_menuButton.hidden = NO;
 }
 
 @end

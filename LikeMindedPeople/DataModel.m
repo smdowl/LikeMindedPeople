@@ -158,6 +158,11 @@ static DataModel *_sharedInstance = nil;
 		[ServiceAdapter uploadUserProfile:profileArray forUser:_userId success:^(id result)
 		 {
 			 
+		 }
+								  failure:^()
+		 {
+			 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+			 [alertView show];
 		 }];
 		
 		// Add the new pois to the database
@@ -190,6 +195,11 @@ static DataModel *_sharedInstance = nil;
 //			 }
 			 if (!_updatingPlaces)
 				 [self _replacePrivateGeofencesWithFences:[NSMutableArray arrayWithArray:geofences]];
+		 }
+									failure:^()
+		 {
+			 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+			 [alertView show];
 		 }];
 		
 				
@@ -284,12 +294,16 @@ static DataModel *_sharedInstance = nil;
 				 
 				 DataModel *strongSelf = weakSelf;
 					 
-				 if (strongSelf->_updatingPlaces)
-				 {
-					 strongSelf->_cancelUpdate = YES;
-				 }
-				 
-				 while (strongSelf->_cancelUpdate){}
+				 // TODO: Want to handle the situation where the data model is already updating
+//				 if (strongSelf->_updatingPlaces)
+//				 {
+//					 strongSelf->_cancelUpdate = YES;
+//				 }
+//				 
+//				 while (strongSelf->_cancelUpdate)
+//				 {
+//					 [NSThread sleepForTimeInterval:1];
+//				 }
 				 
 				 strongSelf -> _updatingPlaces = YES;
 				 
@@ -297,6 +311,11 @@ static DataModel *_sharedInstance = nil;
 				 [ServiceAdapter getGeofencesForUser:strongSelf->_userId atLocation:location radius:GEOFENCE_DOWNLOAD_RADIUS success:^(NSArray *geofences)
 				  {
 					  [strongSelf _replacePrivateGeofencesWithFences:[NSMutableArray arrayWithArray:geofences]];
+				  }
+											 failure:^()
+				  {
+					  UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+					  [alertView show];
 				  }];
 			 }];
 		};
@@ -387,6 +406,10 @@ static DataModel *_sharedInstance = nil;
 				 return;
 			 }
 
+			 NSError *err;
+			 NSRegularExpression *regularExpression = [NSRegularExpression regularExpressionWithPattern:@" <[^;]*>" options:NSRegularExpressionCaseInsensitive error:&err];
+			 currentLocation.geofenceName = [regularExpression stringByReplacingMatchesInString:currentLocation.geofenceName options:NSMatchingReportProgress range:NSMakeRange(0, currentLocation.geofenceName.length) withTemplate:@""];
+			 
 			 // Depending on what happened, change the current locatoin
 			 switch (event.eventType)
 			 {
@@ -398,6 +421,11 @@ static DataModel *_sharedInstance = nil;
 						  {
 							  if (![strongSelf->_currentLocation containsObject:currentLocation])
 								  [strongSelf -> _currentLocation insertObject:currentLocation atIndex:0];
+						  }
+											   failure:^()
+						  {
+							  UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+							  [alertView show];
 						  }];
 					 }
 					 
@@ -416,6 +444,11 @@ static DataModel *_sharedInstance = nil;
 							 [ServiceAdapter exitGeofence:currentLocation userId:_userId success:^(id result)
 							  {
 								  [strongSelf -> _currentLocation removeObject:currentLocation];
+							  }
+												  failure:^()
+							  {
+								  UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+								  [alertView show];
 							  }];
 						 }
 						 
@@ -493,6 +526,11 @@ static DataModel *_sharedInstance = nil;
 											success:^(id result)
 			  {
 				  // Do something useful with result
+			  }
+											failure:^()
+			  {
+				  UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+				  [alertView show];
 			  }];
 		 } failure:^(NSError *err)
 		 {
@@ -788,11 +826,13 @@ static DataModel *_sharedInstance = nil;
 
 - (void)_checkCurrentLocation
 {
+	NSMutableArray *locationsToRemove = [NSMutableArray array];
 	for (GeofenceLocation *location in _currentLocation)
 	{
 		if (![_privateFences containsObject:location])
-			[_currentLocation removeObject:location];
+			[locationsToRemove addObject:location];
 	}
+	[_currentLocation removeObjectsInArray:locationsToRemove];	
 	
 	CLLocation *location = _locationManager.location;
 	for (GeofenceLocation *fence in _privateFences)

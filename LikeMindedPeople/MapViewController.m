@@ -17,6 +17,7 @@
 #import "SideBar.h"
 #import "DirectionsPathDTO.h"
 #import "MenuViewController.h"
+#import "LocationDetailsDTO.h"
 
 #define RESIZE_BUTTTON_PADDING 5
 #define MAX_BUTTON_ALPHA 0.4
@@ -48,6 +49,8 @@
 
 - (void)_removeAndStoreAllOtherResults:(RadiiResultDTO *)resultToKeep;
 - (void)_restoreResults;	// Add the radii results that were removed back to the map
+
+- (void)_startDownloadingDetailsForView:(DetailView *)detailView;
 
 @end
 
@@ -226,6 +229,8 @@
 		[_mapView removeOverlay:_directionsLine];
 		_directionsLine = nil;
 		
+		[_storedResults removeAllObjects];
+		
 //		[_searchConnection getGoogleObjectsWithQuery:searchText andMapRegion:[_mapView region] andNumberOfResults:20 addressesOnly:YES andReferer:@"http://WWW.radii.com"];    
 //		[ServiceAdapter getGoogleSearchResultsForUser:[[DataModel sharedInstance] userId] atLocation:_mapView.centerCoordinate withName:name withType:type success:^(NSArray *results)
 		[ServiceAdapter getFourSquareSearchResultsForUser:[[DataModel sharedInstance] userId] atLocation:_mapView.centerCoordinate withQuery:name ? name : type success:^(NSArray *results)
@@ -313,6 +318,8 @@
 - (void)showMenu:(NSString *)urlString
 {
 	MenuViewController *menuController = [[MenuViewController alloc] initWithNibName:nil bundle:nil];
+	menuController.menuURLString = urlString;
+	
 	[self presentModalViewController:menuController animated:YES];
 }
 
@@ -376,6 +383,11 @@
 		 
 		 [_mapView setRegion:region animated:YES]; 
 		 [_mapView setNeedsDisplay];		 
+	 }
+									  failure:^()
+	 {
+		 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+		 [alertView show];
 	 }];
 }
 
@@ -553,6 +565,8 @@
 			
 		// Update the detail view
 		[_searchView.detailView setData:radiiResult];
+		if (!_searchView.detailView.locationDetails)
+			[self _startDownloadingDetailsForView:_searchView.detailView];
 		
 		id<MKAnnotation> annotation = annotationView.annotation;
 		if ([annotation isKindOfClass:[RadiiResultDTO class]])
@@ -719,7 +733,7 @@
 		UIColor *blue = [UIColor colorWithRed:0.27734375 green:0.11328125 blue:1.0 alpha:0.8];
 		polylineView.strokeColor = blue;
 		polylineView.fillColor = blue;
-		polylineView.lineWidth = 3;
+		polylineView.lineWidth = 4;
 		return polylineView;
 	}
 	else
@@ -794,8 +808,10 @@
 	}
 	
 	// Set the detail view's data. This fill in the UI
-	[_searchView showDetailView];
+	[_searchView showDetailView];	
 	_searchView.detailView.data = [_searchResults objectAtIndex:indexPath.row];
+	if (!_searchView.detailView.locationDetails)
+		[self _startDownloadingDetailsForView:_searchView.detailView];
 }
 
 #pragma mark -
@@ -1116,6 +1132,25 @@
 {
 	for (id<MKAnnotation> annotation in _storedResults)
 		[_mapView addAnnotation:annotation];
+}
+
+- (void)_startDownloadingDetailsForView:(DetailView *)detailView
+{
+	if (detailView)
+	{
+		[ServiceAdapter getLocationDetails:detailView.data 
+									userId:[[DataModel sharedInstance] userId] 
+								   success:^(LocationDetailsDTO *details)
+		 {
+			 NSLog(@"%@", details);
+			 if (detailView)
+				 detailView.locationDetails = details;
+		 }
+								   failure:^()
+		 {
+			 NSLog(@"Couldn't connect");
+		 }];
+	}
 }
 
 #pragma mark -

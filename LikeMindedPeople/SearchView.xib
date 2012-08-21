@@ -82,6 +82,7 @@
 										<string key="NSFrame">{{58, 45}, {204, 50}}</string>
 										<reference key="NSSuperview" ref="687829166"/>
 										<reference key="NSWindow"/>
+										<reference key="NSNextKeyView"/>
 										<string key="NSReuseIdentifierKey">_NS:9</string>
 										<object class="NSColor" key="IBUIBackgroundColor">
 											<int key="NSColorSpace">1</int>
@@ -116,7 +117,7 @@
 								<string key="NSFrameSize">{320, 140}</string>
 								<reference key="NSSuperview" ref="244964773"/>
 								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView"/>
+								<reference key="NSNextKeyView" ref="826991269"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<object class="NSColor" key="IBUIBackgroundColor">
 									<int key="NSColorSpace">3</int>
@@ -271,13 +272,12 @@
 						<string key="NSFrameSize">{320, 40}</string>
 						<reference key="NSSuperview" ref="382233767"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView"/>
+						<reference key="NSNextKeyView" ref="988739247"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<object class="NSColor" key="IBUIBackgroundColor">
 							<int key="NSColorSpace">3</int>
-							<bytes key="NSWhite">MAA</bytes>
+							<bytes key="NSWhite">MCAwLjgAA</bytes>
 						</object>
-						<float key="IBUIAlpha">0.80000001192092896</float>
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 					</object>
 				</array>
@@ -555,6 +555,7 @@
 						<string key="directionsLabel">UILabel</string>
 						<string key="gestureRecognizerView">UIView</string>
 						<string key="interestsLabel">UILabel</string>
+						<string key="menuButton">UIButton</string>
 						<string key="presentUsersLabel">UILabel</string>
 						<string key="ratingLabel">UILabel</string>
 						<string key="titleLabel">UILabel</string>
@@ -583,6 +584,10 @@
 						<object class="IBToOneOutletInfo" key="interestsLabel">
 							<string key="name">interestsLabel</string>
 							<string key="candidateClassName">UILabel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="menuButton">
+							<string key="name">menuButton</string>
+							<string key="candidateClassName">UIButton</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="presentUsersLabel">
 							<string key="name">presentUsersLabel</string>
@@ -727,6 +732,7 @@
 						<string key="cancelSearch:">id</string>
 						<string key="getDirections">id</string>
 						<string key="hideDetailView">id</string>
+						<string key="showMenu">id</string>
 						<string key="tabBarButtonSelected:">id</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="actionInfosByName">
@@ -740,6 +746,10 @@
 						</object>
 						<object class="IBActionInfo" key="hideDetailView">
 							<string key="name">hideDetailView</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="showMenu">
+							<string key="name">showMenu</string>
 							<string key="candidateClassName">id</string>
 						</object>
 						<object class="IBActionInfo" key="tabBarButtonSelected:">

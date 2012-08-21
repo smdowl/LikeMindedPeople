@@ -13,6 +13,8 @@
 #import "GeofenceLocation.h"
 #import "RadiiResultDTO.h"
 #import "ServerKeys.h"
+#import "LocationDetailsDTO.h"
+#import "CategoryDTO.h"
 
 #define DEBUG_MODE 0
 #define FAKE_SEARCH 0
@@ -34,13 +36,14 @@
 				  httpMethod:(NSString *)method
 			postPrefixString:(NSString *)prefix
 					 dataObj:(id)dataObj
-					 success:(void (^)(id))success;
+					 success:(void (^)(id))success
+					 failure:(void (^)(void))failure;
 @end
 
 @implementation ServiceAdapter
 
 // TODO: Use data from facebook
-+ (void)uploadUserProfile:(NSArray *)profile forUser:(NSString *)userId success:(void (^)(id))success
++ (void)uploadUserProfile:(NSArray *)profile forUser:(NSString *)userId success:(void (^)(id))success failure:(void (^)(void))failure 
 {
     NSMutableDictionary *d = [[NSMutableDictionary alloc] init];
     
@@ -49,12 +52,12 @@
     [d setObject:userStuff forKey:@"user"];
     [d setObject:profile forKey:@"profile"];
 	
-    [ServiceAdapter _callServiceWithPath:@"users.json" httpMethod:@"POST" postPrefixString:@"user_profile=" dataObj:d success:success];
+    [ServiceAdapter _callServiceWithPath:@"users.json" httpMethod:@"POST" postPrefixString:@"user_profile=" dataObj:d success:success failure:failure];
 	
 	success(nil);
 }
 
-+ (void)updateCurrentLocationForUser:(NSString *)userId location:(CLLocation *)location success:(void (^)(id))success
++ (void)updateCurrentLocationForUser:(NSString *)userId location:(CLLocation *)location success:(void (^)(id))success failure:(void (^)(void))failure 
 {
 	NSMutableDictionary *d = [[NSMutableDictionary alloc] init];
     
@@ -68,14 +71,14 @@
     // TODO: Get radius somehow
     
     
-    [ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"update_location/%@.json",userId] httpMethod:@"POST" postPrefixString:@"location=" dataObj:dloc success:success];
+    [ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"update_location/%@.json",userId] httpMethod:@"POST" postPrefixString:@"location=" dataObj:dloc success:success failure:failure];
 	
     success(nil);
 }
 
 
 // pointsOfInterest: array of QLPlace
-+ (void)uploadPointsOfInterest:(NSArray *)pointsOfInterest forUser:(NSString *)userId success:(void (^)(id))success
++ (void)uploadPointsOfInterest:(NSArray *)pointsOfInterest forUser:(NSString *)userId success:(void (^)(id))success failure:(void (^)(void))failure 
 {
 	NSMutableDictionary *ds = [[NSMutableDictionary alloc] init];
     //[d setObject:userId forKey:@"uid"];
@@ -98,12 +101,12 @@
 	
     [ds setObject:pois forKey:@"pois"];
     
-    [ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"users/%@.json",userId] httpMethod:@"POST" postPrefixString:@"pois=" dataObj:ds success:success];
+    [ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"users/%@.json",userId] httpMethod:@"POST" postPrefixString:@"pois=" dataObj:ds success:success failure:failure];
     
 	success(nil);
 }
 
-+ (void)getGeofencesForUser:(NSString *)userId atLocation:(CLLocation *)location radius:(CGFloat)radius success:(void (^)(NSArray *))success
++ (void)getGeofencesForUser:(NSString *)userId atLocation:(CLLocation *)location radius:(CGFloat)radius success:(void (^)(NSArray *))success failure:(void (^)(void))failure 
 {    
     // Make "YES" for testing, "NO" to use servers.
 #if !DEBUG_MODE
@@ -131,7 +134,8 @@
 		 }
 	 
 	 success(geofences);
-	 }];
+	 } 
+								 failure:failure];
 #else
 		
         NSMutableArray *places = [NSMutableArray array];
@@ -170,7 +174,50 @@
 #endif
 }
 
-+ (void)enterGeofence:(GeofenceLocation *)geofence userId:(NSString *)userId success:(void (^)(id))success
++ (void)getLocationDetails:(RadiiResultDTO *)location userId:(NSString *)userId success:(void (^)(LocationDetailsDTO *))success failure:(void (^)(void))failure 
+{
+	NSMutableDictionary *locationDictionary = [NSMutableDictionary dictionary];
+	[locationDictionary setObject:[NSString stringWithFormat:@"%f",location.coordinate.latitude] forKey:@"latitude"];
+	[locationDictionary setObject:[NSString stringWithFormat:@"%f",location.coordinate.longitude] forKey:@"longitude"];
+	[locationDictionary setObject:location.businessTitle forKey:@"query"];
+	
+	[ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"venue_details/%@.json", userId] httpMethod:@"POST" postPrefixString:@"venue_query=		" dataObj:locationDictionary success:^(NSDictionary *result)
+	 {
+		 NSLog(@"%@", result);
+		 LocationDetailsDTO *details = [[LocationDetailsDTO alloc] init];
+		 details.name = [result objectForKey:@"name"];
+		 details.description = [result objectForKey:@"description"];
+		 
+		 NSMutableArray *categories = [NSMutableArray array];
+		 for (NSDictionary *category in [result objectForKey:@"categories"])
+		 {
+			 CategoryDTO *newCategory = [[CategoryDTO alloc] init];
+			 newCategory.name = [category objectForKey:@"name"];
+			 
+			 NSMutableArray *parentCategories = [NSMutableArray array];
+			 for (NSString *parentName in [category objectForKey:@"parents"])
+			 {
+				 [parentCategories addObject:parentName];
+			 }
+			 newCategory.parentCategories = parentCategories;
+			 
+			 [categories addObject:newCategory];
+		 }
+		 details.categories = categories;
+		 
+		 NSString *menuString = [result objectForKey:@"menu"];
+		 details.menuURL = ![menuString isKindOfClass:[NSNull class]] ? [menuString isEqualToString:@"<null>"] ? nil : menuString : nil;
+		 
+		 details.currentPeopleCount = [[result objectForKey:@"people_now_count"] unsignedIntValue];
+		 details.rating = [[result objectForKey:@"rating"] floatValue];
+		 
+		 NSLog(@"%@", details);
+		 success(details);
+	 }
+								 failure:failure];
+}
+
++ (void)enterGeofence:(GeofenceLocation *)geofence userId:(NSString *)userId success:(void (^)(id))success failure:(void (^)(void))failure 
 {
 	NSMutableDictionary *geofenceDictionary = [NSMutableDictionary dictionary];
 	[geofenceDictionary setValue:userId forKey:@"fb_id"];
@@ -185,10 +232,11 @@
 //			 BOOL wasSuccessful = [[resultDictionary objectForKey:@"success"] boolValue];
 			 success(result);
 		 }
-	 }];
+	 } 
+								 failure:failure];
 }
 
-+ (void)exitGeofence:(GeofenceLocation *)geofence userId:(NSString *)userId success:(void (^)(id))success
++ (void)exitGeofence:(GeofenceLocation *)geofence userId:(NSString *)userId success:(void (^)(id))success failure:(void (^)(void))failure 
 {
 	NSMutableDictionary *geofenceDictionary = [NSMutableDictionary dictionary];
 	[geofenceDictionary setValue:userId forKey:@"fb_id"];
@@ -204,7 +252,8 @@
 //			 BOOL wasSuccessful = [[resultDictionary objectForKey:@"success"] boolValue];
 			 success(result);
 		 }
-	 }];
+	 }
+								 failure:failure];
 }
 //
 //+ (void)getGoogleSearchResultsForUser:(NSString *)userId atLocation:(CLLocationCoordinate2D)location withName:(NSString *)name withType:(NSString *)type success:(void (^)(NSArray *))success failure:(void (^)(void))failure
@@ -370,7 +419,8 @@
 		 }
 		 
 		 success(resultsArray);
-	 }];
+	 }
+								 failure:failure];
 #else
 	NSMutableArray *resultsArray = [NSMutableArray array];
 	for (int i=0; i<10; i++)
@@ -417,7 +467,7 @@
 #endif
 }
 
-+ (void)getDirectionsFromLocation:(CLLocationCoordinate2D)from toLocation:(CLLocationCoordinate2D)to onSuccess:(void(^)(NSDictionary *))success
++ (void)getDirectionsFromLocation:(CLLocationCoordinate2D)from toLocation:(CLLocationCoordinate2D)to onSuccess:(void(^)(NSDictionary *))success failure:(void (^)(void))failure 
 {
 	NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@origin=%f,%f&destination=%f,%f&sensor=true&mode=walking",GOOGLE_DIRECTIONS_URL,from.latitude,from.longitude,to.latitude,to.longitude]];
 	NSURLRequest *urlRequest = [NSURLRequest requestWithURL:url];
@@ -441,6 +491,7 @@
 			postPrefixString:(NSString *)prefix
 					 dataObj:(id)dataObj
 					 success:(void (^)(id))success
+					 failure:(void (^)(void))failure
 {
 	
     // Create JSON string
@@ -483,86 +534,34 @@
     NSLog(@"ServiceAdapter.callService: Making request=%@", request);
     
     // Make request to server    
-    AFJSONRequestOperation *operation = [AFJSONRequestOperation JSONRequestOperationWithRequest:request 
-																						success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
-		//        NSLog(@"ServiceAdapter.callService: Received type=%@, response=%@", [JSON class], JSON);
-		NSLog(@"%@", JSON);
-        success(JSON);
-    } failure:^(NSURLRequest *request , NSHTTPURLResponse *response , NSError *error , id JSON ) {
-        NSString *errorMsg = [NSString stringWithFormat:@"ServiceAdapter.callService error: %@", error];
-        NSLog(@"%@",errorMsg);
-        //[errFuncs callWithErrorCode:@"DefaultError" errorMessage:errorMsg];
-    }];
+    AFJSONRequestOperation *operation = 
+	[AFJSONRequestOperation JSONRequestOperationWithRequest:request 
+													success:^(NSURLRequest *request, NSHTTPURLResponse *response, id JSON) {
+														//        NSLog(@"ServiceAdapter.callService: Received type=%@, response=%@", [JSON class], JSON);
+														NSLog(@"%@", JSON);
+														if (JSON)
+															success(JSON);
+														else
+															failure();
+														
+													} 
+													failure:^(NSURLRequest *request , NSHTTPURLResponse *response , NSError *error , id JSON ) {
+														NSString *errorMsg = [NSString stringWithFormat:@"ServiceAdapter.callService error: %@", error];
+														NSLog(@"%@",errorMsg);
+														failure();
+														//[errFuncs callWithErrorCode:@"DefaultError" errorMessage:errorMsg];
+													}];
     [operation start];
-    
-}
-
-
-#pragma mark -
-#pragma mark Testing methods
-
-// Just for testing
-+ (void)testService
-{
-    NSLog(@"----------- TEST SERVICE --------");
-    
-    NSMutableDictionary *attr1 = [[NSMutableDictionary alloc] initWithObjectsAndKeys:@"Age", @"key", @"25-34", @"attributeCategories", @"0.7", @"likelihood", nil];
-    NSMutableDictionary *attr2 = [[NSMutableDictionary alloc] initWithObjectsAndKeys:@"Gender", @"key", @"Male", @"attributeCategories", @"0.9", @"likelihood", nil];
-    
-    NSMutableArray *profile = [[NSMutableArray alloc] initWithObjects:attr1,attr2, nil];
-    
-    NSString *userId = @"78782190374";
-    
-    [ServiceAdapter uploadUserProfile:profile forUser:userId success:^(id resp) {
-        NSLog(@"testService: uploadUserProfile, resp:%@", resp);
-		
-        CLLocation *currentPoint = [[CLLocation alloc] initWithLatitude:23 longitude:121];
-        [ServiceAdapter updateCurrentLocationForUser:userId location:currentPoint success:^(id resp) {
-            NSLog(@"testService: updateCurrentLocation, resp=%@", resp);
-            
-            NSMutableArray *places = [[NSMutableArray alloc] init];
-            QLPlace *place = [[QLPlace alloc] init];
-            QLGeoFenceCircle *circle = [[QLGeoFenceCircle alloc] init];
-            circle.latitude = 23.776074;
-            circle.longitude = 122.394304;
-            circle.radius = 10;
-            place.geoFence = circle;
-            place.name = @"poi1";
-            [places addObject:place];
-            
-            place = [[QLPlace alloc] init];
-            circle = [[QLGeoFenceCircle alloc] init];
-            circle.latitude = 22;
-            circle.longitude = 120;
-            circle.radius = 10;
-            place.geoFence = circle;
-            place.name = @"poi2";
-            [places addObject:place];
-            
-            [ServiceAdapter uploadPointsOfInterest:places forUser:userId success:^(id resp) {
-                NSLog(@"testService: uploadPointsOfInterest, resp=%@", resp);
-                
-                
-                [ServiceAdapter getGeofencesForUser:userId atLocation:currentPoint radius:5.0 success:^(id resp) {
-                    NSLog(@"testService: getGeofencesForUser: %@", resp);
-                }];
-            }];
-        }];
-        
-		
-    }];
-	
-    //[ServiceAdapter getAllUsersWithSuccess:^(id resp) {
-    //    NSLog(@"testService: getAllUsersWithSuccess, resp:%@", resp);
-    //}];
-	
     
 }
 
 + (void)getAllUsersWithSuccess:(void (^)(id))success
 {
     NSMutableDictionary *d = [[NSMutableDictionary alloc] init];
-    [ServiceAdapter _callServiceWithPath:@"users.json" httpMethod:@"GET" postPrefixString: @"" dataObj:d success:success];
+    [ServiceAdapter _callServiceWithPath:@"users.json" httpMethod:@"GET" postPrefixString: @"" dataObj:d success:success failure:^()
+	 {
+		 
+	 }];
 }
 
 

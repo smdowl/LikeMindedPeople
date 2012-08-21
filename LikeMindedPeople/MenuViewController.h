@@ -8,10 +8,15 @@
 
 #import <UIKit/UIKit.h>
 
-@interface MenuViewController : UIViewController
+@interface MenuViewController : UIViewController <UIWebViewDelegate>
 {
 	UIWebView *_menuView;
+	NSString *_menuURLString;
 }
 
-@property (nonatomic,strong) UIWebView *menuView;
+@property (nonatomic,strong) IBOutlet UIWebView *menuView;
+@property (nonatomic,strong) NSString *menuURLString;
+
+- (IBAction)hideMenu;
+
 @end

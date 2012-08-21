@@ -9,6 +9,7 @@
 #import "SearchView.h"
 #import "SearchBar.h"
 #import "DetailView.h"
+#import "LocationDetailsDTO.h"
 
 @interface SearchView (PrivateUtilities)
 - (void)_showSearchBar;
@@ -188,8 +189,7 @@
 
 
 - (void)showDetailView
-{
-	
+{	
 	if (!_detailView.isShowing)
 	{
 		[[NSBundle mainBundle] loadNibNamed:@"DetailView" owner:self options:nil];
@@ -230,8 +230,7 @@
 						 completion:^(BOOL finished)
 		 {
 			 _detailView.isShowing = YES;		 
-		 }];
-	
+		 }];		
 	}
 }
 
@@ -286,7 +285,7 @@
 
 - (IBAction)showMenu
 {
-	[_delegate showMenu:@"http://www.google.com"];
+	[_delegate showMenu:_detailView.locationDetails.menuURL];
 }
 
 #pragma mark -
@@ -339,6 +338,8 @@
 	_searchBar.frame = searchBarFrame;
 	
 	[UIView commitAnimations];
+	
+	[_searchBar becomeFirstResponder];
 }
 
 - (void)_hideSearchBar
