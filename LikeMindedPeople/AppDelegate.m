@@ -58,8 +58,8 @@
 	_mapViewController = [[MapViewController alloc] initWithNibName:nil bundle:nil];
 	
     // FB Integration fb123987074412482
-    _facebook = [[Facebook alloc] initWithAppId:@"123987074412482" andDelegate:self];
-//    _facebook = [[Facebook alloc] initWithAppId:@"276594672455627" andDelegate:self];	
+//    _facebook = [[Facebook alloc] initWithAppId:@"123987074412482" andDelegate:self];
+    _facebook = [[Facebook alloc] initWithAppId:@"276594672455627" andDelegate:self];	
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if ([defaults objectForKey:@"FBAccessTokenKey"]

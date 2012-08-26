@@ -245,7 +245,7 @@
 			 detailFrame.origin.x += _detailView.frame.size.width;
 			 _detailView.frame = detailFrame;
 			 
-			 _searchBarPanel.alpha = 0.8;
+			 _searchBarPanel.alpha = 1.0;
 			 
 			 [UIView commitAnimations];	
 		 } 

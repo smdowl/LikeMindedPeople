@@ -94,4 +94,10 @@
 	button.selected = YES;
 }
 
+- (void)failedToLoadDetails
+{
+	_loadingDetailsView.hidden = YES;
+	[_activityIndicator stopAnimating];
+}
+
 @end

@@ -1208,7 +1208,8 @@
 		 }
 								   failure:^(NSError *error)
 		 {
-			 NSLog(@"Couldn't connect");
+			 [[[UIAlertView alloc] initWithTitle:@"Network Error" message:@"Problem getting details for location" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+			 [detailView failedToLoadDetails];
 		 }];
 	}
 }
