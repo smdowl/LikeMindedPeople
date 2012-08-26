@@ -22,6 +22,9 @@
 	UILabel *_ratingLabel;
 	UILabel *_interestsLabel;
 	
+	UIView *_loadingDetailsView;
+	UIActivityIndicatorView *_activityIndicator;
+	
 	UIButton *_backButton;
 	
 	UIView *_gestureRecognizerView;
@@ -46,6 +49,9 @@
 @property (nonatomic,strong) IBOutlet UILabel *ratingLabel;
 @property (nonatomic,strong) IBOutlet UILabel *interestsLabel;
 
+@property (nonatomic,strong) IBOutlet UIView *loadingDetailsView;
+@property (nonatomic,strong) IBOutlet UIActivityIndicatorView *activityIndicator;
+
 @property (nonatomic,strong) IBOutlet UIButton *backButton;
 
 @property (nonatomic,strong) IBOutlet UIView *gestureRecognizerView;
@@ -57,5 +63,8 @@
 @property (nonatomic,strong) NSDictionary *directionsDictionary;
 
 @property (nonatomic) BOOL isShowing;
+
+- (IBAction)selectButton:(UIButton *)button;
+- (void)failedToLoadDetails;
 
 @end

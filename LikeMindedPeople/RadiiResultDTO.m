@@ -14,7 +14,8 @@
 @synthesize type = _type;
 
 @synthesize rating = _rating;
-@synthesize peopleCount = _peopleCount;
+@synthesize peopleHistoryCount = _peopleHistoryCount;
+@synthesize peopleNowCount = _peopleNowCount;
 @synthesize relatedInterests = _relatedInterests;
 
 @synthesize searchLocation = _searchLocation;
@@ -26,7 +27,7 @@
 
 - (NSString *)description
 {
-	return [NSString stringWithFormat:@"%@, %@. %0.2f %i people %@ interests (%f,%f)", _businessTitle, _details, _rating, _peopleCount, _relatedInterests, _searchLocation.latitude, _searchLocation.longitude];
+	return [NSString stringWithFormat:@"%@, %@. %0.2f total people:%i people here now:%i interests:%@ (%f,%f)", _businessTitle, _details, _rating, _peopleHistoryCount, _peopleNowCount, _relatedInterests, _searchLocation.latitude, _searchLocation.longitude];
 }
 
 @end

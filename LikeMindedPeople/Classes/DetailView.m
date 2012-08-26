@@ -21,6 +21,9 @@
 @synthesize ratingLabel = _ratingLabel;
 @synthesize interestsLabel = _interestsLabel;
 
+@synthesize loadingDetailsView = _loadingDetailsView;
+@synthesize activityIndicator = _activityIndicator;
+
 @synthesize backButton = _backButton;
 
 @synthesize gestureRecognizerView = _gestureRecognizerView;
@@ -41,7 +44,8 @@
 	
 	_titleLabel.text = data.businessTitle;
 	_detailsView.text = data.details;
-	_presentUsersLabel.text = [NSString stringWithFormat:@"%i", data.peopleCount];
+//	_presentUsersLabel.text = [NSString stringWithFormat:@"%i", data.peopleCount];
+	_presentUsersLabel.text = @"-";
 	_ratingLabel.text = [NSString stringWithFormat:@"%0.0f%%", 100*data.rating];
 	
 	// TODO: actually do this
@@ -52,6 +56,9 @@
 	_directionsLabel.hidden = YES;
 	
 	_menuButton.hidden = YES;
+	
+	_loadingDetailsView.hidden = NO;
+	[_activityIndicator startAnimating];
 }
 
 - (void)setDirectionsDictionary:(NSDictionary *)directionsDictionary
@@ -66,10 +73,25 @@
 
 - (void)setLocationDetails:(LocationDetailsDTO *)locationDetails
 {
-	_locationDetails = locationDetails;
-	
-	if (locationDetails.menuURL)
-		_menuButton.hidden = NO;
+	NSLog(@"%@", locationDetails);
+	if ([locationDetails.name isEqualToString:_data.businessTitle])
+	{
+		_loadingDetailsView.hidden = YES;
+		[_activityIndicator stopAnimating];
+		
+		_locationDetails = locationDetails;
+		
+		if (locationDetails.menuURL)
+			_menuButton.hidden = NO;
+		
+		_presentUsersLabel.text = [NSString stringWithFormat:@"%i", locationDetails.currentPeopleCount];
+		_ratingLabel.text = [NSString stringWithFormat:@"%0.0f%%", locationDetails.rating*100];
+	}
+}
+
+- (IBAction)selectButton:(UIButton *)button
+{
+	button.selected = YES;
 }
 
 @end

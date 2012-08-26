@@ -20,7 +20,8 @@
 #define BUSINESS_TITLE_KEY @"name"
 #define DESCRIPTION_KEY @"vicinity"
 #define RATING_KEY @"rating"
-#define PEOPLE_COUNT_KEY @"peopleCount"
+#define PEOPLE_HISTORY_COUNT_KEY @"people_history_count"
+#define PEOPLE_NOW_COUNT_KEY @"people_now_count"
 
 // Keys for creating GeofenceLocations
 

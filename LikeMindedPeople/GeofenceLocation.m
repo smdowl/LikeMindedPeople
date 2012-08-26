@@ -174,6 +174,7 @@
 	mapRect.origin.y = origin.y + _radius;
 	mapRect.size = size;
 	
+	return MKMapRectWorld;
 	return mapRect;
 }
 

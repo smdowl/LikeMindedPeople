@@ -257,7 +257,6 @@
 		
 		[_searchResultsView deselectRowAtIndexPath:[_searchResultsView indexPathForSelectedRow] animated:YES];
 		
-		
 		[_delegate deselectPin];
 	}
 }

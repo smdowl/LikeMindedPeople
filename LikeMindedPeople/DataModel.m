@@ -127,7 +127,7 @@ static DataModel *_sharedInstance = nil;
 		if  (!_geofenceRefreshLocation)
 			_geofenceRefreshLocation = [[GeofenceLocation alloc] init];
 		
-		_currentLocation = [NSMutableArray array];
+		_currentLocations = [NSMutableArray array];
 	}
 }
 
@@ -159,10 +159,9 @@ static DataModel *_sharedInstance = nil;
 		 {
 			 
 		 }
-								  failure:^()
+								  failure:^(NSError *error)
 		 {
-			 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-			 [alertView show];
+
 		 }];
 		
 		// Add the new pois to the database
@@ -196,9 +195,9 @@ static DataModel *_sharedInstance = nil;
 			 if (!_updatingPlaces)
 				 [self _replacePrivateGeofencesWithFences:[NSMutableArray arrayWithArray:geofences]];
 		 }
-									failure:^()
+									failure:^(NSError *error)
 		 {
-			 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+			 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:NSStringFromSelector(_cmd) delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
 			 [alertView show];
 		 }];
 		
@@ -239,14 +238,9 @@ static DataModel *_sharedInstance = nil;
 #pragma mark -
 #pragma mark External Methods
 
-- (QLPlace *)currentLocation
+- (NSArray *)currentLocations
 {
-	NSLog(@"%@", _currentLocation);
-	
-	if ([_currentLocation count] > 0)
-		return [_currentLocation objectAtIndex:0];
-	else
-		return nil;
+	return _currentLocations;
 }
 
 - (NSArray *)getAllGeofenceRegions
@@ -312,9 +306,9 @@ static DataModel *_sharedInstance = nil;
 				  {
 					  [strongSelf _replacePrivateGeofencesWithFences:[NSMutableArray arrayWithArray:geofences]];
 				  }
-											 failure:^()
+											 failure:^(NSError *error)
 				  {
-					  UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+					  			 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:NSStringFromSelector(_cmd) delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
 					  [alertView show];
 				  }];
 			 }];
@@ -415,16 +409,16 @@ static DataModel *_sharedInstance = nil;
 			 {
 				 case QLPlaceEventTypeAt:				
 					 // Only add this place to the current location array if it isn't the flag for the geofence updates
-					 if (![currentLocation isEqual:_geofenceRefreshLocation] && ![_currentLocation containsObject:currentLocation])
+					 if (![currentLocation isEqual:_geofenceRefreshLocation] && ![_currentLocations containsObject:currentLocation])
 					 {
 						 [ServiceAdapter enterGeofence:currentLocation userId:_userId success:^(id success)
 						  {
-							  if (![strongSelf->_currentLocation containsObject:currentLocation])
-								  [strongSelf -> _currentLocation insertObject:currentLocation atIndex:0];
+							  if (![strongSelf->_currentLocations containsObject:currentLocation])
+								  [strongSelf -> _currentLocations insertObject:currentLocation atIndex:0];
 						  }
-											   failure:^()
+											   failure:^(NSError *error)
 						  {
-							  UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+							  UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:[NSString stringWithFormat:@"%@\n%@", NSStringFromSelector(_cmd), [error localizedDescription]] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
 							  [alertView show];
 						  }];
 					 }
@@ -439,22 +433,22 @@ static DataModel *_sharedInstance = nil;
 					 }
 					 else
 					 {
-						 if ([strongSelf -> _currentLocation containsObject:currentLocation])
+						 if ([strongSelf -> _currentLocations containsObject:currentLocation])
 						 {
 							 [ServiceAdapter exitGeofence:currentLocation userId:_userId success:^(id result)
 							  {
-								  [strongSelf -> _currentLocation removeObject:currentLocation];
+								  [strongSelf -> _currentLocations removeObject:currentLocation];
 							  }
-												  failure:^()
+												  failure:^(NSError *error)
 							  {
-								  UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+								  UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:[NSString stringWithFormat:@"%@\n%@", NSStringFromSelector(_cmd), [error localizedDescription]] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
 								  [alertView show];
 							  }];
 						 }
 						 
-						 if ([strongSelf -> _currentLocation count])
+						 if ([strongSelf -> _currentLocations count])
 						 {
-							 currentLocation = [strongSelf -> _currentLocation objectAtIndex:0];
+							 currentLocation = [strongSelf -> _currentLocations objectAtIndex:0];
 						 }
 						 else
 						 {
@@ -527,9 +521,9 @@ static DataModel *_sharedInstance = nil;
 			  {
 				  // Do something useful with result
 			  }
-											failure:^()
+											failure:^(NSError *error)
 			  {
-				  UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+			 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:NSStringFromSelector(_cmd) delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
 				  [alertView show];
 			  }];
 		 } failure:^(NSError *err)
@@ -827,19 +821,19 @@ static DataModel *_sharedInstance = nil;
 - (void)_checkCurrentLocation
 {
 	NSMutableArray *locationsToRemove = [NSMutableArray array];
-	for (GeofenceLocation *location in _currentLocation)
+	for (GeofenceLocation *location in _currentLocations)
 	{
 		if (![_privateFences containsObject:location])
 			[locationsToRemove addObject:location];
 	}
-	[_currentLocation removeObjectsInArray:locationsToRemove];	
+	[_currentLocations removeObjectsInArray:locationsToRemove];	
 	
 	CLLocation *location = _locationManager.location;
 	for (GeofenceLocation *fence in _privateFences)
 	{
-		if ([fence containsCoordinate:location.coordinate] && ![_currentLocation containsObject:fence])
+		if ([fence containsCoordinate:location.coordinate] && ![_currentLocations containsObject:fence])
 		{
-			[_currentLocation addObject:fence];
+			[_currentLocations addObject:fence];
 		}
 	}
 }

@@ -11,6 +11,7 @@
 #import "ServiceAdapter.h"
 #import "SearchView.h"
 #import "TDBadgedCell.h"
+#import "RadiiTableViewCell.h"
 #import "SearchBar.h"
 #import "RAdiiResultDTO.h"
 #import "DetailView.h"
@@ -152,7 +153,17 @@
 	[dataModel.coreConnector checkStatusAndOnEnabled:^(QLContextConnectorPermissions *connectorPermissions) {
         
     } disabled:^(NSError *err) {
-		[dataModel.coreConnector enableFromViewController:self success:nil failure:nil];
+		if (!_askedForPermission)
+		{
+			[dataModel.coreConnector enableFromViewController:self success:nil failure:nil];
+		}
+		else
+		{
+			[[[UIAlertView alloc] initWithTitle:@"Permissions" message:@"Without enabling the Gimbal SDK we can't recommend places that match your personality" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+			[dataModel.coreConnector enableFromViewController:self success:nil failure:nil];
+		}
+		
+		_askedForPermission = YES;
     }];
 	
 	if ([CLLocationManager authorizationStatus] != kCLAuthorizationStatusAuthorized)
@@ -260,7 +271,7 @@
 				 [_searchView setData:_searchResults];
 			 }
 		 }
-		 failure:^()
+		 failure:^(NSError *error)
 		 {
 			 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error finding place - Try again" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
 			 [alert show];
@@ -384,9 +395,9 @@
 		 [_mapView setRegion:region animated:YES]; 
 		 [_mapView setNeedsDisplay];		 
 	 }
-									  failure:^()
+									  failure:^(NSError *error)
 	 {
-		 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+		 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:NSStringFromSelector(_cmd) delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
 		 [alertView show];
 	 }];
 }
@@ -531,6 +542,32 @@
 {
 	if (annotationView.annotation == _userLocation)
 		return;
+
+	MKCoordinateRegion region = _mapView.region;
+	
+	CLLocationCoordinate2D center   = region.center;
+	CLLocationCoordinate2D northWestCorner, southEastCorner;
+	
+	northWestCorner.latitude  = center.latitude  - (region.span.latitudeDelta  / 2.0);
+	northWestCorner.longitude = center.longitude - (region.span.longitudeDelta / 2.0);
+	southEastCorner.latitude  = center.latitude  + (region.span.latitudeDelta  / 2.0);
+	southEastCorner.longitude = center.longitude + (region.span.longitudeDelta / 2.0);
+	
+	CLLocationCoordinate2D annotationCoordinate = annotationView.annotation.coordinate;
+	
+	// Check to see if that map contains the annotation
+	if ((annotationCoordinate.latitude > northWestCorner.latitude &&
+		annotationCoordinate.longitude < northWestCorner.longitude &&
+		annotationCoordinate.latitude > southEastCorner.latitude &&
+		annotationCoordinate.longitude > southEastCorner.longitude))
+	{		
+		region.center = CLLocationCoordinate2DMake((center.latitude + annotationCoordinate.latitude)/2, (center.longitude + annotationCoordinate.longitude)/2);	
+		region.span = MKCoordinateSpanMake(fabsf(annotationCoordinate.latitude - _userLocation.coordinate.latitude), fabsf(annotationCoordinate.longitude - _userLocation.coordinate.longitude));
+		
+//		_mapView.region = region;
+		[_mapView setRegion:region animated:YES];
+	}
+		
 	
 	id<MKAnnotation> annotation = annotationView.annotation;
 	if ([annotation isKindOfClass:[RadiiResultDTO class]])
@@ -538,13 +575,14 @@
 		// Stop the timer from hiding the view
 		[_detailViewTimer invalidate];
 		
-		RadiiResultDTO *radiiResult = (RadiiResultDTO *)annotationView.annotation;
+		RadiiResultDTO *radiiResult = (RadiiResultDTO *)annotation;
 		
 		if (!_searchView.detailView.isShowing)
 		{
 			if (_isFullScreen)
 			{
-				[_searchView showDetailView];
+				if (!_searchView.detailView.isShowing)
+					[_searchView showDetailView];
 				
 				// After adding the detail view, remove the targets and then add self
 				[_searchView.detailView.backButton removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
@@ -781,20 +819,39 @@
 	RadiiResultDTO *radiiResult = [_searchResults objectAtIndex:indexPath.row];
 	
 	cell.textLabel.text = radiiResult.businessTitle;
-	cell.detailTextLabel.text = radiiResult.details;
+	cell.textLabel.font = [UIFont systemFontOfSize:14];
+	cell.detailTextLabel.text = radiiResult.peopleHistoryCount ? [NSString stringWithFormat:@"%i %@", radiiResult.peopleHistoryCount, radiiResult.peopleHistoryCount > 1 ? @"ratings" : @"rating"] : @"Not yet rated";
 	
-//	radiiResult.rating = 0.1 * indexPath.row < 1 ? 0.1 * indexPath.row : 1.0;
-	
-	NSString *badgeString = [NSString stringWithFormat:@"%.0f%@",radiiResult.rating*100,@"%"];
-	
-    cell.badgeString = badgeString;
-	
-    cell.badgeColor = [UIColor colorWithRed:radiiResult.rating * HIGH_CORRELATION_RED + (1 - radiiResult.rating) * LOW_CORRELATION_RED 
-									  green:radiiResult.rating * HIGH_CORRELATION_GREEN + (1 - radiiResult.rating) * LOW_CORRELATION_GREEN 
-									   blue:radiiResult.rating * HIGH_CORRELATION_BLUE + (1 - radiiResult.rating) * LOW_CORRELATION_BLUE 
-									  alpha:1.0];
+	if (radiiResult.peopleHistoryCount)
+	{
+		
+		NSString *badgeString = [NSString stringWithFormat:@"%.0f%@",radiiResult.rating*100,@"%"];
+		
+		cell.badgeString = badgeString;
+		
+		cell.badgeColor = [UIColor colorWithRed:radiiResult.rating * HIGH_CORRELATION_RED + (1 - radiiResult.rating) * LOW_CORRELATION_RED 
+										  green:radiiResult.rating * HIGH_CORRELATION_GREEN + (1 - radiiResult.rating) * LOW_CORRELATION_GREEN 
+										   blue:radiiResult.rating * HIGH_CORRELATION_BLUE + (1 - radiiResult.rating) * LOW_CORRELATION_BLUE 
+										  alpha:1.0];
+	}
 	
     return cell;
+	
+//	RadiiTableViewCell *cell = (RadiiTableViewCell *)[tableView dequeueReusableCellWithIdentifier:@"cell"];
+//	if (!cell)
+//	{
+//		cell = [[RadiiTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
+//		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+//		[[NSBundle mainBundle] loadNibNamed:@"RadiiTableViewCell" owner:cell options:nil];	
+//	}
+//	
+//	
+//	RadiiResultDTO *radiiResult = [_searchResults objectAtIndex:indexPath.row];
+//	
+//	cell.nameLabel.text = radiiResult.businessTitle;
+//	cell.peopleHistoryCountLabel.text = radiiResult.peopleHistoryCount ? [NSString stringWithFormat:@"%i %@", radiiResult.peopleHistoryCount, radiiResult.peopleHistoryCount > 1 ? @"ratings" : @"rating"] : @"Not yet rated";
+//	
+//	return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -808,8 +865,11 @@
 	}
 	
 	// Set the detail view's data. This fill in the UI
-	[_searchView showDetailView];	
+	if (!_searchView.detailView.isShowing)
+		[_searchView showDetailView];	
+	
 	_searchView.detailView.data = [_searchResults objectAtIndex:indexPath.row];
+	
 	if (!_searchView.detailView.locationDetails)
 		[self _startDownloadingDetailsForView:_searchView.detailView];
 }
@@ -1146,7 +1206,7 @@
 			 if (detailView)
 				 detailView.locationDetails = details;
 		 }
-								   failure:^()
+								   failure:^(NSError *error)
 		 {
 			 NSLog(@"Couldn't connect");
 		 }];
@@ -1169,7 +1229,24 @@
 
 - (IBAction)currentLocation
 {
-	NSLog(@"Current location: %@", [[DataModel sharedInstance] currentLocation]);
+	NSArray *currentLocations = [[DataModel sharedInstance] currentLocations];
+	NSLog(@"Current location: %@", currentLocations);
+	
+	NSMutableString *alertString = [NSMutableString string];
+	for (GeofenceLocation *geofence in currentLocations)
+	{
+		[alertString appendFormat:@"•%@\n", geofence.geofenceName];
+	}
+	
+	
+	UIAlertView *currentLocationsAlert;
+	
+	if ([currentLocations count])
+		currentLocationsAlert = [[UIAlertView alloc] initWithTitle:@"Checked in locations" message:alertString delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+	else
+		currentLocationsAlert = [[UIAlertView alloc] initWithTitle:@"Not checked in" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+	
+	[currentLocationsAlert show];
 }
 
 - (IBAction)displayGeofences

@@ -26,7 +26,7 @@
 	NSMutableArray *_locationListeners;
 
 	// An array basically being used as a stack, pushing and popping from index 0
-	NSMutableArray *_currentLocation;
+	NSMutableArray *_currentLocations;
 	
 	// Location arrays
 	NSArray *_personalPointsOfInterest;
@@ -48,7 +48,7 @@
 
 @property (nonatomic, strong) CLLocationManager *locationManager;
 
-@property (nonatomic, readonly) QLPlace *currentLocation;
+@property (nonatomic, readonly) NSArray *currentLocations;
 
 @property (nonatomic, readonly) NSArray *personalPointsOfInterest;
 @property (nonatomic, readonly) NSArray *privateFences;

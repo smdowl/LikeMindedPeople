@@ -25,7 +25,8 @@ typedef enum
 	ResultType _type;
 	
 	CGFloat _rating;
-	NSUInteger _peopleCount;
+	NSUInteger _peopleHistoryCount;
+	NSUInteger _peopleNowCount;
 	NSArray *_relatedInterests;
 	
 	CLLocationCoordinate2D _searchLocation;
@@ -38,7 +39,8 @@ typedef enum
 @property (nonatomic) ResultType type;
 
 @property (nonatomic) CGFloat rating;
-@property (nonatomic) NSUInteger peopleCount;
+@property (nonatomic) NSUInteger peopleHistoryCount;
+@property (nonatomic) NSUInteger peopleNowCount;
 @property (nonatomic, strong) NSArray *relatedInterests;
 
 @property (nonatomic) CLLocationCoordinate2D searchLocation;

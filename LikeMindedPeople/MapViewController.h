@@ -53,6 +53,8 @@
 	
 	UIView *_debugPanel;
 	CLLocationManager *_locationManager;
+	
+	BOOL _askedForPermission;
 }
 
 @property (nonatomic, strong) IBOutlet MKMapView *mapView;

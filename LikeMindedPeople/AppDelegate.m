@@ -15,6 +15,8 @@
 #import "LoginViewController.h"
 #import "MapViewController.h"
 
+#define CORNER_RADIUS 5.0
+
 @implementation AppDelegate
 
 @synthesize window = _window;
@@ -40,8 +42,14 @@
     // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];
 	
+	
+	CAShapeLayer *mask = [CAShapeLayer layer];	
+	UIBezierPath *maskPath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0,20,320,480) cornerRadius:CORNER_RADIUS];
+	mask.path = maskPath.CGPath;
+	
 	// Round the corners of the window. The rounded top corners are hidden by the status bar so need to be done separately
     [self.window.layer setCornerRadius:5.0];
+//	self.window.layer.mask = mask;
 	[self.window.layer setMasksToBounds:YES];
 	
     // Just for testing the service adapter through NSLogs
@@ -51,6 +59,7 @@
 	
     // FB Integration fb123987074412482
     _facebook = [[Facebook alloc] initWithAppId:@"123987074412482" andDelegate:self];
+//    _facebook = [[Facebook alloc] initWithAppId:@"276594672455627" andDelegate:self];	
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     if ([defaults objectForKey:@"FBAccessTokenKey"]

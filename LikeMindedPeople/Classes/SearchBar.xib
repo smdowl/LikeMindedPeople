@@ -53,7 +53,7 @@
 						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 						<object class="NSCustomResource" key="IBUIImage">
 							<string key="NSClassName">NSImage</string>
-							<string key="NSResourceName">searchfield.png</string>
+							<string key="NSResourceName">searchbackground.png</string>
 						</object>
 					</object>
 					<object class="IBUITextField" id="850408477">
@@ -80,6 +80,7 @@
 						<bool key="IBUIAdjustsFontSizeToFit">YES</bool>
 						<float key="IBUIMinimumFontSize">17</float>
 						<object class="IBUITextInputTraits" key="IBUITextInputTraits">
+							<int key="IBUIReturnKeyType">6</int>
 							<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 						</object>
 						<object class="IBUIFontDescription" key="IBUIFontDescription">
@@ -141,9 +142,8 @@
 				<string key="NSReuseIdentifierKey">_NS:9</string>
 				<object class="NSColor" key="IBUIBackgroundColor">
 					<int key="NSColorSpace">3</int>
-					<bytes key="NSWhite">MAA</bytes>
+					<bytes key="NSWhite">MCAwLjgAA</bytes>
 				</object>
-				<float key="IBUIAlpha">0.80000001192092896</float>
 				<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
 			</object>
 		</array>
@@ -252,19 +252,36 @@
 				<object class="IBPartialClassDescription">
 					<string key="className">DetailView</string>
 					<string key="superclassName">UIView</string>
+					<object class="NSMutableDictionary" key="actions">
+						<string key="NS.key.0">selectButton:</string>
+						<string key="NS.object.0">UIButton</string>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<string key="NS.key.0">selectButton:</string>
+						<object class="IBActionInfo" key="NS.object.0">
+							<string key="name">selectButton:</string>
+							<string key="candidateClassName">UIButton</string>
+						</object>
+					</object>
 					<dictionary class="NSMutableDictionary" key="outlets">
+						<string key="activityIndicator">UIActivityIndicatorView</string>
 						<string key="backButton">UIButton</string>
 						<string key="detailsView">UITextView</string>
 						<string key="directionsButton">UIButton</string>
 						<string key="directionsLabel">UILabel</string>
 						<string key="gestureRecognizerView">UIView</string>
 						<string key="interestsLabel">UILabel</string>
+						<string key="loadingDetailsView">UIView</string>
 						<string key="menuButton">UIButton</string>
 						<string key="presentUsersLabel">UILabel</string>
 						<string key="ratingLabel">UILabel</string>
 						<string key="titleLabel">UILabel</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
+						<object class="IBToOneOutletInfo" key="activityIndicator">
+							<string key="name">activityIndicator</string>
+							<string key="candidateClassName">UIActivityIndicatorView</string>
+						</object>
 						<object class="IBToOneOutletInfo" key="backButton">
 							<string key="name">backButton</string>
 							<string key="candidateClassName">UIButton</string>
@@ -288,6 +305,10 @@
 						<object class="IBToOneOutletInfo" key="interestsLabel">
 							<string key="name">interestsLabel</string>
 							<string key="candidateClassName">UILabel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="loadingDetailsView">
+							<string key="name">loadingDetailsView</string>
+							<string key="candidateClassName">UIView</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="menuButton">
 							<string key="name">menuButton</string>
@@ -442,7 +463,7 @@
 		<dictionary class="NSMutableDictionary" key="IBDocument.LastKnownImageSizes">
 			<string key="cancel.png">{38, 38}</string>
 			<string key="cancelpress.png">{38, 38}</string>
-			<string key="searchfield.png">{576, 58}</string>
+			<string key="searchbackground.png">{16, 16}</string>
 		</dictionary>
 		<string key="IBCocoaTouchPluginVersion">1181</string>
 	</data>
