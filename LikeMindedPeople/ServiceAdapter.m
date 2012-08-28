@@ -396,25 +396,33 @@
 			 location.latitude = [latitude floatValue];
 			 result.searchLocation = location;
 			 
-			 if ([query isEqualToString:@"bar"])
+			 result.type = other;
+			 
+			 for (NSDictionary *category in [resultDictionary objectForKey:@"categories"])
 			 {
-				 result.type = bar;
-			 }
-			 else if ([query isEqualToString:@"cafe"])
-			 {
-				 result.type = cafe;
-			 }
-			 else if ([query isEqualToString:@"nightclub"])
-			 {
-				 result.type = club;
-			 }
-			 else if ([query isEqualToString:@"food"])
-			 {
-				 result.type = food;
-			 }
-			 else
-			 {
-				 result.type = other;
+				 NSString *categoryName = [category objectForKey:@"name"];
+				 NSLog(@"%@", categoryName);
+				 if ([categoryName rangeOfString:@"Bar"].length || [categoryName isEqualToString:@"Pub"] || [categoryName isEqualToString:@"Brewery"])
+				 {
+					 result.type = bar;
+					 break;
+				 }
+				 else if ([categoryName isEqualToString:@"Café"] || [categoryName isEqualToString:@"Coffee Shop"]|| [categoryName isEqualToString:@"Bakery"])
+				 {
+					 result.type = cafe;
+					 break;
+				 }
+				 else if ([categoryName isEqualToString:@"Nightclub"] || [categoryName isEqualToString:@"Lounge"])
+				 {
+					 result.type = club;
+					 break;
+				 }
+				 else if ([categoryName rangeOfString:@"Restaurant"].length || [categoryName isEqualToString:@"Diner"] || 
+						  [categoryName rangeOfString:@"Sandwich"].length || [categoryName rangeOfString:@"Breakfast"].length)
+				 {
+					 result.type = food;
+					 break;
+				 }
 			 }
 			 
 			 [resultsArray addObject:result];
