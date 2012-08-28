@@ -36,6 +36,7 @@
 	NSDictionary *_directionsDictionary;
 	
 	BOOL _isShowing;
+	BOOL _downloadingDetails;
 }
 
 
@@ -63,6 +64,8 @@
 @property (nonatomic,strong) NSDictionary *directionsDictionary;
 
 @property (nonatomic) BOOL isShowing;
+
+@property (nonatomic, assign) BOOL downloadingDetails;
 
 - (IBAction)selectButton:(UIButton *)button;
 - (void)failedToLoadDetails;

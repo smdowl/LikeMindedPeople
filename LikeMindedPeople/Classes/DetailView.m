@@ -36,11 +36,14 @@
 
 @synthesize isShowing = _isShowing;
 
+@synthesize downloadingDetails = _downloadingDetails;
+
 - (void)setData:(RadiiResultDTO *)data
 {
 	_data = data;
 	
 	_locationDetails = nil;
+	_downloadingDetails = NO;
 	
 	_titleLabel.text = data.businessTitle;
 	_detailsView.text = data.details;
@@ -73,9 +76,9 @@
 
 - (void)setLocationDetails:(LocationDetailsDTO *)locationDetails
 {
-	NSLog(@"%@", locationDetails);
-	if ([locationDetails.name isEqualToString:_data.businessTitle])
-	{
+	// TODO: Took this out for want of a better system for telling if the details apply to this page or not
+//	if ([locationDetails.name isEqualToString:_data.businessTitle])
+//	{
 		_loadingDetailsView.hidden = YES;
 		[_activityIndicator stopAnimating];
 		
@@ -86,7 +89,7 @@
 		
 		_presentUsersLabel.text = [NSString stringWithFormat:@"%i", locationDetails.currentPeopleCount];
 		_ratingLabel.text = [NSString stringWithFormat:@"%0.0f%%", locationDetails.rating*100];
-	}
+//	}
 }
 
 - (IBAction)selectButton:(UIButton *)button

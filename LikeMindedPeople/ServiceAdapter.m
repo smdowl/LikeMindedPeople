@@ -420,6 +420,14 @@
 			 [resultsArray addObject:result];
 		 }
 		 
+		 [resultsArray sortUsingComparator:^(RadiiResultDTO *r1, RadiiResultDTO *r2)
+		  {
+			  if (r1.rating < r2.rating)
+				  return r1.rating < r2.rating;
+			  else
+				  return r1.peopleHistoryCount < r2.peopleHistoryCount;
+		  }];
+		 
 		 success(resultsArray);
 	 }
 								 failure:failure];

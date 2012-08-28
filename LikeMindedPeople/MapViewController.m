@@ -285,6 +285,12 @@
 		 ];
 		_searchingView.hidden = NO;
 		[_indicatorView startAnimating];
+		
+		if (_isFullScreen)
+		{
+			_isFullScreen = NO;
+			[self _animateMap:NO];
+		}
 	}
 	else 
 	{
@@ -603,7 +609,7 @@
 			
 		// Update the detail view
 		[_searchView.detailView setData:radiiResult];
-		if (!_searchView.detailView.locationDetails)
+		if (!_searchView.detailView.locationDetails || _searchView.detailView.downloadingDetails)
 			[self _startDownloadingDetailsForView:_searchView.detailView];
 		
 		id<MKAnnotation> annotation = annotationView.annotation;
@@ -834,6 +840,10 @@
 										   blue:radiiResult.rating * HIGH_CORRELATION_BLUE + (1 - radiiResult.rating) * LOW_CORRELATION_BLUE 
 										  alpha:1.0];
 	}
+	else
+	{
+		cell.badgeColor = [UIColor clearColor];
+	}
 	
     return cell;
 	
@@ -870,7 +880,7 @@
 	
 	_searchView.detailView.data = [_searchResults objectAtIndex:indexPath.row];
 	
-	if (!_searchView.detailView.locationDetails)
+	if (!_searchView.detailView.locationDetails || _searchView.detailView.downloadingDetails)
 		[self _startDownloadingDetailsForView:_searchView.detailView];
 }
 
@@ -1198,11 +1208,12 @@
 {
 	if (detailView)
 	{
+		detailView.downloadingDetails = YES;
+		
 		[ServiceAdapter getLocationDetails:detailView.data 
 									userId:[[DataModel sharedInstance] userId] 
 								   success:^(LocationDetailsDTO *details)
 		 {
-			 NSLog(@"%@", details);
 			 if (detailView)
 				 detailView.locationDetails = details;
 		 }

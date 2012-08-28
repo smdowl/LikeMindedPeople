@@ -78,7 +78,7 @@ static DataModel *_sharedInstance = nil;
 		if (!_sharedInstance)
 		{
 			_sharedInstance = [super allocWithZone:nil];
-						
+			
 			[_sharedInstance _setup];
 		}
 		
@@ -161,7 +161,7 @@ static DataModel *_sharedInstance = nil;
 		 }
 								  failure:^(NSError *error)
 		 {
-
+			 
 		 }];
 		
 		// Add the new pois to the database
@@ -176,32 +176,32 @@ static DataModel *_sharedInstance = nil;
 			_settingUp = NO;
 			return;
 		}
-				
+		
 		[ServiceAdapter getGeofencesForUser:_userId atLocation:location radius:GEOFENCE_DOWNLOAD_RADIUS success:^(NSArray *geofences)
 		 {
-//			 for (GeofenceLocation *geofence in geofences)
-//			 {
-//				 // Testing the enter/exit fence
-//				 [ServiceAdapter enterGeofence:geofence userId:_userId success:^(id success)
-//				  {
-//					  NSLog(@"success enter: %@", success);
-//					  [ServiceAdapter exitGeofence:geofence userId:_userId success:^(id success)
-//					   {
-//						   NSLog(@"success exit: %@", success);
-//					   }];
-//				  }];
-//				 
-//			 }
+			 //			 for (GeofenceLocation *geofence in geofences)
+			 //			 {
+			 //				 // Testing the enter/exit fence
+			 //				 [ServiceAdapter enterGeofence:geofence userId:_userId success:^(id success)
+			 //				  {
+			 //					  NSLog(@"success enter: %@", success);
+			 //					  [ServiceAdapter exitGeofence:geofence userId:_userId success:^(id success)
+			 //					   {
+			 //						   NSLog(@"success exit: %@", success);
+			 //					   }];
+			 //				  }];
+			 //				 
+			 //			 }
 			 if (!_updatingPlaces)
 				 [self _replacePrivateGeofencesWithFences:[NSMutableArray arrayWithArray:geofences]];
 		 }
 									failure:^(NSError *error)
 		 {
-			 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:NSStringFromSelector(_cmd) delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-			 [alertView show];
+			 //			 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:NSStringFromSelector(_cmd) delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+//			 [[[UIAlertView alloc] initWithTitle:@"Problem connecting to server" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
 		 }];
 		
-				
+		
 		// Check to see if the refresh location hasn't been set up yet and whether the user is now outside of it
 		if ([_geofenceRefreshLocation isEmpty])
 			[self updateGeofenceRefreshLocation];
@@ -254,7 +254,7 @@ static DataModel *_sharedInstance = nil;
 	{
 		[self updateGeofenceRefreshLocation];	
 	}
-
+	
 	return _geofenceRefreshLocation;
 }
 
@@ -280,24 +280,24 @@ static DataModel *_sharedInstance = nil;
 			geofencePlace.geoFence = circle;
 			
 			GeofenceLocation *newRefreshLocation = [[GeofenceLocation alloc] initWithPlace:geofencePlace];
-						
+			
 			[self _addAllFences:[NSMutableArray arrayWithObject:newRefreshLocation] onCompletion:^(void)
 			 {
 				 if (!weakSelf)
 					 return;
 				 
 				 DataModel *strongSelf = weakSelf;
-					 
+				 
 				 // TODO: Want to handle the situation where the data model is already updating
-//				 if (strongSelf->_updatingPlaces)
-//				 {
-//					 strongSelf->_cancelUpdate = YES;
-//				 }
-//				 
-//				 while (strongSelf->_cancelUpdate)
-//				 {
-//					 [NSThread sleepForTimeInterval:1];
-//				 }
+				 //				 if (strongSelf->_updatingPlaces)
+				 //				 {
+				 //					 strongSelf->_cancelUpdate = YES;
+				 //				 }
+				 //				 
+				 //				 while (strongSelf->_cancelUpdate)
+				 //				 {
+				 //					 [NSThread sleepForTimeInterval:1];
+				 //				 }
 				 
 				 strongSelf -> _updatingPlaces = YES;
 				 
@@ -308,8 +308,8 @@ static DataModel *_sharedInstance = nil;
 				  }
 											 failure:^(NSError *error)
 				  {
-					  			 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:NSStringFromSelector(_cmd) delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-					  [alertView show];
+					  //					  			 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:NSStringFromSelector(_cmd) delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+//					  [[[UIAlertView alloc] initWithTitle:@"Problem connecting to server" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
 				  }];
 			 }];
 		};
@@ -317,11 +317,11 @@ static DataModel *_sharedInstance = nil;
 		// Get the most recent geofence refresh location
 		[self.placeConnector allPlacesAndOnSuccess:^(NSArray *places)
 		 {
-			for (QLPlace *place in places)
-			{
-				if ([place.name isEqualToString:REFRESH_BOUNDARY_KEY])
-					_geofenceRefreshLocation = [[GeofenceLocation alloc] initWithPlace:place];
-			}
+			 for (QLPlace *place in places)
+			 {
+				 if ([place.name isEqualToString:REFRESH_BOUNDARY_KEY])
+					 _geofenceRefreshLocation = [[GeofenceLocation alloc] initWithPlace:place];
+			 }
 			 
 			 if ([_geofenceRefreshLocation containsCoordinate:[[_locationManager location] coordinate]])
 				 return;
@@ -330,8 +330,8 @@ static DataModel *_sharedInstance = nil;
 			 if (![_geofenceRefreshLocation isEmpty])
 			 {
 				 [self _removeAllFences:[NSMutableArray arrayWithObject:_geofenceRefreshLocation]
-											onCompletion:createNewPlace];
-
+						   onCompletion:createNewPlace];
+				 
 			 }
 			 else
 			 { 
@@ -383,7 +383,7 @@ static DataModel *_sharedInstance = nil;
 			 DataModel *strongSelf = weakSelf;
 			 if (!strongSelf)
 				 return;
-			 			 
+			 
 			 GeofenceLocation *currentLocation;
 			 for (GeofenceLocation *location in fences)
 			 {
@@ -399,7 +399,7 @@ static DataModel *_sharedInstance = nil;
 			 {
 				 return;
 			 }
-
+			 
 			 NSError *err;
 			 NSRegularExpression *regularExpression = [NSRegularExpression regularExpressionWithPattern:@" <[^;]*>" options:NSRegularExpressionCaseInsensitive error:&err];
 			 currentLocation.geofenceName = [regularExpression stringByReplacingMatchesInString:currentLocation.geofenceName options:NSMatchingReportProgress range:NSMakeRange(0, currentLocation.geofenceName.length) withTemplate:@""];
@@ -418,8 +418,8 @@ static DataModel *_sharedInstance = nil;
 						  }
 											   failure:^(NSError *error)
 						  {
-							  UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:[NSString stringWithFormat:@"%@\n%@", NSStringFromSelector(_cmd), [error localizedDescription]] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-							  [alertView show];
+							  //							  UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:[NSString stringWithFormat:@"%@\n%@", NSStringFromSelector(_cmd), [error localizedDescription]] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+							  [[[UIAlertView alloc] initWithTitle:@"Problem connecting to server" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
 						  }];
 					 }
 					 
@@ -441,8 +441,9 @@ static DataModel *_sharedInstance = nil;
 							  }
 												  failure:^(NSError *error)
 							  {
-								  UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:[NSString stringWithFormat:@"%@\n%@", NSStringFromSelector(_cmd), [error localizedDescription]] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-								  [alertView show];
+								  //								  UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:[NSString stringWithFormat:@"%@\n%@", NSStringFromSelector(_cmd), [error localizedDescription]] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+								  //								  [alertView show];
+								  [[[UIAlertView alloc] initWithTitle:@"Problem connecting to server" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
 							  }];
 						 }
 						 
@@ -523,8 +524,9 @@ static DataModel *_sharedInstance = nil;
 			  }
 											failure:^(NSError *error)
 			  {
-			 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:NSStringFromSelector(_cmd) delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-				  [alertView show];
+//				  UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:NSStringFromSelector(_cmd) delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+//				  [alertView show];
+//				  [[[UIAlertView alloc] initWithTitle:@"Problem connecting to server" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
 			  }];
 		 } failure:^(NSError *err)
 		 {
@@ -568,7 +570,7 @@ static DataModel *_sharedInstance = nil;
 		[_placeConnector allPlacesAndOnSuccess:^(NSArray *allPlaces)
 		 {
 			 DataModel *strongSelf = weakSelf;
-			
+			 
 			 if (!strongSelf)
 				 return;
 			 
@@ -580,7 +582,7 @@ static DataModel *_sharedInstance = nil;
 			 }
 			 
 			 _updatingPlaces = YES;
-			 			 
+			 
 			 // Create an array of GeofenceLocations from what is returned by the place connector
 			 NSMutableArray *allLocations = [NSMutableArray array];
 			 for (QLPlace *place in allPlaces)
@@ -588,7 +590,7 @@ static DataModel *_sharedInstance = nil;
 				 GeofenceLocation *newLocation = [[GeofenceLocation alloc] initWithPlace:place];
 				 [allLocations addObject:newLocation];
 			 }
-			 			 
+			 
 			 // Remove any from our local version that are not in the new list
 			 NSMutableArray *removedLocations = [NSMutableArray array];
 			 for (GeofenceLocation *location in allLocations)
@@ -598,8 +600,8 @@ static DataModel *_sharedInstance = nil;
 					 [removedLocations addObject:location];
 				 }
 				 
-//				 if ([_privateFences containsObject:location])
-//					 [_privateFences removeObject:location];
+				 //				 if ([_privateFences containsObject:location])
+				 //					 [_privateFences removeObject:location];
 			 }		 
 			 
 			 // Now work out what additional fences need to be added
@@ -623,7 +625,7 @@ static DataModel *_sharedInstance = nil;
 					  NSLog(@"Finished deleting");
 					  
 					  __weak DataModel *weakWeakSelf = strongSelf;
-					  					  					  
+					  
 					  [strongSelf _addAllFences:addedFences onCompletion:^()
 					   {
 						   DataModel *strongStrongSelf = weakWeakSelf;
@@ -706,7 +708,7 @@ static DataModel *_sharedInstance = nil;
 							 success:^(QLPlace *newFence)
 		 {
 			 [geofenceLocations removeObject:geofenceLocation];
-			 			 
+			 
 			 if (![newFence.name isEqualToString:REFRESH_BOUNDARY_KEY])		 
 			 {			 
 				 GeofenceLocation *newLocation = [[GeofenceLocation alloc] initWithPlace:newFence];
@@ -848,7 +850,7 @@ static DataModel *_sharedInstance = nil;
 			 [_privateFences addObject:[[GeofenceLocation alloc] initWithPlace:place]];
 		 }
 	 }
-	 failure:^(NSError *err)
+								   failure:^(NSError *err)
 	 {
 		 NSLog(@"%@", [err localizedDescription]);
 	 }];
@@ -868,7 +870,7 @@ static DataModel *_sharedInstance = nil;
 {
 	return [[self _baseStoragePath] stringByAppendingPathComponent:@"profiles.archive"];
 }
-															  
+
 - (NSString *)_userIdStoragePath
 {
 	return [[self _baseStoragePath] stringByAppendingPathComponent:@"userId.archive"];	
