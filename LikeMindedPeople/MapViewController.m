@@ -826,7 +826,7 @@
 	
 	cell.textLabel.text = radiiResult.businessTitle;
 	cell.textLabel.font = [UIFont systemFontOfSize:14];
-	cell.detailTextLabel.text = radiiResult.peopleHistoryCount ? [NSString stringWithFormat:@"%i %@", radiiResult.peopleHistoryCount, radiiResult.peopleHistoryCount > 1 ? @"ratings" : @"rating"] : @"Not yet rated";
+	cell.detailTextLabel.text = radiiResult.peopleHistoryCount ? [NSString stringWithFormat:@"%i %@", radiiResult.peopleHistoryCount, radiiResult.peopleHistoryCount > 1 ? @"ratings" : @"rating"] : @"Be the first one here";
 	
 	if (radiiResult.peopleHistoryCount)
 	{
@@ -843,6 +843,14 @@
 	else
 	{
 		cell.badgeColor = [UIColor clearColor];
+//		NSString *badgeString = [NSString stringWithFormat:@"0%%"];
+//		
+//		cell.badgeString = badgeString;
+//		
+//		cell.badgeColor = [UIColor colorWithRed:LOW_CORRELATION_RED 
+//										  green:LOW_CORRELATION_GREEN 
+//										   blue:LOW_CORRELATION_BLUE 
+//										  alpha:1.0];
 	}
 	
     return cell;
