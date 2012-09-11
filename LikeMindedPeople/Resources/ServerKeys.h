@@ -9,8 +9,8 @@
 #ifndef LikeMindedPeople_ServerKeys_h
 #define LikeMindedPeople_ServerKeys_h
 
-//#define BASE_URL @"http://radiiapp.co"
-#define BASE_URL @"http://radii.herokuapp.com"
+#define BASE_URL @"http://api.radiiapp.co"
+//#define BASE_URL @"http://radii.herokuapp.com"
 
 // URL used for testing locally
 //#define BASE_URL @"http://0.0.0.0:3000"

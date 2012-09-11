@@ -43,11 +43,11 @@
 @implementation ServiceAdapter
 
 // TODO: Use data from facebook
-+ (void)uploadUserProfile:(NSArray *)profile forUser:(NSString *)userId success:(void (^)(id))success failure:(void (^)(NSError *))failure 
++ (void)uploadUserProfile:(NSArray *)profile forUser:(NSString *)userId success:(void (^)(id))success failure:(void (^)(NSError *))failure
 {
     NSMutableDictionary *d = [[NSMutableDictionary alloc] init];
     
-    NSMutableDictionary *userStuff = [[NSMutableDictionary alloc] initWithObjectsAndKeys:@"German", @"name", @"Larrain", @"last_name", userId, @"fb_id", nil];
+    NSMutableDictionary *userStuff = [[NSMutableDictionary alloc] initWithObjectsAndKeys:@"John", @"name", @"Doe", @"last_name", userId, @"fb_id", nil];
     
     [d setObject:userStuff forKey:@"user"];
     [d setObject:profile forKey:@"profile"];
