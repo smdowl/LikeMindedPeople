@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>APPSTORE_BUILD</key>
-	<false/>
+	<true/>
 	<key>PRODUCTION_API_KEY</key>
 	<string>73fafda2-8d07-4715-b66a-c7e7349f1155</string>
 	<key>SANDBOX_API_KEY</key>
