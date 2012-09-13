@@ -43,18 +43,14 @@
 @implementation ServiceAdapter
 
 // TODO: Use data from facebook
-+ (void)uploadUserProfile:(NSArray *)profile forUser:(NSString *)userId success:(void (^)(id))success failure:(void (^)(NSError *))failure
++ (void)uploadUserProfile:(NSDictionary *)profile userDetails:(NSDictionary *)userDetails success:(void (^)(id))success failure:(void (^)(NSError *))failure
 {
     NSMutableDictionary *d = [[NSMutableDictionary alloc] init];
-    
-    NSMutableDictionary *userStuff = [[NSMutableDictionary alloc] initWithObjectsAndKeys:@"John", @"name", @"Doe", @"last_name", userId, @"fb_id", nil];
-    
-    [d setObject:userStuff forKey:@"user"];
+        
+    [d setObject:userDetails forKey:@"user"];
     [d setObject:profile forKey:@"profile"];
 	
     [ServiceAdapter _callServiceWithPath:@"users.json" httpMethod:@"POST" postPrefixString:@"user_profile=" dataObj:d success:success failure:failure];
-	
-	success(nil);
 }
 
 + (void)updateCurrentLocationForUser:(NSString *)userId location:(CLLocation *)location success:(void (^)(id))success failure:(void (^)(NSError *))failure 
@@ -67,13 +63,11 @@
     [dloc setObject:@"10" forKey:@"radius"];
     [d setObject:dloc forKey:@"location"];
     
-    [d setObject:userId forKey:@"fb_id"];
+    [d setObject:userId forKey:@"api_id"];
     // TODO: Get radius somehow
     
     
-    [ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"update_location/%@.json",userId] httpMethod:@"POST" postPrefixString:@"location=" dataObj:dloc success:success failure:failure];
-	
-    success(nil);
+    [ServiceAdapter _callServiceWithPath:@"update_location.json" httpMethod:@"POST" postPrefixString:@"location=" dataObj:dloc success:success failure:failure];
 }
 
 
@@ -100,10 +94,9 @@
     }];
 	
     [ds setObject:pois forKey:@"pois"];
+	[ds setValue:userId forKey:@"api_id"];
     
-    [ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"users/%@.json",userId] httpMethod:@"POST" postPrefixString:@"pois=" dataObj:ds success:success failure:failure];
-    
-	success(nil);
+    [ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"users.json"] httpMethod:@"POST" postPrefixString:@"pois=" dataObj:ds success:success failure:failure];
 }
 
 + (void)getGeofencesForUser:(NSString *)userId atLocation:(CLLocation *)location radius:(CGFloat)radius success:(void (^)(NSArray *))success failure:(void (^)(NSError *))failure 
@@ -115,8 +108,9 @@
 	[d setObject:[NSString stringWithFormat:@"%f",location.coordinate.longitude] forKey:@"longitude"];
 	// Filter in miles
 	[d setObject:[NSString stringWithFormat:@"%f",radius]  forKey:@"filter"];
+	[d setObject:userId ? userId : @"" forKey:@"api_id"];
 	
-	[ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"filter_locations/%@.json",userId] httpMethod:@"POST" postPrefixString:@"location_filter=" dataObj:d success:^(NSArray *results)
+	[ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"filter_locations.json"] httpMethod:@"POST" postPrefixString:@"location_filter=" dataObj:d success:^(NSArray *results)
 	 {
 		 NSMutableArray *geofences = [NSMutableArray array];
 		 for (NSDictionary *geofenceDictionary in results)
@@ -177,11 +171,12 @@
 + (void)getLocationDetails:(RadiiResultDTO *)location userId:(NSString *)userId success:(void (^)(LocationDetailsDTO *))success failure:(void (^)(NSError *))failure 
 {
 	NSMutableDictionary *locationDictionary = [NSMutableDictionary dictionary];
+	[locationDictionary setValue:userId forKey:@"api_id"];
 	[locationDictionary setObject:[NSString stringWithFormat:@"%f",location.coordinate.latitude] forKey:@"latitude"];
 	[locationDictionary setObject:[NSString stringWithFormat:@"%f",location.coordinate.longitude] forKey:@"longitude"];
 	[locationDictionary setObject:location.businessTitle forKey:@"query"];
 	
-	[ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"venue_details/%@.json", userId] httpMethod:@"POST" postPrefixString:@"venue_query=" dataObj:locationDictionary success:^(NSDictionary *result)
+	[ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"venue_details.json"] httpMethod:@"POST" postPrefixString:@"venue_query=" dataObj:locationDictionary success:^(NSDictionary *result)
 	 {
 		 LocationDetailsDTO *details = [[LocationDetailsDTO alloc] init];
 		 details.name = [result objectForKey:@"name"];
@@ -219,7 +214,7 @@
 + (void)enterGeofence:(GeofenceLocation *)geofence userId:(NSString *)userId success:(void (^)(id))success failure:(void (^)(NSError *))failure 
 {
 	NSMutableDictionary *geofenceDictionary = [NSMutableDictionary dictionary];
-	[geofenceDictionary setValue:userId forKey:@"fb_id"];
+	[geofenceDictionary setValue:userId forKey:@"api_id"];
 	[geofenceDictionary setValue:[NSString stringWithFormat:@"%f",geofence.location.latitude] forKey:@"latitude"];
 	[geofenceDictionary setValue:[NSString stringWithFormat:@"%f",geofence.location.longitude] forKey:@"longitude"];
 	[geofenceDictionary setValue:geofence.geofenceName forKey:@"name"];
@@ -238,7 +233,7 @@
 + (void)exitGeofence:(GeofenceLocation *)geofence userId:(NSString *)userId success:(void (^)(id))success failure:(void (^)(NSError *))failure 
 {
 	NSMutableDictionary *geofenceDictionary = [NSMutableDictionary dictionary];
-	[geofenceDictionary setValue:userId forKey:@"fb_id"];
+	[geofenceDictionary setValue:userId forKey:@"api_id"];
 	[geofenceDictionary setValue:[NSString stringWithFormat:@"%f",geofence.location.latitude] forKey:@"latitude"];
 	[geofenceDictionary setValue:[NSString stringWithFormat:@"%f",geofence.location.longitude] forKey:@"longitude"];
 	[geofenceDictionary setValue:geofence.geofenceName forKey:@"name"];
@@ -352,6 +347,7 @@
 {
 #if !FAKE_SEARCH
 	NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+	[dictionary setValue:userId forKey:@"api_id"];
 	[dictionary setObject:[NSString stringWithFormat:@"%f",location.latitude] forKey:@"latitude"];
 	[dictionary setObject:[NSString stringWithFormat:@"%f",location.longitude] forKey:@"longitude"];
 	
@@ -366,7 +362,7 @@
 		// Should never happen but if it does just break out
 		return;
 	}
-	[ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"foursquare_venues/%@.json",userId] httpMethod:@"POST" postPrefixString:@"foursquare_query=" dataObj:dictionary success:^(id results)
+	[ServiceAdapter _callServiceWithPath:@"foursquare_venues.json" httpMethod:@"POST" postPrefixString:@"foursquare_query=" dataObj:dictionary success:^(id results)
 	 {
 		 // Here we must build the Geofence objects from the returned dictionary
 		 NSMutableArray *resultsArray = [NSMutableArray array];
@@ -516,6 +512,7 @@
     NSError* error = nil;
     id json = [NSJSONSerialization dataWithJSONObject:dataObj
                                               options:kNilOptions error:&error];
+	
     if (error != nil) {
         NSLog(@"SeviceAdapter.callService: error encoding JSON: %@", error);
         return;

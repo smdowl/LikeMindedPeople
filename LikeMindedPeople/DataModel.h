@@ -16,7 +16,12 @@
 @class QLPlace;
 @interface DataModel : NSObject <QLContextCorePermissionsDelegate, QLContextPlaceConnectorDelegate, PRContextInterestsDelegate, CLLocationManagerDelegate>
 {
+	BOOL _authorized;	// Has the user either signed into fb or bypassed that step.
+	
+	NSString *_apiId;	
+	
 	NSString *_userId;	// In out app is going to be the fb ID. Used to identify you on the server
+	NSString *_userName;
 	
 	QLContextCoreConnector *_coreConnector;
 	QLContextPlaceConnector *_placeConnector;
@@ -40,7 +45,12 @@
 	BOOL _updatingPlaces;
 }
 
+@property (nonatomic) BOOL authorized;
+
+@property (nonatomic, strong) NSString *apiId;
+
 @property (nonatomic, strong) NSString *userId;
+@property (nonatomic, strong) NSString *userName;
 
 @property (nonatomic, strong) QLContextCoreConnector *coreConnector;
 @property (nonatomic, strong) QLContextPlaceConnector *placeConnector;

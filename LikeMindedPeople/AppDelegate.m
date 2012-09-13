@@ -141,6 +141,14 @@
 	// Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
+- (void)bypassFacebook
+{
+	self.window.rootViewController = _mapViewController;
+	
+	[[DataModel sharedInstance] setAuthorized:YES];
+	[[DataModel sharedInstance] runStartUpSequence];
+}
+
 #pragma mark -- FB integration
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
@@ -160,6 +168,7 @@
     [defaults synchronize]; 
     self.window.rootViewController = _mapViewController;
 	
+	[[DataModel sharedInstance] setAuthorized:YES];
 	[[DataModel sharedInstance] runStartUpSequence];
     
 }
@@ -208,6 +217,7 @@
     //do whatever you need to do with this info next
     //(ie. save to db, pass to user singleton, whatever)
     [[DataModel sharedInstance] setUserId:facebookId];
+	[[DataModel sharedInstance] setUserName:userName];
 }
 
 @end

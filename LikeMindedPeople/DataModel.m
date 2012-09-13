@@ -33,7 +33,10 @@
 // TODO: at the moment loading and unloading private locations takes a long time due to all the server interaction that is required. Try and find a faster way.
 
 @interface DataModel()
+
 - (void)_setup;
+
+- (void)_uploadUserProfile;
 
 - (void)_uploadPersonalPointsOfInterest;
 - (void)_getPrivateFencesOnCompletion:(void (^)(NSArray *))onComplete;
@@ -47,9 +50,12 @@
 
 // Persistent storage methods
 - (NSString *)_baseStoragePath;
+- (NSString *)_apiIdStoragePath;
 - (NSString *)_locationsStoragePath;
 - (NSString *)_userIdStoragePath;
+- (NSString *)_userNameStoragePath;
 - (NSString *)_geofenceRefreshLocationStoragePath;
+
 @end
 
 @implementation DataModel
@@ -62,7 +68,12 @@ static DataModel *_sharedInstance = nil;
 
 @synthesize locationManager = _locationManager;
 
+@synthesize authorized = _authorized;
+
+@synthesize apiId = _apiId;
+
 @synthesize userId = _userId;
+@synthesize userName = _userName;
 
 @synthesize personalPointsOfInterest = _personalPointsOfInterest;
 @synthesize privateFences = _privateFences;
@@ -117,7 +128,10 @@ static DataModel *_sharedInstance = nil;
 		_locationManager.purpose = @"Providing your location will allow you to influence the personality of the places you go";
 		[_locationManager startMonitoringSignificantLocationChanges];
 		
+		_apiId = [NSKeyedUnarchiver unarchiveObjectWithFile:[self _apiIdStoragePath]];
+		
 		_userId = [NSKeyedUnarchiver unarchiveObjectWithFile:[self _userIdStoragePath]];
+		_userName = [NSKeyedUnarchiver unarchiveObjectWithFile:[self _userNameStoragePath]];
 		
 		_privateFences = [NSKeyedUnarchiver unarchiveObjectWithFile:[self _locationsStoragePath]];
 		if (!_privateFences)
@@ -147,26 +161,16 @@ static DataModel *_sharedInstance = nil;
 			_placeConnector.delegate = _sharedInstance;
 		}
 		
-		if (!_userId)
+		// If there is no app id, only continue if the data model has been authorized
+		if (!_apiId && !_authorized)
+		{
+			_settingUp = NO;
 			return;
+		}
 		
-		// Update the current profile
-		PRProfile *profile = _interestsConnector.interests;
-		
-		NSArray *profileArray = [self _flattenProfile:profile];
-		
-		[ServiceAdapter uploadUserProfile:profileArray forUser:_userId success:^(id result)
-		 {
-			 
-		 }
-								  failure:^(NSError *error)
-		 {
-			 
-		 }];
-		
+		[self _uploadUserProfile];
 		// Add the new pois to the database
 		//		[self _uploadPersonalPointsOfInterest];
-		
 		
 		// Get the current location to filter the results from the server
 		CLLocation *location = [_locationManager location];
@@ -177,15 +181,15 @@ static DataModel *_sharedInstance = nil;
 			return;
 		}
 		
-		[ServiceAdapter getGeofencesForUser:_userId atLocation:location radius:GEOFENCE_DOWNLOAD_RADIUS success:^(NSArray *geofences)
+		[ServiceAdapter getGeofencesForUser:_apiId atLocation:location radius:GEOFENCE_DOWNLOAD_RADIUS success:^(NSArray *geofences)
 		 {
 			 //			 for (GeofenceLocation *geofence in geofences)
 			 //			 {
 			 //				 // Testing the enter/exit fence
-			 //				 [ServiceAdapter enterGeofence:geofence userId:_userId success:^(id success)
+			 //				 [ServiceAdapter enterGeofence:geofence userId:_apiId success:^(id success)
 			 //				  {
 			 //					  NSLog(@"success enter: %@", success);
-			 //					  [ServiceAdapter exitGeofence:geofence userId:_userId success:^(id success)
+			 //					  [ServiceAdapter exitGeofence:geofence userId:_apiId success:^(id success)
 			 //					   {
 			 //						   NSLog(@"success exit: %@", success);
 			 //					   }];
@@ -217,8 +221,26 @@ static DataModel *_sharedInstance = nil;
 	{
 		_userId = userId;
 		[NSKeyedArchiver archiveRootObject:_userId toFile:[self _userIdStoragePath]];
-		[self runStartUpSequence];
+//		[self runStartUpSequence];
 	}
+}
+
+- (void)setUserName:(NSString *)userName
+{
+	@synchronized(self)
+	{
+		_userName = userName;
+		[NSKeyedArchiver archiveRootObject:_userName toFile:[self _userNameStoragePath]];
+	}		  
+}
+
+- (void)setApiId:(NSString *)apiId
+{
+	@synchronized(self)
+	{
+		_apiId = apiId;
+		[NSKeyedArchiver archiveRootObject:_apiId toFile:[self _apiIdStoragePath]];
+	}		  
 }
 
 - (void)getPPOIInfo
@@ -302,7 +324,7 @@ static DataModel *_sharedInstance = nil;
 				 strongSelf -> _updatingPlaces = YES;
 				 
 				 CLLocation *location = [strongSelf->_locationManager location];
-				 [ServiceAdapter getGeofencesForUser:strongSelf->_userId atLocation:location radius:GEOFENCE_DOWNLOAD_RADIUS success:^(NSArray *geofences)
+				 [ServiceAdapter getGeofencesForUser:strongSelf->_apiId atLocation:location radius:GEOFENCE_DOWNLOAD_RADIUS success:^(NSArray *geofences)
 				  {
 					  [strongSelf _replacePrivateGeofencesWithFences:[NSMutableArray arrayWithArray:geofences]];
 				  }
@@ -365,6 +387,7 @@ static DataModel *_sharedInstance = nil;
 	
 	[NSKeyedArchiver archiveRootObject:_privateFences toFile:[self _locationsStoragePath]];
 	[NSKeyedArchiver archiveRootObject:_userId toFile:[self _userIdStoragePath]];
+	[NSKeyedArchiver archiveRootObject:_userName toFile:[self _userNameStoragePath]];
 	[NSKeyedArchiver archiveRootObject:_geofenceRefreshLocation toFile:[self _geofenceRefreshLocationStoragePath]];
 }
 
@@ -411,7 +434,7 @@ static DataModel *_sharedInstance = nil;
 					 // Only add this place to the current location array if it isn't the flag for the geofence updates
 					 if (![currentLocation isEqual:_geofenceRefreshLocation] && ![_currentLocations containsObject:currentLocation])
 					 {
-						 [ServiceAdapter enterGeofence:currentLocation userId:_userId success:^(id success)
+						 [ServiceAdapter enterGeofence:currentLocation userId:_apiId success:^(id success)
 						  {
 							  if (![strongSelf->_currentLocations containsObject:currentLocation])
 								  [strongSelf -> _currentLocations insertObject:currentLocation atIndex:0];
@@ -435,7 +458,7 @@ static DataModel *_sharedInstance = nil;
 					 {
 						 if ([strongSelf -> _currentLocations containsObject:currentLocation])
 						 {
-							 [ServiceAdapter exitGeofence:currentLocation userId:_userId success:^(id result)
+							 [ServiceAdapter exitGeofence:currentLocation userId:_apiId success:^(id result)
 							  {
 								  [strongSelf -> _currentLocations removeObject:currentLocation];
 							  }
@@ -508,6 +531,31 @@ static DataModel *_sharedInstance = nil;
 #pragma mark -
 #pragma mark Private Methods
 
+- (void)_uploadUserProfile
+{
+	// Update the current profile
+	PRProfile *profile = _interestsConnector.interests;
+	//		"user":{ "name":"Shaun Dowling", "app_id":"1", "fb_id":"", "fb_access_token": ""}
+	NSDictionary *attributes = [self _createProfileDictionary:profile];
+	
+	NSString *fbAccessToken = [[NSUserDefaults standardUserDefaults] objectForKey:@"FBAccessTokenKey"];
+	NSMutableDictionary *userDetails = [NSMutableDictionary dictionary];
+	
+	[userDetails setValue:_userName ? _userName : @"" forKey:@"name"];
+	[userDetails setValue:_apiId ? _apiId : @"" forKey:@"api_id"];
+	[userDetails setValue:fbAccessToken ? fbAccessToken : @"" forKey:@"fb_access_token"];
+	
+	[ServiceAdapter uploadUserProfile:attributes userDetails:userDetails success:^(NSDictionary *result)
+	 {
+		 self.apiId = [[result objectForKey:@"api_id"] stringValue];
+	 }
+							  failure:^(NSError *error)
+	 {
+		 
+	 }];
+
+}
+
 - (void)_uploadPersonalPointsOfInterest
 {
 	@synchronized(self)
@@ -517,7 +565,7 @@ static DataModel *_sharedInstance = nil;
 			 _personalPointsOfInterest = ppoi;
 			 
 			 [ServiceAdapter uploadPointsOfInterest:_personalPointsOfInterest 
-											forUser:_userId 
+											forUser:_apiId 
 											success:^(id result)
 			  {
 				  // Do something useful with result
@@ -820,6 +868,37 @@ static DataModel *_sharedInstance = nil;
 	return profileArray;
 }
 
+// A convenience method for making a PRProfile more manageable for JSON
+- (NSDictionary *)_createProfileDictionary:(PRProfile *)profile
+{
+	NSMutableDictionary *profileDictionary = [NSMutableDictionary dictionary];
+	for (NSString *key in [profile.attrs allKeys])
+	{
+		PRProfileAttribute *attr = [profile getAttribute:key];
+		
+		NSMutableDictionary *attribute = [NSMutableDictionary dictionary];
+		[profileDictionary setValue:attribute forKey:key];
+		
+		[attribute setValue:key forKey:@"key"];
+		
+		NSMutableArray *values = [NSMutableArray array];
+		[attribute setValue:values forKey:@"attributeCategories"];
+		
+		for (PRAttributeCategory *cat in attr.attributeCategories)
+		{
+			NSDictionary *categoryDictionary;
+#if TARGET_IPHONE_SIMULATOR
+			categoryDictionary = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithDouble:0.5], @"likelihood", cat.key, @"key", nil];
+#else
+			categoryDictionary = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithDouble:cat.likelihood], @"likelihood", cat.key, @"key", nil];
+#endif
+			[values addObject:categoryDictionary];
+		}
+	}
+	
+	return profileDictionary;
+}
+
 - (void)_checkCurrentLocation
 {
 	NSMutableArray *locationsToRemove = [NSMutableArray array];
@@ -866,6 +945,11 @@ static DataModel *_sharedInstance = nil;
 	return [documentsDirectories objectAtIndex:0];
 }
 
+- (NSString *)_apiIdStoragePath
+{
+	return [[self _baseStoragePath] stringByAppendingPathComponent:@"apiId"];
+}
+
 - (NSString *)_locationsStoragePath
 {
 	return [[self _baseStoragePath] stringByAppendingPathComponent:@"profiles.archive"];
@@ -874,6 +958,11 @@ static DataModel *_sharedInstance = nil;
 - (NSString *)_userIdStoragePath
 {
 	return [[self _baseStoragePath] stringByAppendingPathComponent:@"userId.archive"];	
+}
+
+- (NSString *)_userNameStoragePath
+{
+	return [[self _baseStoragePath] stringByAppendingPathComponent:@"userName.archive"];	
 }
 
 - (NSString *)_geofenceRefreshLocationStoragePath

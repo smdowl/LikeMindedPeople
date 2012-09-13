@@ -36,4 +36,10 @@
     [_facebook authorize:nil];
 }
 
+- (IBAction)bypassFacebook
+{
+	AppDelegate *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+	[delegate bypassFacebook];
+}
+
 @end

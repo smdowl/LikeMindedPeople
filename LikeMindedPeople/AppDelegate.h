@@ -25,4 +25,6 @@
 @property (strong, nonatomic) LoginViewController *loginViewController;
 @property (nonatomic, retain) Facebook *facebook;
 
+- (void)bypassFacebook;
+
 @end

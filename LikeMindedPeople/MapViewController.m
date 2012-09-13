@@ -244,7 +244,7 @@
 		
 //		[_searchConnection getGoogleObjectsWithQuery:searchText andMapRegion:[_mapView region] andNumberOfResults:20 addressesOnly:YES andReferer:@"http://WWW.radii.com"];    
 //		[ServiceAdapter getGoogleSearchResultsForUser:[[DataModel sharedInstance] userId] atLocation:_mapView.centerCoordinate withName:name withType:type success:^(NSArray *results)
-		[ServiceAdapter getFourSquareSearchResultsForUser:[[DataModel sharedInstance] userId] atLocation:_mapView.centerCoordinate withQuery:name ? name : type success:^(NSArray *results)
+		[ServiceAdapter getFourSquareSearchResultsForUser:[[DataModel sharedInstance] apiId] atLocation:_mapView.centerCoordinate withQuery:name ? name : type success:^(NSArray *results)
 		 {
 			 _searchingView.hidden = YES;
 			 [_indicatorView stopAnimating];
@@ -1219,7 +1219,7 @@
 		detailView.downloadingDetails = YES;
 		
 		[ServiceAdapter getLocationDetails:detailView.data 
-									userId:[[DataModel sharedInstance] userId] 
+									userId:[[DataModel sharedInstance] apiId] 
 								   success:^(LocationDetailsDTO *details)
 		 {
 			 if (detailView)

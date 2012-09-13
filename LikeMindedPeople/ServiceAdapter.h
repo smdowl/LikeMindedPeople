@@ -9,12 +9,12 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 
-@class GeofenceLocation, RadiiResultDTO, LocationDetailsDTO;
+@class GeofenceLocation, RadiiResultDTO, LocationDetailsDTO, PRProfile;
 @interface ServiceAdapter : NSObject {
     NSMutableData *responseData;
 }
 
-+ (void)uploadUserProfile:(NSArray *)profile forUser:(NSString *)userId success:(void (^)(id))success failure:(void (^)(NSError *))failure;
++ (void)uploadUserProfile:(NSDictionary *)profile userDetails:(NSDictionary *)userDetails success:(void (^)(id))success failure:(void (^)(NSError *))failure;
 
 + (void)uploadPointsOfInterest:(NSArray *)pointsOfInterest forUser:(NSString *)userId success:(void (^)(id))success failure:(void (^)(NSError *))failure;
 

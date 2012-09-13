@@ -19,5 +19,6 @@
 @property (nonatomic, strong) IBOutlet UIButton *fbButton;
 
 - (void)authorizeFacebook;
+- (IBAction)bypassFacebook;
 
 @end
