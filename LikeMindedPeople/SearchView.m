@@ -199,7 +199,7 @@
 		UISwipeGestureRecognizer *recognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:_delegate action:@selector(toggleFullScreen)];
 		recognizer.direction = _fullScreen ? UISwipeGestureRecognizerDirectionUp :UISwipeGestureRecognizerDirectionDown;
 		[_detailView.gestureRecognizerView addGestureRecognizer:recognizer];
-		
+//		_detailView.delegate = _delegate;
 		CGRect detailFrame = _detailView.frame;
 		detailFrame.origin.x = self.frame.size.width;
 		

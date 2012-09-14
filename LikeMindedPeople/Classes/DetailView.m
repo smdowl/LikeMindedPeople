@@ -11,6 +11,10 @@
 #import "LocationDetailsDTO.h"
 
 @implementation DetailView
+@synthesize delegate = _delegate;
+
+@synthesize bar = _bar;
+
 @synthesize data = _data;
 @synthesize locationDetails = _locationDetails;
 
@@ -37,6 +41,16 @@
 @synthesize isShowing = _isShowing;
 
 @synthesize downloadingDetails = _downloadingDetails;
+
+- (void)setDelegate:(id<SearchViewDelegate>)delegate
+{
+	_delegate = delegate;
+	
+	// We need a separate recognizer for each button (apparently)
+
+	UISwipeGestureRecognizer *recognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:_delegate action:@selector(toggleFullScreen)];
+	[_bar addGestureRecognizer:recognizer];
+}
 
 - (void)setData:(RadiiResultDTO *)data
 {

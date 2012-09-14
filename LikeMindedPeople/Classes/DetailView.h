@@ -7,12 +7,17 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SearchViewDelegate.h"
 
 @class RadiiResultDTO, LocationDetailsDTO;
 @interface DetailView : UIView
 {
+	__weak id<SearchViewDelegate> _delegate;
+	
 	RadiiResultDTO *_data;
 	LocationDetailsDTO *_locationDetails;
+	
+	UIView *_bar;
 	
 	// UI components
 	UILabel *_titleLabel;
@@ -39,6 +44,9 @@
 	BOOL _downloadingDetails;
 }
 
+@property (nonatomic, weak) IBOutlet id<SearchViewDelegate> delegate;
+
+@property (nonatomic, strong) IBOutlet UIView *bar;
 
 @property (nonatomic,strong) RadiiResultDTO *data;
 @property (nonatomic,strong) LocationDetailsDTO *locationDetails;

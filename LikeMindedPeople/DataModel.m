@@ -442,7 +442,7 @@ static DataModel *_sharedInstance = nil;
 											   failure:^(NSError *error)
 						  {
 							  //							  UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:[NSString stringWithFormat:@"%@\n%@", NSStringFromSelector(_cmd), [error localizedDescription]] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-							  [[[UIAlertView alloc] initWithTitle:@"Problem connecting to server" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+//							  [[[UIAlertView alloc] initWithTitle:@"Problem connecting to server" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
 						  }];
 					 }
 					 
@@ -466,7 +466,7 @@ static DataModel *_sharedInstance = nil;
 							  {
 								  //								  UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:[NSString stringWithFormat:@"%@\n%@", NSStringFromSelector(_cmd), [error localizedDescription]] delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
 								  //								  [alertView show];
-								  [[[UIAlertView alloc] initWithTitle:@"Problem connecting to server" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+//								  [[[UIAlertView alloc] initWithTitle:@"Problem connecting to server" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
 							  }];
 						 }
 						 
