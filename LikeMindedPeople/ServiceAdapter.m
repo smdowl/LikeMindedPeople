@@ -350,7 +350,7 @@
 	[dictionary setValue:userId forKey:@"api_id"];
 	[dictionary setObject:[NSString stringWithFormat:@"%f",location.latitude] forKey:@"latitude"];
 	[dictionary setObject:[NSString stringWithFormat:@"%f",location.longitude] forKey:@"longitude"];
-	
+	[dictionary setValue:[NSNumber numberWithInt:50] forKey:@"limit"];
 //	[dictionary setObject:name ? name : @"" forKey:@"name"];
 //	
 //	[dictionary setObject:type ? type : @"" forKey:@"type"];
@@ -397,7 +397,7 @@
 			 for (NSDictionary *category in [resultDictionary objectForKey:@"categories"])
 			 {
 				 NSString *categoryName = [category objectForKey:@"name"];
-				 NSLog(@"%@", categoryName);
+//				 NSLog(@"%@", categoryName);
 				 if ([categoryName rangeOfString:@"Bar"].length || [categoryName isEqualToString:@"Pub"] || [categoryName isEqualToString:@"Brewery"])
 				 {
 					 result.type = bar;

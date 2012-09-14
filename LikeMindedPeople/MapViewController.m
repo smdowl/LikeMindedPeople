@@ -246,6 +246,16 @@
 //		[ServiceAdapter getGoogleSearchResultsForUser:[[DataModel sharedInstance] userId] atLocation:_mapView.centerCoordinate withName:name withType:type success:^(NSArray *results)
 		[ServiceAdapter getFourSquareSearchResultsForUser:[[DataModel sharedInstance] apiId] atLocation:_mapView.centerCoordinate withQuery:name ? name : type success:^(NSArray *results)
 		 {
+			 ResultType resultType;
+			 if (!type)
+				 resultType = other;
+			 else if ([type isEqualToString:@"bar"])
+				 resultType = bar;
+			 else if ([type isEqualToString:@"cafe"])
+				 resultType = cafe;
+			 else if ([type isEqualToString:@"nightclub"])
+				 resultType = club;
+			 			 
 			 _searchingView.hidden = YES;
 			 [_indicatorView stopAnimating];
 			 
@@ -258,7 +268,21 @@
 				 // Replace all the annotations with new ones
 				 [self _removeAllNonUserAnnotations];
 				 
-				 _searchResults = results;
+				 NSMutableArray *newResults = [NSMutableArray arrayWithArray:results];
+				 
+				 if (resultType != other)
+				 {
+					 NSMutableArray *resultsToRemove = [NSMutableArray array];
+					 for (RadiiResultDTO *result in results)
+					 {
+						 if (result.type != resultType)
+							 [resultsToRemove addObject:result];
+					 }
+					 
+					 [newResults removeObjectsInArray:resultsToRemove];
+				 }
+				 
+				 _searchResults = newResults;
 				 
 				 // Add the repackaged results as annotations
 				 [_mapView addAnnotations:_searchResults];
@@ -273,7 +297,8 @@
 		 }
 		 failure:^(NSError *error)
 		 {
-			 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error finding place - Try again" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+//			 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error finding place - Try again" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+			 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Problem connecting to server" message:@"Please check internet connection and try again" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
 			 [alert show];
 			 
 			 _searchingView.hidden = YES;
