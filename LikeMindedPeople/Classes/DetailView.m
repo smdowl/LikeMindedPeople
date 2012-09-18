@@ -63,8 +63,8 @@
 	_detailsView.text = data.details;
 //	_presentUsersLabel.text = [NSString stringWithFormat:@"%i", data.peopleCount];
 	_presentUsersLabel.text = @"-";
-	_ratingLabel.text = @"-";
-//	[NSString stringWithFormat:@"%0.0f%%", 100*data.rating];
+//	_ratingLabel.text = @"-";
+	_ratingLabel.text = [NSString stringWithFormat:@"%0.0f%%", 100*data.rating];
 	
 	// TODO: actually do this
 	_interestsLabel.text = @"";
@@ -103,7 +103,7 @@
 			_menuButton.hidden = NO;
 		
 		_presentUsersLabel.text = [NSString stringWithFormat:@"%i", locationDetails.currentPeopleCount];
-		_ratingLabel.text = [NSString stringWithFormat:@"%0.0f%%", locationDetails.rating*100];
+//		_ratingLabel.text = [NSString stringWithFormat:@"%0.0f%%", locationDetails.rating*100];
 //	}
 }
 

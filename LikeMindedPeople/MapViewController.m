@@ -110,7 +110,8 @@
 	_searchView.searchResultsView.delegate = self;
 	_searchView.searchResultsView.dataSource = self;
 	
-	_searchView.fullScreen = NO;
+	_searchView.fullScreen = YES;
+    [self toggleFullScreen];
 	
 	// Recognizing gestures on the left side of the screen
 	UIPanGestureRecognizer *leftSwipeGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(_inFromLeft:)];
@@ -1252,7 +1253,7 @@
 		 }
 								   failure:^(NSError *error)
 		 {
-			 [[[UIAlertView alloc] initWithTitle:@"Network Error" message:@"Problem getting details for location" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+//			 [[[UIAlertView alloc] initWithTitle:@"Network Error" message:@"Problem getting details for location" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
 			 [detailView failedToLoadDetails];
 		 }];
 	}

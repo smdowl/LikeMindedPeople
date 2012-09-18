@@ -203,6 +203,10 @@
 		 details.menuURL = ![menuString isKindOfClass:[NSNull class]] ? [menuString isEqualToString:@"<null>"] ? nil : menuString : nil;
 		 
 		 details.currentPeopleCount = [[result objectForKey:@"people_now_count"] unsignedIntValue];
+         if (!details.currentPeopleCount)
+         {
+             details.currentPeopleCount = arc4random() % 25;
+         }
 		 details.rating = [[result objectForKey:@"rating"] floatValue];
 		 
 		 NSLog(@"%@", details);
@@ -375,7 +379,9 @@
 			 NSString *peopleHistoryCount = [resultDictionary objectForKey:PEOPLE_HISTORY_COUNT_KEY];
 			 result.peopleHistoryCount = peopleHistoryCount ? [peopleHistoryCount intValue] : 0;
 
-             if (!result.peopleHistoryCount)
+             BOOL randomize = arc4random() % 2;
+             
+             if (!result.peopleHistoryCount && randomize)
              {
                  result.peopleHistoryCount = arc4random() % 25;
              }
@@ -389,7 +395,7 @@
              NSNumber *rating = [resultDictionary objectForKey:RATING_KEY];
 			 result.rating = rating ? [rating floatValue] : 0;
              
-             if (!result.rating && result.peopleHistoryCount)
+             if (!result.rating && result.peopleHistoryCount && randomize)
              {
                  result.rating = (float)(arc4random() % 100) / 100;
              }
@@ -436,7 +442,7 @@
 		 
 		 [resultsArray sortUsingComparator:^(RadiiResultDTO *r1, RadiiResultDTO *r2)
 		  {
-			  if (r1.rating < r2.rating)
+			  if (r1.rating != r2.rating)
 				  return r1.rating < r2.rating;
 			  else
 				  return r1.peopleHistoryCount < r2.peopleHistoryCount;
