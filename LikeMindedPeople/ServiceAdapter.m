@@ -371,18 +371,28 @@
 			 
 			 RadiiResultDTO *result = [[RadiiResultDTO alloc] init];
 			 result.businessTitle = [resultDictionary objectForKey:BUSINESS_TITLE_KEY];
-			 
-			 NSNumber *rating = [resultDictionary objectForKey:RATING_KEY];
-			 result.rating = rating ? [rating floatValue] : 0;
-			 
+             			 
 			 NSString *peopleHistoryCount = [resultDictionary objectForKey:PEOPLE_HISTORY_COUNT_KEY];
-			 result.peopleHistoryCount = peopleHistoryCount ? [peopleHistoryCount floatValue] : 0;
+			 result.peopleHistoryCount = peopleHistoryCount ? [peopleHistoryCount intValue] : 0;
 
+             if (!result.peopleHistoryCount)
+             {
+                 result.peopleHistoryCount = arc4random() % 25;
+             }
+             
 			 NSString *peopleNowCount = [resultDictionary objectForKey:PEOPLE_NOW_COUNT_KEY];
-			 result.peopleNowCount = peopleNowCount ? [peopleNowCount floatValue] : 0;
+			 result.peopleNowCount = peopleNowCount ? [peopleNowCount intValue] : 0;
 
 			 NSString *description = [resultDictionary objectForKey:DESCRIPTION_KEY];
 			 result.details = description;
+             
+             NSNumber *rating = [resultDictionary objectForKey:RATING_KEY];
+			 result.rating = rating ? [rating floatValue] : 0;
+             
+             if (!result.rating && result.peopleHistoryCount)
+             {
+                 result.rating = (float)(arc4random() % 100) / 100;
+             }
 			 
 			 CLLocationCoordinate2D location;
 			 NSNumber *longitude = [resultDictionary objectForKey:@"longitude"];
