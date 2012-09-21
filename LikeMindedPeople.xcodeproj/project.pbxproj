@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		28866F571608E3E100D3FAAB /* foursquare@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28866F561608E3E100D3FAAB /* foursquare@2x.png */; };
 		288A0EF0160986DF00FACA59 /* libFlurry.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 288A0EEF160986DF00FACA59 /* libFlurry.a */; };
+		288A0EF3160BF7E600FACA59 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288A0EF2160BF7E500FACA59 /* CFNetwork.framework */; };
+		288A0EF5160BF9E300FACA59 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288A0EF4160BF9E300FACA59 /* SystemConfiguration.framework */; };
 		921E91D615CC3D360033C8B1 /* SideBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 921E91D515CC3D360033C8B1 /* SideBar.m */; };
 		9226EDE515C6F09E0081D01C /* libfacebook_ios_sdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D31363B215C494510071BED3 /* libfacebook_ios_sdk.a */; };
 		924E00D615E35B2100A28593 /* searchbackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 924E00D515E35B2100A28593 /* searchbackground.png */; };
@@ -158,6 +160,8 @@
 		28866F561608E3E100D3FAAB /* foursquare@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "foursquare@2x.png"; sourceTree = "<group>"; };
 		288A0EEE160986DF00FACA59 /* Flurry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flurry.h; sourceTree = "<group>"; };
 		288A0EEF160986DF00FACA59 /* libFlurry.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurry.a; sourceTree = "<group>"; };
+		288A0EF2160BF7E500FACA59 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		288A0EF4160BF9E300FACA59 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		921E91D415CC3D360033C8B1 /* SideBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SideBar.h; path = Classes/SideBar.h; sourceTree = "<group>"; };
 		921E91D515CC3D360033C8B1 /* SideBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SideBar.m; path = Classes/SideBar.m; sourceTree = "<group>"; };
 		924E00D515E35B2100A28593 /* searchbackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = searchbackground.png; sourceTree = "<group>"; };
@@ -366,6 +370,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				288A0EF5160BF9E300FACA59 /* SystemConfiguration.framework in Frameworks */,
+				288A0EF3160BF7E600FACA59 /* CFNetwork.framework in Frameworks */,
 				925AE7B315C430F2008840D9 /* UIKit.framework in Frameworks */,
 				925AE7B415C430F2008840D9 /* Foundation.framework in Frameworks */,
 				925AE7B515C430F2008840D9 /* CoreGraphics.framework in Frameworks */,
@@ -737,6 +743,8 @@
 		92FBED3915C3A85F000D1AE3 = {
 			isa = PBXGroup;
 			children = (
+				288A0EF4160BF9E300FACA59 /* SystemConfiguration.framework */,
+				288A0EF2160BF7E500FACA59 /* CFNetwork.framework */,
 				9272ED1215EDDAF60083EFF3 /* Default.png */,
 				9272ED1015EDDAD30083EFF3 /* icon3_small.png */,
 				92FBED4E15C3A85F000D1AE3 /* LikeMindedPeople */,
