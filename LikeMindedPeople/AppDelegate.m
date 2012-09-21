@@ -14,6 +14,7 @@
 #import "ServiceAdapter.h"
 #import "LoginViewController.h"
 #import "MapViewController.h"
+//#import "Flurry.h"
 
 #define CORNER_RADIUS 5.0
 
@@ -42,8 +43,9 @@
     // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor blackColor];
 	
-	
-	CAShapeLayer *mask = [CAShapeLayer layer];	
+//    [Flurry startSession:@"PBVKM874ZTRJX42BSC48"];
+//    NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
+	CAShapeLayer *mask = [CAShapeLayer layer];
 	UIBezierPath *maskPath = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0,20,320,480) cornerRadius:CORNER_RADIUS];
 	mask.path = maskPath.CGPath;
 	
@@ -149,6 +151,14 @@
 	[[DataModel sharedInstance] runStartUpSequence];
 }
 
+#pragma matk -
+#pragma mark Flurry Analytics
+
+//void uncaughtExceptionHandler(NSException *exception)
+//{
+//    [Flurry logError:@"Uncaught" message:@"Crash!" exception:exception];
+//}
+
 #pragma mark -- FB integration
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
@@ -177,7 +187,7 @@
 {
     NSLog(@"fbDidNotLogin");
 	
-	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Could not connect to fb" message:@"Please check interent connection" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Could not connect to facebook" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
     [alert show];
 }
 

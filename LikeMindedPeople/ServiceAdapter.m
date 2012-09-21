@@ -349,7 +349,6 @@
 
 + (void)getFourSquareSearchResultsForUser:(NSString *)userId atLocation:(CLLocationCoordinate2D)location withQuery:(NSString *)query success:(void (^)(NSArray *))success failure:(void (^)(NSError *))failure
 {
-#if !FAKE_SEARCH
 	NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
 	[dictionary setValue:userId forKey:@"api_id"];
 	[dictionary setObject:[NSString stringWithFormat:@"%f",location.latitude] forKey:@"latitude"];
@@ -366,6 +365,7 @@
 		// Should never happen but if it does just break out
 		return;
 	}
+    
 	[ServiceAdapter _callServiceWithPath:@"foursquare_venues.json" httpMethod:@"POST" postPrefixString:@"foursquare_query=" dataObj:dictionary success:^(id results)
 	 {
 		 // Here we must build the Geofence objects from the returned dictionary
@@ -375,31 +375,36 @@
 			 
 			 RadiiResultDTO *result = [[RadiiResultDTO alloc] init];
 			 result.businessTitle = [resultDictionary objectForKey:BUSINESS_TITLE_KEY];
-             			 
+             
 			 NSString *peopleHistoryCount = [resultDictionary objectForKey:PEOPLE_HISTORY_COUNT_KEY];
 			 result.peopleHistoryCount = peopleHistoryCount ? [peopleHistoryCount intValue] : 0;
-
-             BOOL randomize = arc4random() % 2;
              
-             if (!result.peopleHistoryCount && randomize)
-             {
-                 result.peopleHistoryCount = arc4random() % 25;
-             }
-             
-			 NSString *peopleNowCount = [resultDictionary objectForKey:PEOPLE_NOW_COUNT_KEY];
+             NSString *peopleNowCount = [resultDictionary objectForKey:PEOPLE_NOW_COUNT_KEY];
 			 result.peopleNowCount = peopleNowCount ? [peopleNowCount intValue] : 0;
-
+             
 			 NSString *description = [resultDictionary objectForKey:DESCRIPTION_KEY];
 			 result.details = description;
              
              NSNumber *rating = [resultDictionary objectForKey:RATING_KEY];
 			 result.rating = rating ? [rating floatValue] : 0;
              
+#if FAKE_SEARCH
+             // If we want nice results then flip a coin to decide for each result if we want to fake it
+             BOOL randomize = arc4random() % 2;
+             
+             // Create a random number of visitors if there were none
+             if (!result.peopleHistoryCount && randomize)
+             {
+                 result.peopleHistoryCount = arc4random() % 25;
+             }
+
+             // Create a random rating
              if (!result.rating && result.peopleHistoryCount && randomize)
              {
                  result.rating = (float)(arc4random() % 100) / 100;
              }
-			 
+#endif
+             
 			 CLLocationCoordinate2D location;
 			 NSNumber *longitude = [resultDictionary objectForKey:@"longitude"];
 			 location.longitude = [longitude floatValue];
@@ -450,54 +455,10 @@
 		 
 		 success(resultsArray);
 	 }
-								 failure:failure];
-#else
-	NSMutableArray *resultsArray = [NSMutableArray array];
-	for (int i=0; i<10; i++)
-	{
-		RadiiResultDTO *result = [[RadiiResultDTO alloc] init];
-		result.businessTitle = [NSString stringWithFormat:@"%@ %i", name ? name : type, i];
-		
-		result.rating = 0.01*(arc4random() % 100);
-		
-		result.peopleCount = random() % 20;
-		
-		CGFloat range = 0.01;
-		
-		CLLocationCoordinate2D newLocation;
-		newLocation.longitude = location.longitude + -range + 2 * range * 0.01 * (arc4random() % 100);
-		newLocation.latitude = location.latitude + -range + 2 * range * 0.01 * (arc4random() % 100);
-		
-		result.searchLocation = newLocation;
-		
-		if ([type isEqualToString:@"bar"])
-		{
-			result.type = bar;
-		}
-		else if ([type isEqualToString:@"cafe"])
-		{
-			result.type = cafe;
-		}
-		else if ([type isEqualToString:@"club"])
-		{
-			result.type = club;
-		}
-		else if ([type isEqualToString:@"food"])
-		{
-			result.type = food;
-		}
-		else
-		{
-			result.type = arc4random() % 4;
-		}
-		
-		[resultsArray addObject:result];
-	}
-	success(resultsArray);   
-#endif
+								 failure:failure];    
 }
 
-+ (void)getDirectionsFromLocation:(CLLocationCoordinate2D)from toLocation:(CLLocationCoordinate2D)to onSuccess:(void(^)(NSDictionary *))success failure:(void (^)(NSError *))failure 
++ (void)getDirectionsFromLocation:(CLLocationCoordinate2D)from toLocation:(CLLocationCoordinate2D)to onSuccess:(void(^)(NSDictionary *))success failure:(void (^)(NSError *))failure
 {
 	NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@origin=%f,%f&destination=%f,%f&sensor=true&mode=walking",GOOGLE_DIRECTIONS_URL,from.latitude,from.longitude,to.latitude,to.longitude]];
 	NSURLRequest *urlRequest = [NSURLRequest requestWithURL:url];

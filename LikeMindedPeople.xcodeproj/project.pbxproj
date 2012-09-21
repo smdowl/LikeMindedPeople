@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		28866F571608E3E100D3FAAB /* foursquare@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28866F561608E3E100D3FAAB /* foursquare@2x.png */; };
+		288A0EF0160986DF00FACA59 /* libFlurry.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 288A0EEF160986DF00FACA59 /* libFlurry.a */; };
 		921E91D615CC3D360033C8B1 /* SideBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 921E91D515CC3D360033C8B1 /* SideBar.m */; };
 		9226EDE515C6F09E0081D01C /* libfacebook_ios_sdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D31363B215C494510071BED3 /* libfacebook_ios_sdk.a */; };
 		924E00D615E35B2100A28593 /* searchbackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 924E00D515E35B2100A28593 /* searchbackground.png */; };
@@ -155,6 +156,8 @@
 
 /* Begin PBXFileReference section */
 		28866F561608E3E100D3FAAB /* foursquare@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "foursquare@2x.png"; sourceTree = "<group>"; };
+		288A0EEE160986DF00FACA59 /* Flurry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flurry.h; sourceTree = "<group>"; };
+		288A0EEF160986DF00FACA59 /* libFlurry.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurry.a; sourceTree = "<group>"; };
 		921E91D415CC3D360033C8B1 /* SideBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SideBar.h; path = Classes/SideBar.h; sourceTree = "<group>"; };
 		921E91D515CC3D360033C8B1 /* SideBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SideBar.m; path = Classes/SideBar.m; sourceTree = "<group>"; };
 		924E00D515E35B2100A28593 /* searchbackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = searchbackground.png; sourceTree = "<group>"; };
@@ -377,6 +380,7 @@
 				925AE80415C43213008840D9 /* NetworkServices.framework in Frameworks */,
 				9226EDE515C6F09E0081D01C /* libfacebook_ios_sdk.a in Frameworks */,
 				92EBF33615C59B2D0085C47E /* QuartzCore.framework in Frameworks */,
+				288A0EF0160986DF00FACA59 /* libFlurry.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -390,6 +394,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		288A0EED160986DF00FACA59 /* Flurry */ = {
+			isa = PBXGroup;
+			children = (
+				288A0EEE160986DF00FACA59 /* Flurry.h */,
+				288A0EEF160986DF00FACA59 /* libFlurry.a */,
+			);
+			path = Flurry;
+			sourceTree = "<group>";
+		};
 		9253044A15D73C6C00BC7FEF /* Search View */ = {
 			isa = PBXGroup;
 			children = (
@@ -770,6 +783,7 @@
 				D31363FB15C4E72F0071BED3 /* AFNetworking */,
 				D31363A915C494510071BED3 /* facebook-ios-sdk */,
 				D31363BC15C494590071BED3 /* facebook-hack */,
+				288A0EED160986DF00FACA59 /* Flurry */,
 				92FBED4F15C3A85F000D1AE3 /* Supporting Files */,
 			);
 			path = LikeMindedPeople;
@@ -1210,6 +1224,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/LikeMindedPeople/facebook-ios-sdk\"",
+					"\"$(SRCROOT)/LikeMindedPeople/Flurry\"",
 				);
 				PRODUCT_NAME = LikeMindedPeople;
 				SKIP_INSTALL = NO;
@@ -1245,6 +1260,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/LikeMindedPeople/facebook-ios-sdk\"",
+					"\"$(SRCROOT)/LikeMindedPeople/Flurry\"",
 				);
 				PRODUCT_NAME = LikeMindedPeople;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "29B54B8B-0EB1-4239-8787-C6BAFC8D88F6";

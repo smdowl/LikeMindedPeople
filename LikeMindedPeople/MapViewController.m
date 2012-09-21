@@ -101,6 +101,7 @@
 	// Need to set us as the delgate because of the map views own gesture reconizers
 	pinchRecognizer.delegate = self;  
     [_mapView addGestureRecognizer:pinchRecognizer];
+    _mapView.userTrackingMode = MKUserTrackingModeNone;
 	_mapView.delegate = self;
 	_mapView.showsUserLocation = YES;
 	
@@ -171,8 +172,7 @@
 	{
 		[self _setMapVisible:NO];
 		
-		_locationManager = [[CLLocationManager alloc] init];
-		_locationManager.delegate = self;
+//		_locationManager.delegate = self;
 	}
 	else
 	{
@@ -271,13 +271,15 @@
 				 
 				 NSMutableArray *newResults = [NSMutableArray arrayWithArray:results];
 				 
+                 // If the user hasn't done a specific search only include the relavent places
+                 // (I have disabled this for now but we will probably want to come up with a way to include some functionality like this)
 				 if (resultType != other)
 				 {
 					 NSMutableArray *resultsToRemove = [NSMutableArray array];
 					 for (RadiiResultDTO *result in results)
 					 {
-						 if (result.type != resultType)
-							 [resultsToRemove addObject:result];
+//						 if (result.type != resultType)
+//							 [resultsToRemove addObject:result];
 					 }
 					 
 					 [newResults removeObjectsInArray:resultsToRemove];
