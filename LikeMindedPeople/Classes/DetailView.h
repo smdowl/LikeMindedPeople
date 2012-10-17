@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "SearchViewDelegate.h"
+#import "SearchView.h"
 
 @class RadiiResultDTO, LocationDetailsDTO;
 @interface DetailView : UIView

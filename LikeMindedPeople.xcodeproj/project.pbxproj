@@ -11,6 +11,15 @@
 		288A0EF0160986DF00FACA59 /* libFlurry.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 288A0EEF160986DF00FACA59 /* libFlurry.a */; };
 		288A0EF3160BF7E600FACA59 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288A0EF2160BF7E500FACA59 /* CFNetwork.framework */; };
 		288A0EF5160BF9E300FACA59 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288A0EF4160BF9E300FACA59 /* SystemConfiguration.framework */; };
+		289340CB162E0EC100833EC0 /* SearchPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 289340CA162E0EC100833EC0 /* SearchPanel.m */; };
+		289340CD162E0F5300833EC0 /* SearchPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 289340CC162E0F5300833EC0 /* SearchPanel.xib */; };
+		28B4663C162E25640084C9A9 /* Common.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28B4661F162E25640084C9A9 /* Common.framework */; };
+		28B4663D162E25640084C9A9 /* ContextCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28B46622162E25640084C9A9 /* ContextCore.framework */; };
+		28B46649162E25640084C9A9 /* ContextLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28B46632162E25640084C9A9 /* ContextLocation.framework */; };
+		28B4664A162E25640084C9A9 /* DataModels.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 28B46634162E25640084C9A9 /* DataModels.bundle */; };
+		28B4664B162E25640084C9A9 /* ContextProfiling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28B46636162E25640084C9A9 /* ContextProfiling.framework */; };
+		28B4664C162E25640084C9A9 /* rules.txt in Resources */ = {isa = PBXBuildFile; fileRef = 28B46638162E25640084C9A9 /* rules.txt */; };
+		28B4664D162E25640084C9A9 /* NetworkServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 28B4663A162E25640084C9A9 /* NetworkServices.framework */; };
 		921E91D615CC3D360033C8B1 /* SideBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 921E91D515CC3D360033C8B1 /* SideBar.m */; };
 		9226EDE515C6F09E0081D01C /* libfacebook_ios_sdk.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D31363B215C494510071BED3 /* libfacebook_ios_sdk.a */; };
 		924E00D615E35B2100A28593 /* searchbackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 924E00D515E35B2100A28593 /* searchbackground.png */; };
@@ -29,21 +38,6 @@
 		925AE7B715C430F2008840D9 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7B015C430F2008840D9 /* MapKit.framework */; };
 		925AE7B815C430F2008840D9 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7B115C430F2008840D9 /* CoreData.framework */; };
 		925AE7B915C430F2008840D9 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7B215C430F2008840D9 /* Security.framework */; };
-		925AE7EB15C43212008840D9 /* Common.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7C315C43212008840D9 /* Common.framework */; };
-		925AE7EC15C43212008840D9 /* ContextCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7C615C43212008840D9 /* ContextCore.framework */; };
-		925AE7F815C43212008840D9 /* ContextLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7D615C43212008840D9 /* ContextLocation.framework */; };
-		925AE7F915C43213008840D9 /* ContentModel.mom in Resources */ = {isa = PBXBuildFile; fileRef = 925AE7D915C43212008840D9 /* ContentModel.mom */; };
-		925AE7FA15C43213008840D9 /* ContentModel.omo in Resources */ = {isa = PBXBuildFile; fileRef = 925AE7DA15C43212008840D9 /* ContentModel.omo */; };
-		925AE7FB15C43213008840D9 /* VersionInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 925AE7DB15C43212008840D9 /* VersionInfo.plist */; };
-		925AE7FC15C43213008840D9 /* PlaceOfRelevanceModel.mom in Resources */ = {isa = PBXBuildFile; fileRef = 925AE7DD15C43212008840D9 /* PlaceOfRelevanceModel.mom */; };
-		925AE7FD15C43213008840D9 /* PlaceOfRelevanceModel.omo in Resources */ = {isa = PBXBuildFile; fileRef = 925AE7DE15C43212008840D9 /* PlaceOfRelevanceModel.omo */; };
-		925AE7FE15C43213008840D9 /* VersionInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 925AE7DF15C43212008840D9 /* VersionInfo.plist */; };
-		925AE7FF15C43213008840D9 /* Repository.mom in Resources */ = {isa = PBXBuildFile; fileRef = 925AE7E115C43212008840D9 /* Repository.mom */; };
-		925AE80015C43213008840D9 /* Repository.omo in Resources */ = {isa = PBXBuildFile; fileRef = 925AE7E215C43212008840D9 /* Repository.omo */; };
-		925AE80115C43213008840D9 /* VersionInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 925AE7E315C43212008840D9 /* VersionInfo.plist */; };
-		925AE80215C43213008840D9 /* ContextProfiling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7E515C43212008840D9 /* ContextProfiling.framework */; };
-		925AE80315C43213008840D9 /* rules.txt in Resources */ = {isa = PBXBuildFile; fileRef = 925AE7E715C43212008840D9 /* rules.txt */; };
-		925AE80415C43213008840D9 /* NetworkServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7E915C43212008840D9 /* NetworkServices.framework */; };
 		925AE86F15C45924008840D9 /* UserContext.plist in Resources */ = {isa = PBXBuildFile; fileRef = 925AE86E15C45924008840D9 /* UserContext.plist */; };
 		925AE8C515C49075008840D9 /* LoginViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 925AE8C315C49075008840D9 /* LoginViewController.m */; };
 		925AE8C615C49075008840D9 /* LoginViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 925AE8C415C49075008840D9 /* LoginViewController.xib */; };
@@ -162,6 +156,16 @@
 		288A0EEF160986DF00FACA59 /* libFlurry.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurry.a; sourceTree = "<group>"; };
 		288A0EF2160BF7E500FACA59 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		288A0EF4160BF9E300FACA59 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		289340C9162E0EC100833EC0 /* SearchPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SearchPanel.h; path = Classes/SearchPanel.h; sourceTree = "<group>"; };
+		289340CA162E0EC100833EC0 /* SearchPanel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SearchPanel.m; path = Classes/SearchPanel.m; sourceTree = "<group>"; };
+		289340CC162E0F5300833EC0 /* SearchPanel.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = SearchPanel.xib; path = Classes/SearchPanel.xib; sourceTree = "<group>"; };
+		28B4661F162E25640084C9A9 /* Common.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Common.framework; sourceTree = "<group>"; };
+		28B46622162E25640084C9A9 /* ContextCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ContextCore.framework; sourceTree = "<group>"; };
+		28B46632162E25640084C9A9 /* ContextLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ContextLocation.framework; sourceTree = "<group>"; };
+		28B46634162E25640084C9A9 /* DataModels.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = DataModels.bundle; sourceTree = "<group>"; };
+		28B46636162E25640084C9A9 /* ContextProfiling.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ContextProfiling.framework; sourceTree = "<group>"; };
+		28B46638162E25640084C9A9 /* rules.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rules.txt; sourceTree = "<group>"; };
+		28B4663A162E25640084C9A9 /* NetworkServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = NetworkServices.framework; sourceTree = "<group>"; };
 		921E91D415CC3D360033C8B1 /* SideBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SideBar.h; path = Classes/SideBar.h; sourceTree = "<group>"; };
 		921E91D515CC3D360033C8B1 /* SideBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SideBar.m; path = Classes/SideBar.m; sourceTree = "<group>"; };
 		924E00D515E35B2100A28593 /* searchbackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = searchbackground.png; sourceTree = "<group>"; };
@@ -175,7 +179,6 @@
 		9253044615D7006000BC7FEF /* SearchView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SearchView.xib; sourceTree = "<group>"; };
 		9253044815D7007E00BC7FEF /* DetailView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DetailView.xib; sourceTree = "<group>"; };
 		9253044B15D73D6800BC7FEF /* SearchBar.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = SearchBar.xib; path = Classes/SearchBar.xib; sourceTree = "<group>"; };
-		9253044D15D74A3F00BC7FEF /* SearchViewDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SearchViewDelegate.h; path = Classes/SearchViewDelegate.h; sourceTree = "<group>"; };
 		925AE7AC15C430F2008840D9 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		925AE7AD15C430F2008840D9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		925AE7AE15C430F2008840D9 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -183,21 +186,6 @@
 		925AE7B015C430F2008840D9 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		925AE7B115C430F2008840D9 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		925AE7B215C430F2008840D9 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
-		925AE7C315C43212008840D9 /* Common.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Common.framework; sourceTree = "<group>"; };
-		925AE7C615C43212008840D9 /* ContextCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ContextCore.framework; sourceTree = "<group>"; };
-		925AE7D615C43212008840D9 /* ContextLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ContextLocation.framework; sourceTree = "<group>"; };
-		925AE7D915C43212008840D9 /* ContentModel.mom */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = ContentModel.mom; sourceTree = "<group>"; };
-		925AE7DA15C43212008840D9 /* ContentModel.omo */ = {isa = PBXFileReference; lastKnownFileType = file; path = ContentModel.omo; sourceTree = "<group>"; };
-		925AE7DB15C43212008840D9 /* VersionInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = VersionInfo.plist; sourceTree = "<group>"; };
-		925AE7DD15C43212008840D9 /* PlaceOfRelevanceModel.mom */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = PlaceOfRelevanceModel.mom; sourceTree = "<group>"; };
-		925AE7DE15C43212008840D9 /* PlaceOfRelevanceModel.omo */ = {isa = PBXFileReference; lastKnownFileType = file; path = PlaceOfRelevanceModel.omo; sourceTree = "<group>"; };
-		925AE7DF15C43212008840D9 /* VersionInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = VersionInfo.plist; sourceTree = "<group>"; };
-		925AE7E115C43212008840D9 /* Repository.mom */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = Repository.mom; sourceTree = "<group>"; };
-		925AE7E215C43212008840D9 /* Repository.omo */ = {isa = PBXFileReference; lastKnownFileType = file; path = Repository.omo; sourceTree = "<group>"; };
-		925AE7E315C43212008840D9 /* VersionInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = VersionInfo.plist; sourceTree = "<group>"; };
-		925AE7E515C43212008840D9 /* ContextProfiling.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ContextProfiling.framework; sourceTree = "<group>"; };
-		925AE7E715C43212008840D9 /* rules.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rules.txt; sourceTree = "<group>"; };
-		925AE7E915C43212008840D9 /* NetworkServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = NetworkServices.framework; sourceTree = "<group>"; };
 		925AE80B15C43F7D008840D9 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		925AE86E15C45924008840D9 /* UserContext.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = UserContext.plist; sourceTree = "<group>"; };
 		925AE8C215C49075008840D9 /* LoginViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginViewController.h; sourceTree = "<group>"; };
@@ -379,14 +367,14 @@
 				925AE7B715C430F2008840D9 /* MapKit.framework in Frameworks */,
 				925AE7B815C430F2008840D9 /* CoreData.framework in Frameworks */,
 				925AE7B915C430F2008840D9 /* Security.framework in Frameworks */,
-				925AE7EB15C43212008840D9 /* Common.framework in Frameworks */,
-				925AE7EC15C43212008840D9 /* ContextCore.framework in Frameworks */,
-				925AE7F815C43212008840D9 /* ContextLocation.framework in Frameworks */,
-				925AE80215C43213008840D9 /* ContextProfiling.framework in Frameworks */,
-				925AE80415C43213008840D9 /* NetworkServices.framework in Frameworks */,
 				9226EDE515C6F09E0081D01C /* libfacebook_ios_sdk.a in Frameworks */,
 				92EBF33615C59B2D0085C47E /* QuartzCore.framework in Frameworks */,
 				288A0EF0160986DF00FACA59 /* libFlurry.a in Frameworks */,
+				28B4663C162E25640084C9A9 /* Common.framework in Frameworks */,
+				28B4663D162E25640084C9A9 /* ContextCore.framework in Frameworks */,
+				28B46649162E25640084C9A9 /* ContextLocation.framework in Frameworks */,
+				28B4664B162E25640084C9A9 /* ContextProfiling.framework in Frameworks */,
+				28B4664D162E25640084C9A9 /* NetworkServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -409,144 +397,114 @@
 			path = Flurry;
 			sourceTree = "<group>";
 		};
+		28B4661D162E25640084C9A9 /* context-beta-ios-sdk */ = {
+			isa = PBXGroup;
+			children = (
+				28B4661E162E25640084C9A9 /* Common.embeddedframework */,
+				28B46621162E25640084C9A9 /* ContextCore.embeddedframework */,
+				28B46631162E25640084C9A9 /* ContextLocation.embeddedframework */,
+				28B46635162E25640084C9A9 /* ContextProfiling.embeddedframework */,
+				28B46639162E25640084C9A9 /* NetworkServices.embeddedframework */,
+			);
+			path = "context-beta-ios-sdk";
+			sourceTree = "<group>";
+		};
+		28B4661E162E25640084C9A9 /* Common.embeddedframework */ = {
+			isa = PBXGroup;
+			children = (
+				28B4661F162E25640084C9A9 /* Common.framework */,
+				28B46620162E25640084C9A9 /* Resources */,
+			);
+			path = Common.embeddedframework;
+			sourceTree = "<group>";
+		};
+		28B46620162E25640084C9A9 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		28B46621162E25640084C9A9 /* ContextCore.embeddedframework */ = {
+			isa = PBXGroup;
+			children = (
+				28B46622162E25640084C9A9 /* ContextCore.framework */,
+				28B46623162E25640084C9A9 /* Resources */,
+			);
+			path = ContextCore.embeddedframework;
+			sourceTree = "<group>";
+		};
+		28B46623162E25640084C9A9 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		28B46631162E25640084C9A9 /* ContextLocation.embeddedframework */ = {
+			isa = PBXGroup;
+			children = (
+				28B46632162E25640084C9A9 /* ContextLocation.framework */,
+				28B46633162E25640084C9A9 /* Resources */,
+			);
+			path = ContextLocation.embeddedframework;
+			sourceTree = "<group>";
+		};
+		28B46633162E25640084C9A9 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				28B46634162E25640084C9A9 /* DataModels.bundle */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		28B46635162E25640084C9A9 /* ContextProfiling.embeddedframework */ = {
+			isa = PBXGroup;
+			children = (
+				28B46636162E25640084C9A9 /* ContextProfiling.framework */,
+				28B46637162E25640084C9A9 /* Resources */,
+			);
+			path = ContextProfiling.embeddedframework;
+			sourceTree = "<group>";
+		};
+		28B46637162E25640084C9A9 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				28B46638162E25640084C9A9 /* rules.txt */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		28B46639162E25640084C9A9 /* NetworkServices.embeddedframework */ = {
+			isa = PBXGroup;
+			children = (
+				28B4663A162E25640084C9A9 /* NetworkServices.framework */,
+				28B4663B162E25640084C9A9 /* Resources */,
+			);
+			path = NetworkServices.embeddedframework;
+			sourceTree = "<group>";
+		};
+		28B4663B162E25640084C9A9 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		9253044A15D73C6C00BC7FEF /* Search View */ = {
 			isa = PBXGroup;
 			children = (
 				9290AE8815C84C1500E91D61 /* SearchView.h */,
 				9290AE8915C84C1500E91D61 /* SearchView.m */,
 				9253044615D7006000BC7FEF /* SearchView.xib */,
-				9253044D15D74A3F00BC7FEF /* SearchViewDelegate.h */,
+				289340C9162E0EC100833EC0 /* SearchPanel.h */,
+				289340CA162E0EC100833EC0 /* SearchPanel.m */,
+				289340CC162E0F5300833EC0 /* SearchPanel.xib */,
 				9290AE8415C837B800E91D61 /* SearchBar.h */,
 				9290AE8515C837B800E91D61 /* SearchBar.m */,
 				9253044B15D73D6800BC7FEF /* SearchBar.xib */,
 			);
 			name = "Search View";
-			sourceTree = "<group>";
-		};
-		925AE7C115C43212008840D9 /* context-beta-ios-sdk */ = {
-			isa = PBXGroup;
-			children = (
-				925AE7C215C43212008840D9 /* Common.embeddedframework */,
-				925AE7C515C43212008840D9 /* ContextCore.embeddedframework */,
-				925AE7D515C43212008840D9 /* ContextLocation.embeddedframework */,
-				925AE7E415C43212008840D9 /* ContextProfiling.embeddedframework */,
-				925AE7E815C43212008840D9 /* NetworkServices.embeddedframework */,
-			);
-			path = "context-beta-ios-sdk";
-			sourceTree = "<group>";
-		};
-		925AE7C215C43212008840D9 /* Common.embeddedframework */ = {
-			isa = PBXGroup;
-			children = (
-				925AE7C315C43212008840D9 /* Common.framework */,
-				925AE7C415C43212008840D9 /* Resources */,
-			);
-			path = Common.embeddedframework;
-			sourceTree = "<group>";
-		};
-		925AE7C415C43212008840D9 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
-		925AE7C515C43212008840D9 /* ContextCore.embeddedframework */ = {
-			isa = PBXGroup;
-			children = (
-				925AE7C615C43212008840D9 /* ContextCore.framework */,
-				925AE7C715C43212008840D9 /* Resources */,
-			);
-			path = ContextCore.embeddedframework;
-			sourceTree = "<group>";
-		};
-		925AE7C715C43212008840D9 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
-		925AE7D515C43212008840D9 /* ContextLocation.embeddedframework */ = {
-			isa = PBXGroup;
-			children = (
-				925AE7D615C43212008840D9 /* ContextLocation.framework */,
-				925AE7D715C43212008840D9 /* Resources */,
-			);
-			path = ContextLocation.embeddedframework;
-			sourceTree = "<group>";
-		};
-		925AE7D715C43212008840D9 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				925AE7D815C43212008840D9 /* ContentModel.momd */,
-				925AE7DC15C43212008840D9 /* PlaceOfRelevanceModel.momd */,
-				925AE7E015C43212008840D9 /* Repository.momd */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
-		925AE7D815C43212008840D9 /* ContentModel.momd */ = {
-			isa = PBXGroup;
-			children = (
-				925AE7D915C43212008840D9 /* ContentModel.mom */,
-				925AE7DA15C43212008840D9 /* ContentModel.omo */,
-				925AE7DB15C43212008840D9 /* VersionInfo.plist */,
-			);
-			path = ContentModel.momd;
-			sourceTree = "<group>";
-		};
-		925AE7DC15C43212008840D9 /* PlaceOfRelevanceModel.momd */ = {
-			isa = PBXGroup;
-			children = (
-				925AE7DD15C43212008840D9 /* PlaceOfRelevanceModel.mom */,
-				925AE7DE15C43212008840D9 /* PlaceOfRelevanceModel.omo */,
-				925AE7DF15C43212008840D9 /* VersionInfo.plist */,
-			);
-			path = PlaceOfRelevanceModel.momd;
-			sourceTree = "<group>";
-		};
-		925AE7E015C43212008840D9 /* Repository.momd */ = {
-			isa = PBXGroup;
-			children = (
-				925AE7E115C43212008840D9 /* Repository.mom */,
-				925AE7E215C43212008840D9 /* Repository.omo */,
-				925AE7E315C43212008840D9 /* VersionInfo.plist */,
-			);
-			path = Repository.momd;
-			sourceTree = "<group>";
-		};
-		925AE7E415C43212008840D9 /* ContextProfiling.embeddedframework */ = {
-			isa = PBXGroup;
-			children = (
-				925AE7E515C43212008840D9 /* ContextProfiling.framework */,
-				925AE7E615C43212008840D9 /* Resources */,
-			);
-			path = ContextProfiling.embeddedframework;
-			sourceTree = "<group>";
-		};
-		925AE7E615C43212008840D9 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				925AE7E715C43212008840D9 /* rules.txt */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
-		925AE7E815C43212008840D9 /* NetworkServices.embeddedframework */ = {
-			isa = PBXGroup;
-			children = (
-				925AE7E915C43212008840D9 /* NetworkServices.framework */,
-				925AE7EA15C43212008840D9 /* Resources */,
-			);
-			path = NetworkServices.embeddedframework;
-			sourceTree = "<group>";
-		};
-		925AE7EA15C43212008840D9 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Resources;
 			sourceTree = "<group>";
 		};
 		925AE8AD15C476E4008840D9 /* Resources */ = {
@@ -743,8 +701,6 @@
 		92FBED3915C3A85F000D1AE3 = {
 			isa = PBXGroup;
 			children = (
-				288A0EF4160BF9E300FACA59 /* SystemConfiguration.framework */,
-				288A0EF2160BF7E500FACA59 /* CFNetwork.framework */,
 				9272ED1215EDDAF60083EFF3 /* Default.png */,
 				9272ED1015EDDAD30083EFF3 /* icon3_small.png */,
 				92FBED4E15C3A85F000D1AE3 /* LikeMindedPeople */,
@@ -766,9 +722,11 @@
 		92FBED4715C3A85F000D1AE3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				28B4661D162E25640084C9A9 /* context-beta-ios-sdk */,
+				288A0EF4160BF9E300FACA59 /* SystemConfiguration.framework */,
+				288A0EF2160BF7E500FACA59 /* CFNetwork.framework */,
 				92EBF33515C59B2D0085C47E /* QuartzCore.framework */,
 				925AE80B15C43F7D008840D9 /* MapKit.framework */,
-				925AE7C115C43212008840D9 /* context-beta-ios-sdk */,
 				925AE7AC15C430F2008840D9 /* UIKit.framework */,
 				925AE7AD15C430F2008840D9 /* Foundation.framework */,
 				925AE7AE15C430F2008840D9 /* CoreGraphics.framework */,
@@ -937,7 +895,7 @@
 		92FBED3B15C3A85F000D1AE3 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0430;
+				LastUpgradeCheck = 0450;
 			};
 			buildConfigurationList = 92FBED3E15C3A85F000D1AE3 /* Build configuration list for PBXProject "LikeMindedPeople" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -963,16 +921,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				92FBED5315C3A85F000D1AE3 /* InfoPlist.strings in Resources */,
-				925AE7F915C43213008840D9 /* ContentModel.mom in Resources */,
-				925AE7FA15C43213008840D9 /* ContentModel.omo in Resources */,
-				925AE7FB15C43213008840D9 /* VersionInfo.plist in Resources */,
-				925AE7FC15C43213008840D9 /* PlaceOfRelevanceModel.mom in Resources */,
-				925AE7FD15C43213008840D9 /* PlaceOfRelevanceModel.omo in Resources */,
-				925AE7FE15C43213008840D9 /* VersionInfo.plist in Resources */,
-				925AE7FF15C43213008840D9 /* Repository.mom in Resources */,
-				925AE80015C43213008840D9 /* Repository.omo in Resources */,
-				925AE80115C43213008840D9 /* VersionInfo.plist in Resources */,
-				925AE80315C43213008840D9 /* rules.txt in Resources */,
 				925AE86F15C45924008840D9 /* UserContext.plist in Resources */,
 				D31363B915C494510071BED3 /* FBDialog.bundle in Resources */,
 				925AE8C615C49075008840D9 /* LoginViewController.xib in Resources */,
@@ -1035,6 +983,9 @@
 				9290EA4515FFAA94002A9952 /* settings@2x.png in Resources */,
 				9290EA4615FFAA94002A9952 /* settings2@2x.png in Resources */,
 				28866F571608E3E100D3FAAB /* foursquare@2x.png in Resources */,
+				289340CD162E0F5300833EC0 /* SearchPanel.xib in Resources */,
+				28B4664A162E25640084C9A9 /* DataModels.bundle in Resources */,
+				28B4664C162E25640084C9A9 /* rules.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1114,6 +1065,7 @@
 				926C274A15E1FCD5001DE8DC /* TimeFrameDTO.m in Sources */,
 				92DF6EEC15E53A6100C05641 /* RadiiButton.m in Sources */,
 				92DF6EEF15E7EEA400C05641 /* RadiiTableViewCell.m in Sources */,
+				289340CB162E0EC100833EC0 /* SearchPanel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1176,8 +1128,10 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "";
 				SDKROOT = iphoneos;
+				VALID_ARCHS = "armv7 armv7s";
 			};
 			name = Debug;
 		};
@@ -1195,29 +1149,25 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PRODUCT_NAME = "";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
+				VALID_ARCHS = "armv7 armv7s";
 			};
 			name = Release;
 		};
 		92FBED7215C3A85F000D1AE3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				CODE_SIGN_IDENTITY = "Shaun Dowling";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Shaun Dowling (T55NFAFBA2)";
 				DYLIB_COMPATIBILITY_VERSION = admin;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/Common.embeddedframework\"",
-					"\"$(SRCROOT)/ContextCore.embeddedframework\"",
-					"\"$(SRCROOT)/ContextIR.embeddedframework\"",
-					"\"$(SRCROOT)/ContextLocation.embeddedframework\"",
-					"\"$(SRCROOT)/ContextProfiling.embeddedframework\"",
-					"\"$(SRCROOT)/NetworkServices.embeddedframework\"",
-					"\"$(SRCROOT)/../Codes/Qualcomm/gimbal/GimbalIOSSDK/context-beta-ios-sdk/ContextProfiling.embeddedframework\"",
 					"\"$(SRCROOT)/context-beta-ios-sdk/Common.embeddedframework\"",
 					"\"$(SRCROOT)/context-beta-ios-sdk/ContextCore.embeddedframework\"",
 					"\"$(SRCROOT)/context-beta-ios-sdk/ContextIR.embeddedframework\"",
@@ -1243,17 +1193,11 @@
 		92FBED7315C3A85F000D1AE3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Shaun Dowling";
 				DYLIB_COMPATIBILITY_VERSION = admin;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/Common.embeddedframework\"",
-					"\"$(SRCROOT)/ContextCore.embeddedframework\"",
-					"\"$(SRCROOT)/ContextIR.embeddedframework\"",
-					"\"$(SRCROOT)/ContextLocation.embeddedframework\"",
-					"\"$(SRCROOT)/ContextProfiling.embeddedframework\"",
-					"\"$(SRCROOT)/NetworkServices.embeddedframework\"",
-					"\"$(SRCROOT)/../Codes/Qualcomm/gimbal/GimbalIOSSDK/context-beta-ios-sdk/ContextProfiling.embeddedframework\"",
 					"\"$(SRCROOT)/context-beta-ios-sdk/Common.embeddedframework\"",
 					"\"$(SRCROOT)/context-beta-ios-sdk/ContextCore.embeddedframework\"",
 					"\"$(SRCROOT)/context-beta-ios-sdk/ContextIR.embeddedframework\"",

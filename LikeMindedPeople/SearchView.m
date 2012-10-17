@@ -14,6 +14,9 @@
 @interface SearchView (PrivateUtilities)
 - (void)_showSearchBar;
 - (void)_hideSearchBar;
+
+- (void)_barSwiped:(UISwipeGestureRecognizer *)recognizer;
+
 @end
 
 @implementation SearchView
@@ -64,17 +67,17 @@
 	_selectedIndex = -1;
 	
 	_searchResultsView.rowHeight = 35.0;
-}
-
-- (void)setDelegate:(id<SearchViewDelegate>)delegate
-{
-	_delegate = delegate;
-	
-	// We need a separate recognizer for each button (apparently)
-	for (UIButton *button in _buttonsArray)
+    
+    // Must add two recognizer to each button because the direction property only corresponds to what will tigger an event, not the direction that was actually swiped
+    for (UIButton *button in _buttonsArray)
 	{
-		UISwipeGestureRecognizer *recognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:_delegate action:@selector(toggleFullScreen)];
-		[button addGestureRecognizer:recognizer];
+		UISwipeGestureRecognizer *upRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(_barSwiped:)];
+        upRecognizer.direction = UISwipeGestureRecognizerDirectionUp;
+		[button addGestureRecognizer:upRecognizer];
+        
+        UISwipeGestureRecognizer *downRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(_barSwiped:)];
+        downRecognizer.direction = UISwipeGestureRecognizerDirectionDown;
+		[button addGestureRecognizer:downRecognizer];
 	}
 }
 
@@ -93,14 +96,14 @@
 
 - (void)setTabBarGestureDirection:(UISwipeGestureRecognizerDirection) direction
 {
-	for (UIButton *button in _buttonsArray)
-	{
-		for (UISwipeGestureRecognizer *recognizer in button.gestureRecognizers)
-		{
-			if ([recognizer isKindOfClass:[UISwipeGestureRecognizer class]])
-				recognizer.direction = direction;
-		}
-	}
+//	for (UIButton *button in _buttonsArray)
+//	{
+//		for (UISwipeGestureRecognizer *recognizer in button.gestureRecognizers)
+//		{
+//			if ([recognizer isKindOfClass:[UISwipeGestureRecognizer class]])
+//				recognizer.direction = direction;
+//		}
+//	}
 	
 	if (_detailView)
 	{
@@ -187,6 +190,17 @@
 	[_searchResultsView reloadData];
 }
 
+//- (void)setFrame:(CGRect)frame
+//{
+//    super.frame = frame;
+//    
+//    CGRect searchResultsFrame = _searchResultsView.frame;
+//    searchResultsFrame.size.height = frame.size.height - _searchBarPanel.frame.size.height;
+//    _searchResultsView.frame = searchResultsFrame;
+////    _noResultsView.superview.frame = searchResultsFrame;
+//    _noResultsView.frame = searchResultsFrame;
+//    
+//}
 
 - (void)showDetailView
 {	
@@ -196,7 +210,7 @@
 		
 		// Add the gesture recognizer to toggle between full screen
 		
-		UISwipeGestureRecognizer *recognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:_delegate action:@selector(toggleFullScreen)];
+		UISwipeGestureRecognizer *recognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:_delegate action:@selector(_barSwipped:)];
 		recognizer.direction = _fullScreen ? UISwipeGestureRecognizerDirectionUp :UISwipeGestureRecognizerDirectionDown;
 		[_detailView.gestureRecognizerView addGestureRecognizer:recognizer];
 //		_detailView.delegate = _delegate;
@@ -329,8 +343,6 @@
 	
 	[_searchBarContainerView addSubview:_searchBar];
 	
-	[_delegate checkLayout];
-	
 	[UIView beginAnimations:nil context:nil];
 	
 	searchBarFrame.origin.y -= _searchBar.frame.size.height;
@@ -349,8 +361,6 @@
 		 searchViewFrame.origin.y += _searchBar.frame.size.height;
 		 searchViewFrame.size.height -= _searchBar.frame.size.height;
 		 self.frame = searchViewFrame;
-		 
-		 [_delegate checkLayout];
 		 
 		 CGRect containerFrame = _searchBarContainerView.frame;
 		 containerFrame.origin.y -= _searchBarContainerView.frame.size.height;
@@ -371,6 +381,11 @@
 	 }];
 	
 
+}
+
+- (void)_barSwiped:(UISwipeGestureRecognizer *)recognizer
+{
+    [_delegate slideView:recognizer.direction == UISwipeGestureRecognizerDirectionUp];
 }
 
 @end

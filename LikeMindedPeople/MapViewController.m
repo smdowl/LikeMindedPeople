@@ -9,7 +9,6 @@
 #import "MapViewController.h"
 #import "DataModel.h"
 #import "ServiceAdapter.h"
-#import "SearchView.h"
 #import "TDBadgedCell.h"
 #import "RadiiTableViewCell.h"
 #import "SearchBar.h"
@@ -37,21 +36,25 @@
 #define HIGH_CORRELATION_GREEN 0.875
 #define HIGH_CORRELATION_BLUE 0.433
 
-@interface MapViewController ()
+// What ratio of the map should the results cover
+#define MAP_HIDDEN_RATIO ((float)3/5)
+
+@interface MapViewController (PrivateUtilities)
 
 - (void)_removeAllNonUserAnnotations;
-- (void)_animateMap:(BOOL)fullScreen;
 - (void)_hideKeyboard;
 
-- (void)_inFromLeft:(UIPanGestureRecognizer *)recognizer;
-- (void)_inFromRight:(UIPanGestureRecognizer *)recognizer;
+//- (void)_inFromLeft:(UIPanGestureRecognizer *)recognizer;
+//- (void)_inFromRight:(UIPanGestureRecognizer *)recognizer;
 
-- (void)_setMapVisible:(BOOL)visible;
+- (void)_setMapVisible:(BOOL)visible; // Either show or hide the map (at the moment dependent on whether location services has been enabled)
 
 - (void)_removeAndStoreAllOtherResults:(RadiiResultDTO *)resultToKeep;
 - (void)_restoreResults;	// Add the radii results that were removed back to the map
 
 - (void)_startDownloadingDetailsForView:(DetailView *)detailView;
+
+- (void)_animateToMapVisibility:(MapVisible)visibility;
 
 @end
 
@@ -62,7 +65,6 @@
 @synthesize searchingView = _searchingView;
 @synthesize indicatorView = _indicatorView;
 
-@synthesize resizeButton = _resizeButton;
 @synthesize keyboardCancelButton = _keyboardCancelButton;
 
 @synthesize slideInLeft = _slideInLeft;
@@ -70,6 +72,8 @@
 
 @synthesize locationDisabledView = _locationDisabledView;
 @synthesize debugPanel = _debugPanel;
+
+@synthesize mapVisible = _mapVisible;
 
 #pragma mark -
 #pragma mark View lifecycle
@@ -85,21 +89,14 @@
 	searchViewFrame.origin.y = CGRectGetMaxY(_mapView.frame) - _searchView.searchBarPanel.frame.size.height;
 	searchViewFrame.size.height = self.view.frame.size.height - searchViewFrame.origin.y;
 	_searchView.frame = searchViewFrame;
-	
-	CGRect resizeButtonFrame = _resizeButton.frame;
-	resizeButtonFrame.origin.y -= _searchView.searchBarPanel.frame.size.height;
-	_resizeButton.frame = resizeButtonFrame;
-	
+    
 	[self.view insertSubview:_searchView belowSubview:_searchingView];
 	_searchView.delegate = self;
-	
-	[_resizeButton setImage:[UIImage imageNamed:@"fullscreen.png"] forState:UIControlStateNormal];
-	[_resizeButton setImage:[UIImage imageNamed:@"fullscreenglow.png"] forState:UIControlStateHighlighted];
-	
+    
 	UIPinchGestureRecognizer *pinchRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinchGesture:)];
 	
 	// Need to set us as the delgate because of the map views own gesture reconizers
-	pinchRecognizer.delegate = self;  
+	pinchRecognizer.delegate = self;
     [_mapView addGestureRecognizer:pinchRecognizer];
     _mapView.userTrackingMode = MKUserTrackingModeNone;
 	_mapView.delegate = self;
@@ -107,12 +104,13 @@
 	
 	[_keyboardCancelButton addTarget:self action:@selector(_hideKeyboard) forControlEvents:UIControlEventTouchUpInside];
 	[_keyboardCancelButton removeFromSuperview];
-		
+    
 	_searchView.searchResultsView.delegate = self;
 	_searchView.searchResultsView.dataSource = self;
 	
 	_searchView.fullScreen = YES;
-    [self toggleFullScreen];
+    // doing this to very lazily set the default screen layout to fe fullscreen map
+    [self _animateToMapVisibility:fullScreen];
 	
 	// Recognizing gestures on the left side of the screen
 	UIPanGestureRecognizer *leftSwipeGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(_inFromLeft:)];
@@ -122,10 +120,10 @@
 	UIPanGestureRecognizer *rightSwipeGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(_inFromRight:)];
 	[_slideInRight addGestureRecognizer:rightSwipeGestureRecognizer];
 	
-//	[_searchView.detailView.backButton addTarget:_searchView action:@selector(hideDetailView) forControlEvents:UIControlEventTouchUpInside];
+    //	[_searchView.detailView.backButton addTarget:_searchView action:@selector(hideDetailView) forControlEvents:UIControlEventTouchUpInside];
 	
 	// TODO: Maybe take this out
-	[[DataModel sharedInstance] addLocationListener:self];	
+	[[DataModel sharedInstance] addLocationListener:self];
 	
 #if DEBUG_BUTTONS
 	_debugPanel.hidden = NO;
@@ -137,7 +135,7 @@
 - (void)viewDidAppear:(BOOL)animated
 {
 	[super viewDidAppear:animated];
-		
+    
 	// Set the searchBarPanel to recieve keyboard notifications
 	
 	
@@ -150,7 +148,7 @@
 											 selector:@selector(keyboardWillHide:)
 												 name:UIKeyboardWillHideNotification
 											   object:nil];
-
+    
 	DataModel *dataModel = [DataModel sharedInstance];
 	[dataModel.coreConnector checkStatusAndOnEnabled:^(QLContextConnectorPermissions *connectorPermissions) {
         
@@ -172,7 +170,7 @@
 	{
 		[self _setMapVisible:NO];
 		
-//		_locationManager.delegate = self;
+        //		_locationManager.delegate = self;
 	}
 	else
 	{
@@ -207,7 +205,6 @@
 	
     _mapView = nil;
 	_searchView = nil;
-	_resizeButton = nil;
 }
 
 - (IBAction)enableLocationServices
@@ -215,24 +212,8 @@
 	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"prefs://"]];
 }
 
-- (IBAction)toggleFullScreen:(id)sender
-{
-	[self toggleFullScreen];
-}
-
 #pragma mark -
 #pragma mark SearchViewDelegate
-
-- (void)checkLayout
-{
-	[UIView beginAnimations:nil context:nil];
-	
-	CGRect resizeFrame = _resizeButton.frame;
-	resizeFrame.origin.y = _searchView.frame.origin.y - _resizeButton.frame.size.height;
-	_resizeButton.frame = resizeFrame;
-	
-	[UIView commitAnimations];
-}
 
 - (void)beginSearchForPlacesWithName:(NSString *)name type:(NSString *)type
 {
@@ -243,8 +224,8 @@
 		
 		[_storedResults removeAllObjects];
 		
-//		[_searchConnection getGoogleObjectsWithQuery:searchText andMapRegion:[_mapView region] andNumberOfResults:20 addressesOnly:YES andReferer:@"http://WWW.radii.com"];    
-//		[ServiceAdapter getGoogleSearchResultsForUser:[[DataModel sharedInstance] userId] atLocation:_mapView.centerCoordinate withName:name withType:type success:^(NSArray *results)
+        //		[_searchConnection getGoogleObjectsWithQuery:searchText andMapRegion:[_mapView region] andNumberOfResults:20 addressesOnly:YES andReferer:@"http://WWW.radii.com"];
+        //		[ServiceAdapter getGoogleSearchResultsForUser:[[DataModel sharedInstance] userId] atLocation:_mapView.centerCoordinate withName:name withType:type success:^(NSArray *results)
 		[ServiceAdapter getFourSquareSearchResultsForUser:[[DataModel sharedInstance] apiId] atLocation:_mapView.centerCoordinate withQuery:name ? name : type success:^(NSArray *results)
 		 {
 			 ResultType resultType;
@@ -256,7 +237,7 @@
 				 resultType = cafe;
 			 else if ([type isEqualToString:@"nightclub"])
 				 resultType = club;
-			 			 
+             
 			 _searchingView.hidden = YES;
 			 [_indicatorView stopAnimating];
 			 
@@ -264,8 +245,8 @@
 			 {
 				 [self _removeAllNonUserAnnotations];
 			 }
-			 else 
-			 {				
+			 else
+			 {
 				 // Replace all the annotations with new ones
 				 [self _removeAllNonUserAnnotations];
 				 
@@ -278,8 +259,8 @@
 					 NSMutableArray *resultsToRemove = [NSMutableArray array];
 					 for (RadiiResultDTO *result in results)
 					 {
-//						 if (result.type != resultType)
-//							 [resultsToRemove addObject:result];
+                         //						 if (result.type != resultType)
+                         //							 [resultsToRemove addObject:result];
 					 }
 					 
 					 [newResults removeObjectsInArray:resultsToRemove];
@@ -298,9 +279,9 @@
 				 [_searchView setData:_searchResults];
 			 }
 		 }
-		 failure:^(NSError *error)
+                                                  failure:^(NSError *error)
 		 {
-//			 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error finding place - Try again" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+             //			 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error finding place - Try again" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
 			 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Problem connecting to server" message:@"Please check internet connection and try again" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
 			 [alert show];
 			 
@@ -314,13 +295,10 @@
 		_searchingView.hidden = NO;
 		[_indicatorView startAnimating];
 		
-		if (_isFullScreen)
-		{
-			_isFullScreen = NO;
-			[self _animateMap:NO];
-		}
+		if (_mapVisible == fullScreen)
+			[self _animateToMapVisibility:halfScreen];
 	}
-	else 
+	else
 	{
 		[self _removeAllNonUserAnnotations];
 	}
@@ -341,23 +319,20 @@
 - (void)deselectPin
 {
 	for (id<MKAnnotation> annotation in _mapView.selectedAnnotations)
-	{
 		[_mapView deselectAnnotation:annotation animated:YES];
-	}
 }
 
-- (void)toggleFullScreen
+- (void)slideView:(BOOL)upwards
 {
-	if (_isFullScreen)
-	{
-		_isFullScreen = NO;
-		[self _animateMap:NO];
-	}
-	else
-	{
-		_isFullScreen = YES;
-		[self _animateMap:YES];
-	}
+    // In the case where the view is already at an extreme and can't go any further then there is nothing to do
+	if (upwards && _mapVisible == mapHidden) return;
+    if (!upwards && _mapVisible == fullScreen) return;
+    
+    // Otherwise increment the view in the desired direction
+    NSInteger change = upwards ? 1 : -1;
+    MapVisible newMapVisible = _mapVisible + change;
+    
+    [self _animateToMapVisibility:newMapVisible];
 }
 
 - (void)showMenu:(NSString *)urlString
@@ -381,8 +356,8 @@
 		 NSDictionary *leg = [[route objectForKey:@"legs"] objectAtIndex:0];
 		 NSString *distance = [[leg objectForKey:@"distance"] objectForKey:@"text"];
 		 NSString *duration = [[leg objectForKey:@"duration"] objectForKey:@"text"];
-
-		 NSDictionary *directionsDictionary = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:distance,duration,nil] 
+         
+		 NSDictionary *directionsDictionary = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:distance,duration,nil]
 																		  forKeys:[NSArray arrayWithObjects:@"distance", @"duration", nil]];
 		 _searchView.detailView.directionsDictionary = directionsDictionary;
 		 
@@ -390,32 +365,32 @@
 		 NSArray *path = [MapViewController decodePolylineOfGoogleMaps:polylineString];
 		 NSLog(@"%@", path);
 		 
-//		 DirectionsPathDTO *directionPath = [[DirectionsPathDTO alloc] initWithPath:path];
+         //		 DirectionsPathDTO *directionPath = [[DirectionsPathDTO alloc] initWithPath:path];
 		 CLLocationCoordinate2D locations[path.count];
 		 
 		 CGPoint minLatLong = CGPointMake(MAXFLOAT,MAXFLOAT);
 		 CGPoint maxLatLong = CGPointMake(-MAXFLOAT,-MAXFLOAT);
 		 
 		 for (int i=0; i<path.count; i++)
-		  {
-			  NSValue *pathValue = [path objectAtIndex:i];
-			  
-			  CLLocationCoordinate2D location;
-			  location.latitude = pathValue.CGPointValue.x;
-			  location.longitude = pathValue.CGPointValue.y;
-			  
-			  if (location.latitude < minLatLong.x)
-				  minLatLong.x = location.latitude;
-			  if (location.longitude < minLatLong.y)
-				  minLatLong.y = location.longitude;
-			  
-			  if (location.latitude > maxLatLong.x)
-				  maxLatLong.x = location.latitude;
-			  if (location.longitude > maxLatLong.y)
-				  maxLatLong.y = location.longitude;
-			  
-			  locations[i] = location;
-		  }
+         {
+             NSValue *pathValue = [path objectAtIndex:i];
+             
+             CLLocationCoordinate2D location;
+             location.latitude = pathValue.CGPointValue.x;
+             location.longitude = pathValue.CGPointValue.y;
+             
+             if (location.latitude < minLatLong.x)
+                 minLatLong.x = location.latitude;
+             if (location.longitude < minLatLong.y)
+                 minLatLong.y = location.longitude;
+             
+             if (location.latitude > maxLatLong.x)
+                 maxLatLong.x = location.latitude;
+             if (location.longitude > maxLatLong.y)
+                 maxLatLong.y = location.longitude;
+             
+             locations[i] = location;
+         }
 		 
 		 [_mapView removeOverlay:_directionsLine];
 		 _directionsLine = [MKPolyline polylineWithCoordinates:locations count:path.count];
@@ -426,8 +401,8 @@
 		 region.span.longitudeDelta = ROUTE_BOUNDING_MULTIPLIER * (maxLatLong.y - minLatLong.y);
 		 region.center = CLLocationCoordinate2DMake(minLatLong.x + region.span.latitudeDelta/(2 * ROUTE_BOUNDING_MULTIPLIER), minLatLong.y + region.span.longitudeDelta / (2 * ROUTE_BOUNDING_MULTIPLIER));
 		 
-		 [_mapView setRegion:region animated:YES]; 
-		 [_mapView setNeedsDisplay];		 
+		 [_mapView setRegion:region animated:YES];
+		 [_mapView setNeedsDisplay];
 	 }
 									  failure:^(NSError *error)
 	 {
@@ -450,7 +425,7 @@
     CGFloat lat = 0.0f;
     CGFloat lng = 0.0f;
     
-    while (index < length) 
+    while (index < length)
 	{
         
         // Temorary variable to hold each ASCII byte.
@@ -483,7 +458,7 @@
             // Then left shift the bits by the required amount, wich increases
             // by 5 bits each time.
             // OR the value into results, wich sums up the individual 5-bit chunks
-            // into the original value. Since the 5-bit chunks were reserved in 
+            // into the original value. Since the 5-bit chunks were reserved in
             // order during encoding, reading them in this way ensures proper
             // summation.
             result |= (b & 0x1f) << shift;
@@ -522,12 +497,12 @@
         CGFloat dlng = (result & 1) ? ~(result >> 1) : (result >> 1);
         lng += dlng;
         
-        // The actual latitude and longitude values were multiplied by 
+        // The actual latitude and longitude values were multiplied by
         // 1e5 before encoding so that they could be converted to a 32-bit
         //integer representation. (With a decimal accuracy of 5 places)
         // Convert back to original value.
-//        [points addObject:[NSString stringWithFormat:@"%f", (lat * 1e-5)]];
-//        [points addObject:[NSString stringWithFormat:@"%f", (lng * 1e-5)]];
+        //        [points addObject:[NSString stringWithFormat:@"%f", (lat * 1e-5)]];
+        //        [points addObject:[NSString stringWithFormat:@"%f", (lng * 1e-5)]];
         [points addObject:[NSValue valueWithCGPoint:CGPointMake((lat * 1e-5),(lng * 1e-5))]];
     }
     
@@ -540,25 +515,25 @@
 
 - (void)mapView:(MKMapView *)mapView didUpdateUserLocation:(MKUserLocation *)userLocation
 {
+    
 	if (!_locationSet)
 	{
 		_userLocation = userLocation;
 		
 		// When the view appears, home in on our location
-		CLLocation *newLocation = _mapView.userLocation.location;
+		CLLocation *newLocation = userLocation.location;
 		
-		double scalingFactor = ABS( (cos(2 * M_PI * newLocation.coordinate.latitude / 360.0) ));
-		
-		// Specify the amound of miles we want to see around our location
-		double miles = 0.5;
-		
-		MKCoordinateRegion region;
-		region.span.latitudeDelta = miles/69.0;
-		region.span.longitudeDelta = miles/(scalingFactor * 69.0); 
-		region.center = newLocation.coordinate;
-		
+        NSInteger mileRadius = 5;
+        CGFloat distance = 1609.344f * mileRadius;
+        
+		MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(
+                                                                       newLocation.coordinate,
+                                                                       distance,
+                                                                       distance
+                                                                       );
+        
 		[_mapView setRegion:region animated:YES];
-		
+        
 		_locationSet = YES;
 	}
 }
@@ -567,16 +542,14 @@
 {
 	// TODO: trying to stop the user from disappearing. Not 100% sure if this helps
 	if (_userLocation)
-	{
 		[_mapView addAnnotation:_userLocation];
-	}
 }
 
 - (void)mapView:(MKMapView *)mapView didSelectAnnotationView:(MKAnnotationView *)annotationView
 {
 	if (annotationView.annotation == _userLocation)
 		return;
-
+    
 	MKCoordinateRegion region = _mapView.region;
 	
 	CLLocationCoordinate2D center   = region.center;
@@ -591,17 +564,17 @@
 	
 	// Check to see if that map contains the annotation
 	if ((annotationCoordinate.latitude > northWestCorner.latitude &&
-		annotationCoordinate.longitude < northWestCorner.longitude &&
-		annotationCoordinate.latitude > southEastCorner.latitude &&
-		annotationCoordinate.longitude > southEastCorner.longitude))
-	{		
-		region.center = CLLocationCoordinate2DMake((center.latitude + annotationCoordinate.latitude)/2, (center.longitude + annotationCoordinate.longitude)/2);	
+         annotationCoordinate.longitude < northWestCorner.longitude &&
+         annotationCoordinate.latitude > southEastCorner.latitude &&
+         annotationCoordinate.longitude > southEastCorner.longitude))
+	{
+		region.center = CLLocationCoordinate2DMake((center.latitude + annotationCoordinate.latitude)/2, (center.longitude + annotationCoordinate.longitude)/2);
 		region.span = MKCoordinateSpanMake(fabsf(annotationCoordinate.latitude - _userLocation.coordinate.latitude), fabsf(annotationCoordinate.longitude - _userLocation.coordinate.longitude));
 		
-//		_mapView.region = region;
+        //		_mapView.region = region;
 		[_mapView setRegion:region animated:YES];
 	}
-		
+    
 	
 	id<MKAnnotation> annotation = annotationView.annotation;
 	if ([annotation isKindOfClass:[RadiiResultDTO class]])
@@ -613,7 +586,7 @@
 		
 		if (!_searchView.detailView.isShowing)
 		{
-			if (_isFullScreen)
+			if (_mapVisible == fullScreen)
 			{
 				if (!_searchView.detailView.isShowing)
 					[_searchView showDetailView];
@@ -624,17 +597,17 @@
 				CGAffineTransform rotation = CGAffineTransformMakeRotation(M_PI_2);
 				[_searchView.detailView.backButton setTransform:rotation];
 			}
-			else 
+			else
 			{
 				NSIndexPath *selectedIndex = [NSIndexPath indexPathForRow:[_searchResults indexOfObject:radiiResult] inSection:0];
 				
 				// Move the table view if it is on screen
 				[_searchView.searchResultsView selectRowAtIndexPath:selectedIndex
-														   animated:YES 
-													 scrollPosition:UITableViewScrollPositionMiddle];			
+														   animated:YES
+													 scrollPosition:UITableViewScrollPositionMiddle];
 			}
 		}
-			
+        
 		// Update the detail view
 		[_searchView.detailView setData:radiiResult];
 		if (!_searchView.detailView.locationDetails || _searchView.detailView.downloadingDetails)
@@ -697,7 +670,7 @@
 	}
 	
 	_detailViewTimer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:_searchView selector:@selector(hideDetailView) userInfo:nil repeats:NO];
-//	[_searchView hideDetailView];
+    //	[_searchView hideDetailView];
 	[_searchView.searchResultsView deselectRowAtIndexPath:[_searchView.searchResultsView indexPathForSelectedRow] animated:YES];
 }
 
@@ -713,7 +686,7 @@
 		{
 			annotationView = [[MKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"radiiPin"];
 		}
-		else 
+		else
 		{
 			annotationView.annotation = annotation;
 		}
@@ -738,23 +711,23 @@
 		}
 		
 		annotationView.centerOffset = CGPointMake(0,-[annotationView.image size].height / 2);
-
-//		annotationView.centerOffset = CGPointMake(0,-annotationView.image.size.height);
+        
+        //		annotationView.centerOffset = CGPointMake(0,-annotationView.image.size.height);
 		
 		return annotationView;
 	}
-//	else if ([annotation isKindOfClass:[MKUserLocation class]])
+    //	else if ([annotation isKindOfClass:[MKUserLocation class]])
 	else if (annotation == _mapView.userLocation)
 	{
 		MKPinAnnotationView *annotationView = (MKPinAnnotationView *)[_mapView dequeueReusableAnnotationViewWithIdentifier:@"mePin"];
-
+        
 		if (!annotationView)
 		{
 			annotationView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"mePin"];
 			annotationView.animatesDrop = NO;
 			annotationView.canShowCallout = NO;
 		}
-		else 
+		else
 		{
 			annotationView.annotation = annotation;
 		}
@@ -775,7 +748,7 @@
 		if (overlay == _refreshLocation)
 		{
 			region.fillColor = [UIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:0.5];
-			region.strokeColor = [UIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:0.8];		
+			region.strokeColor = [UIColor colorWithRed:0.5 green:0.5 blue:0.5 alpha:0.8];
 			region.lineWidth = 2.0;
 		}
 		else
@@ -786,22 +759,22 @@
 		}
 		return region;
 	}
-//	else if ([overlay isKindOfClass:[DirectionsPathDTO class]])
-//	{
-//		DirectionsPathDTO *directionsPath = (DirectionsPathDTO *)overlay;
-//		MKOverlayPathView *pathView = [[MKOverlayPathView alloc] initWithOverlay:overlay];
-//		pathView.path = directionsPath.mapKitPath;
-//		pathView.strokeColor = [UIColor blackColor];
-//		return pathView;
-//	}
+    //	else if ([overlay isKindOfClass:[DirectionsPathDTO class]])
+    //	{
+    //		DirectionsPathDTO *directionsPath = (DirectionsPathDTO *)overlay;
+    //		MKOverlayPathView *pathView = [[MKOverlayPathView alloc] initWithOverlay:overlay];
+    //		pathView.path = directionsPath.mapKitPath;
+    //		pathView.strokeColor = [UIColor blackColor];
+    //		return pathView;
+    //	}
 	else if ([overlay isKindOfClass:[MKPolyline class]])
 	{
 		MKPolyline *polyline = (MKPolyline *)overlay;
 		MKPolylineView *polylineView = [[MKPolylineView alloc] initWithPolyline:polyline];
 		
 		UIColor *orangeColor = [UIColor colorWithRed:0.984375 green:0.5625 blue:0.0859375 alpha:0.9];
-//		polylineView.strokeColor = orangeColor;
-//		polylineView.fillColor = orangeColor;
+        //		polylineView.strokeColor = orangeColor;
+        //		polylineView.fillColor = orangeColor;
 		UIColor *blue = [UIColor colorWithRed:0.27734375 green:0.11328125 blue:1.0 alpha:0.8];
 		polylineView.strokeColor = blue;
 		polylineView.fillColor = blue;
@@ -818,8 +791,8 @@
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateToLocation:(CLLocation *)newLocation fromLocation:(CLLocation *)oldLocation
 {
-//	_userLocation = [[MKAnnotation alloc] init];
-	[_mapView setCenterCoordinate:[[manager location] coordinate]];	
+    //	_userLocation = [[MKAnnotation alloc] init];
+	[_mapView setCenterCoordinate:[[manager location] coordinate]];
 	[manager stopUpdatingLocation];
 }
 
@@ -830,7 +803,7 @@
 		[self _setMapVisible:YES];
 		
 		if ([[manager location] coordinate].longitude != 0 && [[manager location] coordinate].longitude != 0)
-			[_mapView setCenterCoordinate:[[manager location] coordinate]];	
+			[_mapView setCenterCoordinate:[[manager location] coordinate]];
 		else
 			[manager startUpdatingLocation];
 	}
@@ -844,10 +817,10 @@
 	TDBadgedCell *cell = (TDBadgedCell *)[tableView dequeueReusableCellWithIdentifier:@"cell"];
 	if (!cell)
 	{
-		cell = [[TDBadgedCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"cell"];	
+		cell = [[TDBadgedCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"cell"];
 		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
 		cell.textLabel.textColor = [UIColor colorWithRed:89/255 green:89/255 blue:89/255 alpha:1.0];
-		cell.textLabel.font = [UIFont fontWithName:@"Helvetica" size:12];  
+		cell.textLabel.font = [UIFont fontWithName:@"Helvetica" size:12];
 	}
 	
 	RadiiResultDTO *radiiResult = [_searchResults objectAtIndex:indexPath.row];
@@ -863,41 +836,41 @@
 		
 		cell.badgeString = badgeString;
 		
-		cell.badgeColor = [UIColor colorWithRed:radiiResult.rating * HIGH_CORRELATION_RED + (1 - radiiResult.rating) * LOW_CORRELATION_RED 
-										  green:radiiResult.rating * HIGH_CORRELATION_GREEN + (1 - radiiResult.rating) * LOW_CORRELATION_GREEN 
-										   blue:radiiResult.rating * HIGH_CORRELATION_BLUE + (1 - radiiResult.rating) * LOW_CORRELATION_BLUE 
+		cell.badgeColor = [UIColor colorWithRed:radiiResult.rating * HIGH_CORRELATION_RED + (1 - radiiResult.rating) * LOW_CORRELATION_RED
+										  green:radiiResult.rating * HIGH_CORRELATION_GREEN + (1 - radiiResult.rating) * LOW_CORRELATION_GREEN
+										   blue:radiiResult.rating * HIGH_CORRELATION_BLUE + (1 - radiiResult.rating) * LOW_CORRELATION_BLUE
 										  alpha:1.0];
 	}
 	else
 	{
 		cell.badgeColor = [UIColor clearColor];
-//		NSString *badgeString = [NSString stringWithFormat:@"0%%"];
-//		
-//		cell.badgeString = badgeString;
-//		
-//		cell.badgeColor = [UIColor colorWithRed:LOW_CORRELATION_RED 
-//										  green:LOW_CORRELATION_GREEN 
-//										   blue:LOW_CORRELATION_BLUE 
-//										  alpha:1.0];
+        //		NSString *badgeString = [NSString stringWithFormat:@"0%%"];
+        //
+        //		cell.badgeString = badgeString;
+        //
+        //		cell.badgeColor = [UIColor colorWithRed:LOW_CORRELATION_RED
+        //										  green:LOW_CORRELATION_GREEN
+        //										   blue:LOW_CORRELATION_BLUE
+        //										  alpha:1.0];
 	}
 	
     return cell;
 	
-//	RadiiTableViewCell *cell = (RadiiTableViewCell *)[tableView dequeueReusableCellWithIdentifier:@"cell"];
-//	if (!cell)
-//	{
-//		cell = [[RadiiTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
-//		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-//		[[NSBundle mainBundle] loadNibNamed:@"RadiiTableViewCell" owner:cell options:nil];	
-//	}
-//	
-//	
-//	RadiiResultDTO *radiiResult = [_searchResults objectAtIndex:indexPath.row];
-//	
-//	cell.nameLabel.text = radiiResult.businessTitle;
-//	cell.peopleHistoryCountLabel.text = radiiResult.peopleHistoryCount ? [NSString stringWithFormat:@"%i %@", radiiResult.peopleHistoryCount, radiiResult.peopleHistoryCount > 1 ? @"ratings" : @"rating"] : @"Not yet rated";
-//	
-//	return cell;
+    //	RadiiTableViewCell *cell = (RadiiTableViewCell *)[tableView dequeueReusableCellWithIdentifier:@"cell"];
+    //	if (!cell)
+    //	{
+    //		cell = [[RadiiTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
+    //		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    //		[[NSBundle mainBundle] loadNibNamed:@"RadiiTableViewCell" owner:cell options:nil];
+    //	}
+    //
+    //
+    //	RadiiResultDTO *radiiResult = [_searchResults objectAtIndex:indexPath.row];
+    //
+    //	cell.nameLabel.text = radiiResult.businessTitle;
+    //	cell.peopleHistoryCountLabel.text = radiiResult.peopleHistoryCount ? [NSString stringWithFormat:@"%i %@", radiiResult.peopleHistoryCount, radiiResult.peopleHistoryCount > 1 ? @"ratings" : @"rating"] : @"Not yet rated";
+    //
+    //	return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -912,7 +885,7 @@
 	
 	// Set the detail view's data. This fill in the UI
 	if (!_searchView.detailView.isShowing)
-		[_searchView showDetailView];	
+		[_searchView showDetailView];
 	
 	_searchView.detailView.data = [_searchResults objectAtIndex:indexPath.row];
 	
@@ -936,15 +909,14 @@
 #pragma mark PinchGestureRecognizer Methods
 
 - (void)handlePinchGesture:(UIPinchGestureRecognizer *)pinchGestureRecognizer
-{	
+{
 	switch (pinchGestureRecognizer.state)
 	{
 		case UIGestureRecognizerStateChanged:
-			if([pinchGestureRecognizer scale] > 1 && !_isFullScreen) 
+			if([pinchGestureRecognizer scale] > 1 && !_mapVisible == fullScreen)
 			{
 				_transitioningToFullScreen = YES;
-				_isFullScreen = YES;
-				[self _animateMap:YES];
+				[self _animateToMapVisibility:fullScreen];
 			}
 			break;
 		case UIGestureRecognizerStateEnded:
@@ -955,7 +927,7 @@
 							   {
 								   NSArray *annotations = [_mapView annotations];
 								   [_mapView removeAnnotations:annotations];
-								   [_mapView addAnnotations:annotations];	
+								   [_mapView addAnnotations:annotations];
 								   
 								   if (_directionsLine)
 									   [_mapView addOverlay:_directionsLine];
@@ -980,20 +952,15 @@
 #pragma mark Keyboard Notifications
 
 - (void)keyboardWillShow:(NSNotification *)notification
-{	
+{
 	CGSize viewSize = self.view.frame.size;
 	CGSize keyboardSize = [[[notification userInfo] objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
 	
 	[UIView beginAnimations:nil context:nil];
 	CGRect searchViewFrame = _searchView.frame;
-	searchViewFrame.origin.y = viewSize.height - keyboardSize.height - _searchView.searchBar.frame.size.height;	
+	searchViewFrame.origin.y = viewSize.height - keyboardSize.height - _searchView.searchBar.frame.size.height;
 	_searchView.frame = searchViewFrame;
-	
-	CGRect resizeButtonFrame = _resizeButton.frame;
-	resizeButtonFrame.origin.y = searchViewFrame.origin.y - _resizeButton.frame.size.height;
-	_resizeButton.frame = resizeButtonFrame;
-	[UIView commitAnimations];
-	
+    
 	[self.view insertSubview:_keyboardCancelButton belowSubview:_searchView];
 }
 
@@ -1002,15 +969,10 @@
 	CGSize viewSize = self.view.frame.size;
 	
 	[UIView beginAnimations:nil context:nil];
-	CGRect searchViewFrame = _searchView.frame;	
-	searchViewFrame.origin.y = _isFullScreen ? viewSize.height - [_searchView panelHeight] : viewSize.height - _searchView.frame.size.height;
+	CGRect searchViewFrame = _searchView.frame;
+	searchViewFrame.origin.y = _mapVisible == fullScreen ? viewSize.height - [_searchView panelHeight] : viewSize.height - _searchView.frame.size.height;
 	_searchView.frame = searchViewFrame;
-	
-	CGRect resizeButtonFrame = _resizeButton.frame;
-	resizeButtonFrame.origin.y = searchViewFrame.origin.y - _resizeButton.frame.size.height;
-	_resizeButton.frame = resizeButtonFrame;
-	[UIView commitAnimations];
-	
+    
 	[_keyboardCancelButton removeFromSuperview];
 }
 
@@ -1031,7 +993,7 @@
 		[self.view addSubview:_slideInCancelButton];
 		
 		// Create the covering view
-		_leftSideBar = [[SideBar alloc] initWithFrame:CGRectMake(xPosition - SIDE_BAR_WIDTH,0,SIDE_BAR_WIDTH,self.view.frame.size.height)];			
+		_leftSideBar = [[SideBar alloc] initWithFrame:CGRectMake(xPosition - SIDE_BAR_WIDTH,0,SIDE_BAR_WIDTH,self.view.frame.size.height)];
 		
 		UISwipeGestureRecognizer *swipeRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(_outToLeft:)];
 		swipeRecognizer.direction = UISwipeGestureRecognizerDirectionLeft;
@@ -1039,7 +1001,7 @@
 		
 		[self.view addSubview:_leftSideBar];
 		
-	} 
+	}
 	else if (state == UIGestureRecognizerStateChanged)
 	{
 		// Only move the view to, at most, its width
@@ -1052,7 +1014,7 @@
 			coveringFrame.origin.x = xPosition - SIDE_BAR_WIDTH;
 			_leftSideBar.frame = coveringFrame;
 		}
-	} 
+	}
 	else if (state == UIGestureRecognizerStateEnded)
 	{
 		void (^onComplete)(BOOL finished);
@@ -1086,7 +1048,7 @@
 				_slideInCancelButton = nil;
 			};
 		}
-
+        
 		// Animate for both in and out
 		[UIView animateWithDuration:0.2 animations:^()
 		 {
@@ -1099,7 +1061,7 @@
 
 // Might want to do this with a swipe gestore or another pan
 - (void)_outToLeft:(id)sender
-{	
+{
 	[UIView animateWithDuration:0.3 animations:^()
 	 {
 		 _leftSideBar.frame = 	CGRectMake(-SIDE_BAR_WIDTH, 0, SIDE_BAR_WIDTH, self.view.frame.size.height);;
@@ -1115,150 +1077,6 @@
 - (void)_inFromRight:(UIPanGestureRecognizer *)recognizer
 {
 	
-}
-
-#pragma mark -
-#pragma mark Private Methods
-
-- (void)_removeAllNonUserAnnotations
-{
-	for (id<MKAnnotation> annotation in _mapView.annotations)
-	{
-		if (annotation == _userLocation)
-		{
-			continue;
-		}
-		else
-		{
-			[_mapView removeAnnotation:annotation];
-		}
-	}
-	
-	_searchResults = nil;
-	[_searchView setData:_searchResults];
-}
-
-- (void)_animateMap:(BOOL)toFullScreen
-{
-	CGFloat verticalShift = toFullScreen ? _searchView.searchResultsView.frame.size.height : -_searchView.searchResultsView.frame.size.height;
-	NSString *resizeButtonImageName = toFullScreen ? @"minimize.png" : @"fullscreen.png";
-	NSString *resizeGlowButtonImageName = toFullScreen ? @"minimizeglow.png" : @"fullscreenglow.png";
-	
-	CGFloat backButtonRotation = toFullScreen ? M_PI_2 : 0;
-	
-	// Remove all targets from the back button
-	[_searchView.detailView.backButton removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
-	
-	// Either set it to remove from screen on return to normal view
-	if (toFullScreen)
-	{
-		[_searchView.detailView.backButton addTarget:self action:@selector(toggleFullScreen:) forControlEvents:UIControlEventTouchUpInside];
-	}
-	else
-	{
-		[_searchView.detailView.backButton addTarget:_searchView action:@selector(hideDetailView) forControlEvents:UIControlEventTouchUpInside];
-	}
-	[UIView animateWithDuration:0.2 animations:^()
-	 {
-		 
-		 CGRect mapFrame = _mapView.frame;
-		 mapFrame.size.height += verticalShift;
-		 _mapView.frame = mapFrame;
-		 
-		 CGRect searchViewFrame = _searchView.frame;
-		 searchViewFrame.origin.y += verticalShift;
-		 _searchView.frame = searchViewFrame;
-		 
-		 CGRect resizeButtonFrame = _resizeButton.frame;
-		 resizeButtonFrame.origin.y += verticalShift;
-		 _resizeButton.frame = resizeButtonFrame;	 
-		 
-		 [_resizeButton setImage:[UIImage imageNamed:resizeButtonImageName] forState:UIControlStateNormal];
-		 [_resizeButton setImage:[UIImage imageNamed:resizeGlowButtonImageName] forState:UIControlStateHighlighted];
-		 
-		 CGAffineTransform rotation = CGAffineTransformMakeRotation(backButtonRotation);
-		 [_searchView.detailView.backButton setTransform:rotation];
-	 }  completion:^(BOOL finished)
-	 {
-		 if (_transitioningToFullScreen)
-		 {
-			 dispatch_async(dispatch_get_main_queue(), ^()
-							{
-								NSArray *annotations = [_mapView annotations];
-								[_mapView removeAnnotations:annotations];
-								[_mapView addAnnotations:annotations];		
-							});
-		 }
-
-		 // Had this in because the users locations seemed to disappear sometimes
-//		 if (![[_mapView annotations] containsObject:_userLocation])
-//		 {
-//			 _mapView.showsUserLocation = NO;
-//			 _mapView.showsUserLocation = YES;
-//		 }
-		 
-		 _searchView.fullScreen = toFullScreen;
-	 }];
-}
-
-- (void)_refreshAnnotations
-{
-	[_mapView removeAnnotation:_mapView.userLocation];
-	[_mapView addAnnotation:_mapView.userLocation];
-}
-
-- (void)_hideKeyboard
-{
-	[_searchView.searchBar resignFirstResponder];
-	[_searchView selectButton:-1];
-}
-
-- (void)_setMapVisible:(BOOL)visible
-{
-	_locationDisabledView.hidden = visible;
-	_resizeButton.enabled = visible;	
-
-	if (visible)
-		[_mapView setCenterCoordinate:[[[[DataModel sharedInstance] locationManager] location] coordinate] animated:YES];
-}
-
-- (void)_removeAndStoreAllOtherResults:(RadiiResultDTO *)resultToKeep
-{
-	for (id<MKAnnotation> annotation in _searchResults)
-	{
-		if (annotation != resultToKeep && annotation != _userLocation)
-		{
-			[_mapView removeAnnotation:annotation];
-			[_storedResults addObject:annotation];
-		}
-	}
-}
-
-- (void)_restoreResults
-{
-	for (id<MKAnnotation> annotation in _storedResults)
-		[_mapView addAnnotation:annotation];
-}
-
-- (void)_startDownloadingDetailsForView:(DetailView *)detailView
-{
-	if (detailView)
-	{
-		detailView.downloadingDetails = YES;
-		
-		[ServiceAdapter getLocationDetails:detailView.data 
-									userId:[[DataModel sharedInstance] apiId] 
-								   success:^(LocationDetailsDTO *details)
-		 {
-			 if (detailView)
-				 detailView.locationDetails = details;
-		 }
-								   failure:^(NSError *error)
-		 {
-//			 [[[UIAlertView alloc] initWithTitle:@"Network Error" message:@"Problem getting details for location" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-			 [detailView failedToLoadDetails];
-		 }];
-	}
 }
 
 #pragma mark -
@@ -1306,7 +1124,7 @@
 	}
 	
 	if (!_showingGeofences)
-	{	
+	{
 		NSArray *allGeofenceRegions = [[DataModel sharedInstance] getAllGeofenceRegions];
 		[_mapView addOverlays:allGeofenceRegions];
 		
@@ -1317,6 +1135,22 @@
 	_showingGeofences = !_showingGeofences;
 }
 
+- (IBAction)refreshLocation
+{
+    CLLocation *newLocation = _userLocation.location;
+    
+    NSInteger mileRadius = 5;
+    CGFloat distance = 1609.344f * mileRadius;
+    
+    MKCoordinateRegion region = MKCoordinateRegionMakeWithDistance(
+                                                                   newLocation.coordinate,
+                                                                   distance,
+                                                                   distance
+                                                                   );
+    
+    [_mapView setRegion:region animated:YES];
+}
+
 - (void)dealloc
 {
 	_mapView = nil;
@@ -1325,11 +1159,168 @@
 	_searchingView = nil;
 	_indicatorView = nil;
 	
-	_resizeButton = nil;
 	_keyboardCancelButton = nil;
 	
 	_slideInLeft = nil;
 	_slideInRight = nil;
+}
+
+@end
+
+#pragma mark -
+#pragma mark Private Methods
+
+@implementation MapViewController (PrivateUtilities)
+
+- (void)_removeAllNonUserAnnotations
+{
+	for (id<MKAnnotation> annotation in _mapView.annotations)
+	{
+		if (annotation == _userLocation)
+		{
+			continue;
+		}
+		else
+		{
+			[_mapView removeAnnotation:annotation];
+		}
+	}
+	
+	_searchResults = nil;
+	[_searchView setData:_searchResults];
+}
+
+- (void)_refreshAnnotations
+{
+	[_mapView removeAnnotation:_mapView.userLocation];
+	[_mapView addAnnotation:_mapView.userLocation];
+}
+
+- (void)_hideKeyboard
+{
+	[_searchView.searchBar resignFirstResponder];
+	[_searchView selectButton:-1];
+}
+
+- (void)_setMapVisible:(BOOL)visible
+{
+	_locationDisabledView.hidden = visible;
+    
+	if (visible)
+		[_mapView setCenterCoordinate:[[[[DataModel sharedInstance] locationManager] location] coordinate] animated:YES];
+}
+
+- (void)_removeAndStoreAllOtherResults:(RadiiResultDTO *)resultToKeep
+{
+	for (id<MKAnnotation> annotation in _searchResults)
+	{
+		if (annotation != resultToKeep && annotation != _userLocation)
+		{
+			[_mapView removeAnnotation:annotation];
+			[_storedResults addObject:annotation];
+		}
+	}
+}
+
+- (void)_restoreResults
+{
+	for (id<MKAnnotation> annotation in _storedResults)
+		[_mapView addAnnotation:annotation];
+}
+
+- (void)_startDownloadingDetailsForView:(DetailView *)detailView
+{
+	if (detailView)
+	{
+		detailView.downloadingDetails = YES;
+		
+		[ServiceAdapter getLocationDetails:detailView.data
+									userId:[[DataModel sharedInstance] apiId]
+								   success:^(LocationDetailsDTO *details)
+		 {
+			 if (detailView)
+				 detailView.locationDetails = details;
+		 }
+								   failure:^(NSError *error)
+		 {
+             //			 [[[UIAlertView alloc] initWithTitle:@"Network Error" message:@"Problem getting details for location" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+			 [detailView failedToLoadDetails];
+		 }];
+	}
+}
+
+- (void)_animateToMapVisibility:(MapVisible)mapVisibility
+{
+    CGFloat searchViewOrigin;
+    
+    switch (mapVisibility)
+    {
+        case fullScreen:
+            searchViewOrigin = self.view.frame.size.height - _searchView.searchBarPanel.frame.size.height;
+            break;
+        case halfScreen:
+            searchViewOrigin = floor(MAP_HIDDEN_RATIO * self.view.frame.size.height);
+            break;
+        case mapHidden:
+            searchViewOrigin = _mapView.frame.origin.y;
+            break;
+        default:
+            break;
+    }
+    
+    CGFloat backButtonRotation = mapVisibility == fullScreen ? M_PI_2 : 0;
+    
+    // Remove all targets from the back button
+    [_searchView.detailView.backButton removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
+    
+    // Either set it to remove from screen on return to normal view
+    
+    // TODO: At the moment this is no use, need to work out how to implement better
+//    if (mapVisibility == fullScreen)
+//    {
+//        [_searchView.detailView.backButton addTarget:self action:@selector(toggleFullScreen:) forControlEvents:UIControlEventTouchUpInside];
+//    }
+//    else
+//    {
+//        [_searchView.detailView.backButton addTarget:_searchView action:@selector(hideDetailView) forControlEvents:UIControlEventTouchUpInside];
+//    }
+    
+    [UIView animateWithDuration:0.2 animations:^()
+     {
+         CGRect mapFrame = _mapView.frame;
+         mapFrame.size.height = searchViewOrigin - mapFrame.origin.y;
+         _mapView.frame = mapFrame;
+         
+         CGRect searchViewFrame = _searchView.frame;
+         searchViewFrame.origin.y = searchViewOrigin;
+         searchViewFrame.size.height = self.view.frame.size.height - searchViewOrigin;
+         _searchView.frame = searchViewFrame;
+                           
+         CGAffineTransform rotation = CGAffineTransformMakeRotation(backButtonRotation);
+         [_searchView.detailView.backButton setTransform:rotation];
+     }
+                     completion:^(BOOL finished)
+     {
+         if (_transitioningToFullScreen)
+         {
+             dispatch_async(dispatch_get_main_queue(), ^()
+                            {
+                                NSArray *annotations = [_mapView annotations];
+                                [_mapView removeAnnotations:annotations];
+                                [_mapView addAnnotations:annotations];
+                            });
+         }
+         
+         _mapVisible = mapVisibility;
+         
+         // Had this in because the users locations seemed to disappear sometimes
+         //		 if (![[_mapView annotations] containsObject:_userLocation])
+         //		 {
+         //			 _mapView.showsUserLocation = NO;
+         //			 _mapView.showsUserLocation = YES;
+         //		 }
+         
+     }];
 }
 
 @end

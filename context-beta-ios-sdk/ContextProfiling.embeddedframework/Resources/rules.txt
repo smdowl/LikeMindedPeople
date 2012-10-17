@@ -1,1 +1,1 @@
-../ContextProfiling.framework/Versions/0.27/Resources/rules.txt
+../ContextProfiling.framework/Versions/0.34/Resources/rules.txt

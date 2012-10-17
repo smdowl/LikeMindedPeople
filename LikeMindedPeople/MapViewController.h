@@ -8,7 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import <MapKit/MapKit.h>
-#import "SearchViewDelegate.h"
+#import "SearchView.h"
+
+typedef enum
+{
+    fullScreen = 0,
+    halfScreen = 1,
+    mapHidden = 2
+} MapVisible;
 
 @class DataModel, SearchBarPanel, SearchView, SideBar, GeofenceLocation;
 @interface MapViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, MKMapViewDelegate, CLLocationManagerDelegate, SearchViewDelegate>
@@ -19,9 +26,8 @@
 	UIView *_searchingView; // A view to show the phone is busy
 	UIActivityIndicatorView *_indicatorView;
 	
-	UIButton *_resizeButton;
 	UIButton *_keyboardCancelButton;
-	BOOL _isFullScreen;
+
 	BOOL _transitioningToFullScreen;	// Used to refresh the annotations because they seem to disapear
 	
 	NSArray *_searchResults;
@@ -55,6 +61,8 @@
 	CLLocationManager *_locationManager;
 	
 	BOOL _askedForPermission;
+    
+    MapVisible _mapVisible;
 }
 
 @property (nonatomic, strong) IBOutlet MKMapView *mapView;
@@ -63,7 +71,6 @@
 @property (nonatomic, strong) IBOutlet UIView *searchingView;
 @property (nonatomic, strong) IBOutlet UIActivityIndicatorView *indicatorView;
 
-@property (nonatomic, strong) IBOutlet UIButton *resizeButton;
 @property (nonatomic, strong) IBOutlet UIButton *keyboardCancelButton;
 
 @property (nonatomic, strong) IBOutlet UIView *slideInLeft;
@@ -72,7 +79,8 @@
 @property (nonatomic, strong) IBOutlet UIView *locationDisabledView;
 @property (nonatomic, strong) IBOutlet UIView *debugPanel;
 
-- (IBAction)toggleFullScreen:(id)sender;
+@property (nonatomic) MapVisible mapVisible;
+
 - (IBAction)enableLocationServices;
 
 // Test methods
@@ -80,5 +88,7 @@
 - (IBAction)printCurrentCenter;
 - (IBAction)currentLocation;
 - (IBAction)displayGeofences;
+
+- (IBAction)refreshLocation;
 
 @end

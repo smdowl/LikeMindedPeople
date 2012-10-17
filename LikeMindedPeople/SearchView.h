@@ -7,7 +7,26 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "SearchViewDelegate.h"
+
+@class RadiiResultDTO;
+@protocol SearchViewDelegate <NSObject>
+
+- (void)beginSearchForPlacesWithName:(NSString *)name type:(NSString *)type;
+
+- (void)cancelSearch;
+
+- (void)clearResults;
+
+- (void)deselectPin;
+
+- (void)getDirectionsToLocation:(RadiiResultDTO *)location;
+
+- (void)slideView:(BOOL)upwards;
+
+- (void)showMenu:(NSString *)urlString;
+
+@end
+
 
 @class SearchBar, SearchBarPanel, DetailView;
 @interface SearchView : UIView <UITextFieldDelegate, UIGestureRecognizerDelegate>
@@ -36,6 +55,7 @@
 	// A detail view that can be created and animated across
 	DetailView *_detailView;
 		
+    // A value to determine the functionality of the swipe gesture.
 	BOOL _fullScreen;
 }
 
@@ -72,3 +92,4 @@
 - (IBAction)showMenu;
 
 @end
+

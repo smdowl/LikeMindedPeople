@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>NSManagedObjectModel_CurrentVersionName</key>
+	<string>PlaceModel v4</string>
+	<key>NSManagedObjectModel_VersionHashes</key>
+	<dict>
+		<key>PlaceModel</key>
+		<dict>
+			<key>QLPlaceEntity</key>
+			<data>
+			YvtZ12gm8UhPPg4Zi9F6U4IxisAsiemppo/N6gv3vRA=
+			</data>
+			<key>QLPlaceEventEntity</key>
+			<data>
+			pSqCbIaiV26QjZ1bfwbahZH3xhmjJkZe05Z54OUO7nU=
+			</data>
+		</dict>
+		<key>PlaceModel v2</key>
+		<dict>
+			<key>QLPlaceBubbleBoundaryEntity</key>
+			<data>
+			M72yA7d5ROR4WbvbtkrE1N84bnUAfKLijkyYWo0W+88=
+			</data>
+			<key>QLPlaceEntity</key>
+			<data>
+			YvtZ12gm8UhPPg4Zi9F6U4IxisAsiemppo/N6gv3vRA=
+			</data>
+			<key>QLPlaceEventEntity</key>
+			<data>
+			pSqCbIaiV26QjZ1bfwbahZH3xhmjJkZe05Z54OUO7nU=
+			</data>
+		</dict>
+		<key>PlaceModel v3</key>
+		<dict>
+			<key>QLPlaceAttributeEntity</key>
+			<data>
+			4z+7H0WMyhrZo0p2IG/OgI0E+94xf03+x85/9pe4QrA=
+			</data>
+			<key>QLPlaceBubbleBoundaryEntity</key>
+			<data>
+			M72yA7d5ROR4WbvbtkrE1N84bnUAfKLijkyYWo0W+88=
+			</data>
+			<key>QLPlaceEntity</key>
+			<data>
+			7RPvBuASeQ8Vgm8ieEhn6ElwLWwAcQ27e3VpKGj3fpo=
+			</data>
+			<key>QLPlaceEventEntity</key>
+			<data>
+			pSqCbIaiV26QjZ1bfwbahZH3xhmjJkZe05Z54OUO7nU=
+			</data>
+			<key>QLPolygonPointEntity</key>
+			<data>
+			daHNLuD41ynI31xA6snaIuLpxXTwCbnXAUTn/yaMnCc=
+			</data>
+		</dict>
+		<key>PlaceModel v4</key>
+		<dict>
+			<key>QLPlaceAttributeEntity</key>
+			<data>
+			4z+7H0WMyhrZo0p2IG/OgI0E+94xf03+x85/9pe4QrA=
+			</data>
+			<key>QLPlaceBubbleBoundaryEntity</key>
+			<data>
+			M72yA7d5ROR4WbvbtkrE1N84bnUAfKLijkyYWo0W+88=
+			</data>
+			<key>QLPlaceEntity</key>
+			<data>
+			7RPvBuASeQ8Vgm8ieEhn6ElwLWwAcQ27e3VpKGj3fpo=
+			</data>
+			<key>QLPlaceEventEntity</key>
+			<data>
+			pSqCbIaiV26QjZ1bfwbahZH3xhmjJkZe05Z54OUO7nU=
+			</data>
+			<key>QLPolygonPointEntity</key>
+			<data>
+			daHNLuD41ynI31xA6snaIuLpxXTwCbnXAUTn/yaMnCc=
+			</data>
+		</dict>
+	</dict>
+</dict>
+</plist>

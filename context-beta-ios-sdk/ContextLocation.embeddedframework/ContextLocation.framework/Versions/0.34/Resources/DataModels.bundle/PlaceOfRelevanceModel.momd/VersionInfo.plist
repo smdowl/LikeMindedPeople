@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>NSManagedObjectModel_CurrentVersionName</key>
+	<string>PlaceOfRelevanceModel v2</string>
+	<key>NSManagedObjectModel_VersionHashes</key>
+	<dict>
+		<key>PlaceOfRelevanceModel</key>
+		<dict>
+			<key>QLFixEntity</key>
+			<data>
+			zki6ri66Jh1Pa+5eJ3NL7+yzJrcIOZeuCMrMc6FIWt0=
+			</data>
+			<key>QLPlaceModelEntity</key>
+			<data>
+			Vz3YoAJGejDbd6x7X2qn5yMclbQg6Sp0P1vL9+T+LXI=
+			</data>
+			<key>QLPlaceOfRelevanceEntity</key>
+			<data>
+			na4eyXRQRhGI5+iIfMaNbnNZp1dQgJa3ZDPEO3o7M/4=
+			</data>
+			<key>QLStatisticalModelEntity</key>
+			<data>
+			ZPAiqnYq9J+zGBSoDuq1gcJU/2yP5VKDUE3vW1rmNCQ=
+			</data>
+			<key>QLVisitEntity</key>
+			<data>
+			V3XjqcVt7J6xF8bEyW6EBA2IQdNc/A8WGlG+Z9rYJ18=
+			</data>
+			<key>QLVisitModelEntity</key>
+			<data>
+			Det7B5G4hNEs/D2bhfTO0tBnRhcHwQ53cSazz4ABSf0=
+			</data>
+		</dict>
+		<key>PlaceOfRelevanceModel v2</key>
+		<dict>
+			<key>QLFixEntity</key>
+			<data>
+			zki6ri66Jh1Pa+5eJ3NL7+yzJrcIOZeuCMrMc6FIWt0=
+			</data>
+			<key>QLPlaceModelEntity</key>
+			<data>
+			Vz3YoAJGejDbd6x7X2qn5yMclbQg6Sp0P1vL9+T+LXI=
+			</data>
+			<key>QLPlaceOfRelevanceEntity</key>
+			<data>
+			na4eyXRQRhGI5+iIfMaNbnNZp1dQgJa3ZDPEO3o7M/4=
+			</data>
+			<key>QLStatisticalModelEntity</key>
+			<data>
+			ZPAiqnYq9J+zGBSoDuq1gcJU/2yP5VKDUE3vW1rmNCQ=
+			</data>
+			<key>QLVisitEntity</key>
+			<data>
+			V3XjqcVt7J6xF8bEyW6EBA2IQdNc/A8WGlG+Z9rYJ18=
+			</data>
+			<key>QLVisitModelEntity</key>
+			<data>
+			Det7B5G4hNEs/D2bhfTO0tBnRhcHwQ53cSazz4ABSf0=
+			</data>
+		</dict>
+	</dict>
+</dict>
+</plist>
