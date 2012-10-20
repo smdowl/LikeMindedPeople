@@ -12,8 +12,8 @@
 #import "TDBadgedCell.h"
 #import "RadiiTableViewCell.h"
 #import "SearchBar.h"
-#import "RAdiiResultDTO.h"
-#import "DetailView.h"
+#import "RadiiResultDTO.h"
+#import "DetailViewController.h"
 #import "SideBar.h"
 #import "DirectionsPathDTO.h"
 #import "MenuViewController.h"
@@ -52,28 +52,13 @@
 - (void)_removeAndStoreAllOtherResults:(RadiiResultDTO *)resultToKeep;
 - (void)_restoreResults;	// Add the radii results that were removed back to the map
 
-- (void)_startDownloadingDetailsForView:(DetailView *)detailView;
+- (void)_startDownloadingDetailsForView:(DetailViewController *)detailView;
 
 - (void)_animateToMapVisibility:(MapVisible)visibility;
 
 @end
 
 @implementation MapViewController
-@synthesize mapView = _mapView;
-@synthesize searchView = _searchView;
-
-@synthesize searchingView = _searchingView;
-@synthesize indicatorView = _indicatorView;
-
-@synthesize keyboardCancelButton = _keyboardCancelButton;
-
-@synthesize slideInLeft = _slideInLeft;
-@synthesize slideInRight = _slideInRight;
-
-@synthesize locationDisabledView = _locationDisabledView;
-@synthesize debugPanel = _debugPanel;
-
-@synthesize mapVisible = _mapVisible;
 
 #pragma mark -
 #pragma mark View lifecycle
@@ -180,6 +165,8 @@
 	[[DataModel sharedInstance] updateGeofenceRefreshLocation];
 	
 	_mapView.showsUserLocation = YES;
+    
+    [self refreshLocation];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -359,7 +346,7 @@
          
 		 NSDictionary *directionsDictionary = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:distance,duration,nil]
 																		  forKeys:[NSArray arrayWithObjects:@"distance", @"duration", nil]];
-		 _searchView.detailView.directionsDictionary = directionsDictionary;
+//		 _searchView.detailView.directionsDictionary = directionsDictionary;
 		 
 		 NSString *polylineString = [[route objectForKey:@"overview_polyline"] objectForKey:@"points"];
 		 NSArray *path = [MapViewController decodePolylineOfGoogleMaps:polylineString];
@@ -584,34 +571,34 @@
 		
 		RadiiResultDTO *radiiResult = (RadiiResultDTO *)annotation;
 		
-		if (!_searchView.detailView.isShowing)
-		{
-			if (_mapVisible == fullScreen)
-			{
-				if (!_searchView.detailView.isShowing)
-					[_searchView showDetailView];
-				
-				// After adding the detail view, remove the targets and then add self
-				[_searchView.detailView.backButton removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
-				[_searchView.detailView.backButton addTarget:self action:@selector(toggleFullScreen:) forControlEvents:UIControlEventTouchUpInside];
-				CGAffineTransform rotation = CGAffineTransformMakeRotation(M_PI_2);
-				[_searchView.detailView.backButton setTransform:rotation];
-			}
-			else
-			{
+//		if (!_searchView.detailView.isShowing)
+//		{
+//			if (_mapVisible == fullScreen)
+//			{
+//				if (!_searchView.detailView.isShowing)
+//					[_searchView showDetailView];
+//				
+//				// After adding the detail view, remove the targets and then add self
+//				[_searchView.detailView.backButton removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
+//				[_searchView.detailView.backButton addTarget:self action:@selector(toggleFullScreen:) forControlEvents:UIControlEventTouchUpInside];
+//				CGAffineTransform rotation = CGAffineTransformMakeRotation(M_PI_2);
+//				[_searchView.detailView.backButton setTransform:rotation];
+//			}
+//			else
+//			{
 				NSIndexPath *selectedIndex = [NSIndexPath indexPathForRow:[_searchResults indexOfObject:radiiResult] inSection:0];
 				
 				// Move the table view if it is on screen
 				[_searchView.searchResultsView selectRowAtIndexPath:selectedIndex
 														   animated:YES
 													 scrollPosition:UITableViewScrollPositionMiddle];
-			}
-		}
-        
+//			}
+//		}
+    
 		// Update the detail view
-		[_searchView.detailView setData:radiiResult];
-		if (!_searchView.detailView.locationDetails || _searchView.detailView.downloadingDetails)
-			[self _startDownloadingDetailsForView:_searchView.detailView];
+		[_detailView setData:radiiResult];
+		if (!_detailView.locationDetails || _detailView.downloadingDetails)
+			[self _startDownloadingDetailsForView:_detailView];
 		
 		id<MKAnnotation> annotation = annotationView.annotation;
 		if ([annotation isKindOfClass:[RadiiResultDTO class]])
@@ -882,15 +869,18 @@
 		if ([annotation isEqual:[_searchResults objectAtIndex:indexPath.row]])
 			[_mapView selectAnnotation:annotation animated:YES];
 	}
-	
-	// Set the detail view's data. This fill in the UI
-	if (!_searchView.detailView.isShowing)
-		[_searchView showDetailView];
-	
-	_searchView.detailView.data = [_searchResults objectAtIndex:indexPath.row];
-	
-	if (!_searchView.detailView.locationDetails || _searchView.detailView.downloadingDetails)
-		[self _startDownloadingDetailsForView:_searchView.detailView];
+    
+    
+    DetailViewController *detailController = [[DetailViewController alloc] initWithNibName:@"DetailViewController" bundle:nil];
+	[self presentModalViewController:detailController animated:YES];
+//	// Set the detail view's data. This fill in the UI
+//	if (!_searchView.detailView.isShowing)
+//		[_searchView showDetailView];
+//	
+//	_searchView.detailView.data = [_searchResults objectAtIndex:indexPath.row];
+//	
+//	if (!_searchView.detailView.locationDetails || _searchView.detailView.downloadingDetails)
+//		[self _startDownloadingDetailsForView:_searchView.detailView];
 }
 
 #pragma mark -
@@ -1151,6 +1141,12 @@
     [_mapView setRegion:region animated:YES];
 }
 
+- (IBAction)showDetailView
+{
+    DetailViewController *detailController = [[DetailViewController alloc] initWithNibName:@"DetailViewController" bundle:nil];
+	[self presentModalViewController:detailController animated:YES];
+}
+
 - (void)dealloc
 {
 	_mapView = nil;
@@ -1228,13 +1224,13 @@
 		[_mapView addAnnotation:annotation];
 }
 
-- (void)_startDownloadingDetailsForView:(DetailView *)detailView
+- (void)_startDownloadingDetailsForView:(DetailViewController *)detailView
 {
 	if (detailView)
 	{
-		detailView.downloadingDetails = YES;
+		_detailView.downloadingDetails = YES;
 		
-		[ServiceAdapter getLocationDetails:detailView.data
+		[ServiceAdapter getLocationDetails:_detailView.data
 									userId:[[DataModel sharedInstance] apiId]
 								   success:^(LocationDetailsDTO *details)
 		 {
@@ -1271,7 +1267,7 @@
     CGFloat backButtonRotation = mapVisibility == fullScreen ? M_PI_2 : 0;
     
     // Remove all targets from the back button
-    [_searchView.detailView.backButton removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
+//    [_searchView.detailView.backButton removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
     
     // Either set it to remove from screen on return to normal view
     
@@ -1297,7 +1293,7 @@
          _searchView.frame = searchViewFrame;
                            
          CGAffineTransform rotation = CGAffineTransformMakeRotation(backButtonRotation);
-         [_searchView.detailView.backButton setTransform:rotation];
+//         [_searchView.detailView.backButton setTransform:rotation];
      }
                      completion:^(BOOL finished)
      {

@@ -14,6 +14,7 @@
 #import "ServiceAdapter.h"
 #import "LoginViewController.h"
 #import "MapViewController.h"
+#import "DetailViewController.h"
 #import "Flurry.h"
 
 #define CORNER_RADIUS 5.0
@@ -59,7 +60,7 @@
     //[ServiceAdapter testService];
     
 	_mapViewController = [[MapViewController alloc] initWithNibName:nil bundle:nil];
-	
+	UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:_mapViewController];
     // FB Integration fb123987074412482
 //    _facebook = [[Facebook alloc] initWithAppId:@"123987074412482" andDelegate:self];
     _facebook = [[Facebook alloc] initWithAppId:@"276594672455627" andDelegate:self];	
@@ -81,6 +82,7 @@
 	{
 		[_facebook requestWithGraphPath:@"me" andDelegate:self];
 		self.window.rootViewController = _mapViewController;
+//        self.window.rootViewController = navController;
 	}
 	
     [self.window makeKeyAndVisible];

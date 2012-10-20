@@ -11,36 +11,6 @@
 #import "LocationDetailsDTO.h"
 
 @implementation DetailView
-@synthesize delegate = _delegate;
-
-@synthesize bar = _bar;
-
-@synthesize data = _data;
-@synthesize locationDetails = _locationDetails;
-
-@synthesize titleLabel = _titleLabel;
-@synthesize detailsView = _detailsView;
-
-@synthesize presentUsersLabel = _presentUsersLabel;
-@synthesize ratingLabel = _ratingLabel;
-@synthesize interestsLabel = _interestsLabel;
-
-@synthesize loadingDetailsView = _loadingDetailsView;
-@synthesize activityIndicator = _activityIndicator;
-
-@synthesize backButton = _backButton;
-
-@synthesize gestureRecognizerView = _gestureRecognizerView;
-
-@synthesize menuButton = _menuButton;
-
-@synthesize directionsButton = _directionsButton;
-@synthesize directionsLabel = _directionsLabel;
-@synthesize directionsDictionary = _directionsDictionary;
-
-@synthesize isShowing = _isShowing;
-
-@synthesize downloadingDetails = _downloadingDetails;
 
 - (void)setDelegate:(id<SearchViewDelegate>)delegate
 {

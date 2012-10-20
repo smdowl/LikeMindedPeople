@@ -17,7 +17,7 @@ typedef enum
     mapHidden = 2
 } MapVisible;
 
-@class DataModel, SearchBarPanel, SearchView, SideBar, GeofenceLocation;
+@class DataModel, SearchBarPanel, SearchView, SideBar, GeofenceLocation, DetailViewController;
 @interface MapViewController : UIViewController <UITableViewDelegate, UITableViewDataSource, UIGestureRecognizerDelegate, MKMapViewDelegate, CLLocationManagerDelegate, SearchViewDelegate>
 {	
 	MKMapView *_mapView;
@@ -63,6 +63,8 @@ typedef enum
 	BOOL _askedForPermission;
     
     MapVisible _mapVisible;
+    
+    DetailViewController *_detailView;
 }
 
 @property (nonatomic, strong) IBOutlet MKMapView *mapView;
@@ -90,5 +92,6 @@ typedef enum
 - (IBAction)displayGeofences;
 
 - (IBAction)refreshLocation;
+- (IBAction)showDetailView;
 
 @end
