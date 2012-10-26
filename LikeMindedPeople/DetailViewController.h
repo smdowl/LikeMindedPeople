@@ -45,9 +45,6 @@
 
 @property (nonatomic,strong) IBOutlet UIButton *menuButton;
 
-@property (nonatomic) BOOL downloadingDetails;
-
 - (void)failedToLoadDetails;
-- (IBAction)cancel;
 
 @end

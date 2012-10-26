@@ -1194,7 +1194,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Shaun Dowling";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Shaun Dowling (T55NFAFBA2)";
 				DYLIB_COMPATIBILITY_VERSION = admin;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1215,7 +1215,7 @@
 					"\"$(SRCROOT)/LikeMindedPeople/Flurry\"",
 				);
 				PRODUCT_NAME = LikeMindedPeople;
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "29B54B8B-0EB1-4239-8787-C6BAFC8D88F6";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "2AE181BE-3D91-4542-84F4-33C2FD6071FE";
 				SKIP_INSTALL = NO;
 				WRAPPER_EXTENSION = app;
 			};

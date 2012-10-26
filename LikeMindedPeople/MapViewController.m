@@ -52,7 +52,7 @@
 - (void)_removeAndStoreAllOtherResults:(RadiiResultDTO *)resultToKeep;
 - (void)_restoreResults;	// Add the radii results that were removed back to the map
 
-- (void)_startDownloadingDetailsForView:(DetailViewController *)detailView;
+//- (void)_startDownloadingDetailsForView:(DetailViewController *)detailView;
 
 - (void)_animateToMapVisibility:(MapVisible)visibility;
 
@@ -92,11 +92,7 @@
     
 	_searchView.searchResultsView.delegate = self;
 	_searchView.searchResultsView.dataSource = self;
-	
-	_searchView.fullScreen = YES;
-    // doing this to very lazily set the default screen layout to fe fullscreen map
-    [self _animateToMapVisibility:fullScreen];
-	
+		
 	// Recognizing gestures on the left side of the screen
 	UIPanGestureRecognizer *leftSwipeGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(_inFromLeft:)];
 	[_slideInLeft addGestureRecognizer:leftSwipeGestureRecognizer];
@@ -115,6 +111,40 @@
 #endif
 	
 	_storedResults = [NSMutableArray array];
+    
+    _mapVisible = fullScreen;
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    // Add the buttons to the navigation bar
+    //    UIButton *settingsButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    //    [settingsButton setImage:[UIImage imageNamed:@"settings.png"] forState:UIControlStateNormal];
+    
+    UIImage *settingsImage = [UIImage imageNamed:@"settings.png"];
+    UIBarButtonItem *settingsButton = [[UIBarButtonItem alloc] initWithImage:settingsImage style:UIBarButtonItemStylePlain target:self action:@selector(debug:)];
+    self.navigationItem.leftBarButtonItem = settingsButton;
+    
+    UIBarButtonItem* rightButton = [[UIBarButtonItem alloc] initWithTitle:@"Test" style:UIBarButtonItemStyleBordered target:self action:@selector(showDetailView)];
+    rightButton.tintColor = [UIColor darkGrayColor];
+    self.navigationItem.rightBarButtonItem = rightButton;
+    
+    // Adjust the position of the map view to ensure that it is at the origin of the view
+    CGRect mapFrame = _mapView.frame;
+    mapFrame.origin.y = 0;
+    _mapView.frame = mapFrame;
+    
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"headerlogoandbg.png"]];
+    
+    CGRect imageFrame = imageView.frame;
+    imageFrame.size = self.navigationController.navigationBar.frame.size;
+    imageView.frame = imageFrame;
+    
+//    self.navigationItem.titleView = imageView;
+    
+    [self _animateToMapVisibility:_mapVisible];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -164,25 +194,25 @@
 	
 	[[DataModel sharedInstance] updateGeofenceRefreshLocation];
 	
-	_mapView.showsUserLocation = YES;
-    
-    [self refreshLocation];
+    if (!_mapView.showsUserLocation)
+    {
+        _mapView.showsUserLocation = YES;
+//        [self refreshLocation];
+    }
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
 	[super viewWillDisappear:animated];
-	// Stop the SearchBarPanel recieving notifications
 	
+    // Stop the SearchBarPanel recieving notifications
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)viewDidDisappear:(BOOL)animated
 {
 	[super viewDidDisappear:animated];
-	
-	_mapView.showsUserLocation = NO;
-	
+		
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
@@ -190,6 +220,8 @@
 {
     [super viewDidUnload];
 	
+    _mapView.showsUserLocation = NO;
+    
     _mapView = nil;
 	_searchView = nil;
 }
@@ -594,12 +626,7 @@
 													 scrollPosition:UITableViewScrollPositionMiddle];
 //			}
 //		}
-    
-		// Update the detail view
-		[_detailView setData:radiiResult];
-		if (!_detailView.locationDetails || _detailView.downloadingDetails)
-			[self _startDownloadingDetailsForView:_detailView];
-		
+    		
 		id<MKAnnotation> annotation = annotationView.annotation;
 		if ([annotation isKindOfClass:[RadiiResultDTO class]])
 		{
@@ -656,8 +683,6 @@
 		}
 	}
 	
-	_detailViewTimer = [NSTimer scheduledTimerWithTimeInterval:0.1 target:_searchView selector:@selector(hideDetailView) userInfo:nil repeats:NO];
-    //	[_searchView hideDetailView];
 	[_searchView.searchResultsView deselectRowAtIndexPath:[_searchView.searchResultsView indexPathForSelectedRow] animated:YES];
 }
 
@@ -869,18 +894,10 @@
 		if ([annotation isEqual:[_searchResults objectAtIndex:indexPath.row]])
 			[_mapView selectAnnotation:annotation animated:YES];
 	}
-    
-    
+       
     DetailViewController *detailController = [[DetailViewController alloc] initWithNibName:@"DetailViewController" bundle:nil];
-	[self presentModalViewController:detailController animated:YES];
-//	// Set the detail view's data. This fill in the UI
-//	if (!_searchView.detailView.isShowing)
-//		[_searchView showDetailView];
-//	
-//	_searchView.detailView.data = [_searchResults objectAtIndex:indexPath.row];
-//	
-//	if (!_searchView.detailView.locationDetails || _searchView.detailView.downloadingDetails)
-//		[self _startDownloadingDetailsForView:_searchView.detailView];
+	[self.navigationController pushViewController:detailController animated:YES];
+	detailController.data = [_searchResults objectAtIndex:indexPath.row];
 }
 
 #pragma mark -
@@ -1144,7 +1161,7 @@
 - (IBAction)showDetailView
 {
     DetailViewController *detailController = [[DetailViewController alloc] initWithNibName:@"DetailViewController" bundle:nil];
-	[self presentModalViewController:detailController animated:YES];
+    [self.navigationController pushViewController:detailController animated:YES];
 }
 
 - (void)dealloc
@@ -1224,26 +1241,6 @@
 		[_mapView addAnnotation:annotation];
 }
 
-- (void)_startDownloadingDetailsForView:(DetailViewController *)detailView
-{
-	if (detailView)
-	{
-		_detailView.downloadingDetails = YES;
-		
-		[ServiceAdapter getLocationDetails:_detailView.data
-									userId:[[DataModel sharedInstance] apiId]
-								   success:^(LocationDetailsDTO *details)
-		 {
-			 if (detailView)
-				 detailView.locationDetails = details;
-		 }
-								   failure:^(NSError *error)
-		 {
-             //			 [[[UIAlertView alloc] initWithTitle:@"Network Error" message:@"Problem getting details for location" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-			 [detailView failedToLoadDetails];
-		 }];
-	}
-}
 
 - (void)_animateToMapVisibility:(MapVisible)mapVisibility
 {
@@ -1258,7 +1255,7 @@
             searchViewOrigin = floor(MAP_HIDDEN_RATIO * self.view.frame.size.height);
             break;
         case mapHidden:
-            searchViewOrigin = _mapView.frame.origin.y;
+            searchViewOrigin = 0;
             break;
         default:
             break;

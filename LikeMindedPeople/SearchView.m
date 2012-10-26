@@ -34,10 +34,6 @@
 @synthesize searchResultsView = _searchResultsView;
 @synthesize noResultsView = _noResultsView;
 
-@synthesize detailView = _detailView;
-
-@synthesize fullScreen = _fullScreen;
-
 - (void)awakeFromNib
 {
 	// Store the buttons in an array for easy index reference
@@ -79,43 +75,7 @@
         downRecognizer.direction = UISwipeGestureRecognizerDirectionDown;
 		[button addGestureRecognizer:downRecognizer];
 	}
-}
-
-#pragma mark -
-#pragma mark UISwipeGestureRecognizer methods
-
-- (void)setFullScreen:(BOOL)fullScreen
-{
-	_fullScreen = fullScreen;
-	
-	if (fullScreen)
-		[self setTabBarGestureDirection:UISwipeGestureRecognizerDirectionUp];
-	else
-		[self setTabBarGestureDirection:UISwipeGestureRecognizerDirectionDown];
-}
-
-- (void)setTabBarGestureDirection:(UISwipeGestureRecognizerDirection) direction
-{
-//	for (UIButton *button in _buttonsArray)
-//	{
-//		for (UISwipeGestureRecognizer *recognizer in button.gestureRecognizers)
-//		{
-//			if ([recognizer isKindOfClass:[UISwipeGestureRecognizer class]])
-//				recognizer.direction = direction;
-//		}
-//	}
-	
-	if (_detailView)
-	{
-		for (UISwipeGestureRecognizer *recognizer in _detailView.gestureRecognizerView.gestureRecognizers)
-		{
-			if ([recognizer isKindOfClass:[UISwipeGestureRecognizer class]])
-				recognizer.direction = _fullScreen ? UISwipeGestureRecognizerDirectionUp :UISwipeGestureRecognizerDirectionDown;
-		}
-	}
-		
-}
-		
+}		
 
 #pragma mark -
 #pragma mark External Methods
@@ -202,79 +162,6 @@
 //    
 //}
 
-- (void)showDetailView
-{	
-	if (!_detailView.isShowing)
-	{
-		[[NSBundle mainBundle] loadNibNamed:@"DetailView" owner:self options:nil];
-		
-		// Add the gesture recognizer to toggle between full screen
-		
-		UISwipeGestureRecognizer *recognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:_delegate action:@selector(_barSwipped:)];
-		recognizer.direction = _fullScreen ? UISwipeGestureRecognizerDirectionUp :UISwipeGestureRecognizerDirectionDown;
-		[_detailView.gestureRecognizerView addGestureRecognizer:recognizer];
-//		_detailView.delegate = _delegate;
-		CGRect detailFrame = _detailView.frame;
-		detailFrame.origin.x = self.frame.size.width;
-		
-		if (_searchBar)
-		{
-			detailFrame.origin.y += _searchBar.frame.size.height;
-			[self selectButton:0];
-		}
-		
-		_detailView.frame = detailFrame;
-		_detailView.hidden = NO;
-		[self addSubview:_detailView];
-		
-//		[UIView beginAnimations:nil context:nil];
-		
-		[UIView animateWithDuration:0.2
-						 animations:^()
-		 {
-			 
-			 CGRect detailFrame = _detailView.frame;
-			 detailFrame.origin.x -= _detailView.frame.size.width;
-			 detailFrame.origin.y = 0;
-			 _detailView.frame = detailFrame;
-			 
-			 _searchBarPanel.alpha = 0.0;
-			 //		[UIView commitAnimations];	
-		 } 
-						 completion:^(BOOL finished)
-		 {
-			 _detailView.isShowing = YES;		 
-		 }];		
-	}
-}
-
-- (IBAction)hideDetailView
-{	
-	if (_detailView.isShowing)
-	{
-		[UIView animateWithDuration:0.2 
-						 animations:^()
-		 {
-			 CGRect detailFrame = _detailView.frame;
-			 detailFrame.origin.x += _detailView.frame.size.width;
-			 _detailView.frame = detailFrame;
-			 
-			 _searchBarPanel.alpha = 1.0;
-			 
-			 [UIView commitAnimations];	
-		 } 
-						 completion:^(BOOL finished)
-		 {
-			 _detailView.hidden = YES;
-			 _detailView.isShowing = NO;
-		 }];	 
-		
-		[_searchResultsView deselectRowAtIndexPath:[_searchResultsView indexPathForSelectedRow] animated:YES];
-		
-		[_delegate deselectPin];
-	}
-}
-
 #pragma mark -
 #pragma mark IBActions
 
@@ -289,16 +176,6 @@
 	NSUInteger buttonIndex = [_buttonsArray indexOfObject:sender];
 	
 	[self selectButton:buttonIndex];
-}
-
-- (IBAction)getDirections
-{
-	[_delegate getDirectionsToLocation:_detailView.data];
-}
-
-- (IBAction)showMenu
-{
-	[_delegate showMenu:_detailView.locationDetails.menuURL];
 }
 
 #pragma mark -

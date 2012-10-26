@@ -60,7 +60,19 @@
     //[ServiceAdapter testService];
     
 	_mapViewController = [[MapViewController alloc] initWithNibName:nil bundle:nil];
-	UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:_mapViewController];
+    _navController = [[UINavigationController alloc] initWithRootViewController:_mapViewController];
+    _navController.navigationBar.tintColor = [UIColor whiteColor];
+    
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"headerlogoandbg.png"]];
+    
+    CGRect imageFrame = imageView.frame;
+    imageFrame.size = _navController.navigationBar.frame.size;
+    imageView.frame = imageFrame;
+    
+    // This causes problems when presenting new view controllers
+    [_navController.navigationBar setBackgroundImage:imageView.image forBarMetrics:UIBarMetricsDefault];
+    
+    
     // FB Integration fb123987074412482
 //    _facebook = [[Facebook alloc] initWithAppId:@"123987074412482" andDelegate:self];
     _facebook = [[Facebook alloc] initWithAppId:@"276594672455627" andDelegate:self];	
@@ -81,8 +93,8 @@
 	else
 	{
 		[_facebook requestWithGraphPath:@"me" andDelegate:self];
-		self.window.rootViewController = _mapViewController;
-//        self.window.rootViewController = navController;
+//		self.window.rootViewController = _mapViewController;
+        self.window.rootViewController = _navController;
 	}
 	
     [self.window makeKeyAndVisible];
@@ -101,20 +113,15 @@
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
 	[[DataModel sharedInstance] close];
-
-	if (self.window.rootViewController == _mapViewController)
-	{
-		[_mapViewController viewDidDisappear:NO];
-	}
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {
-	// Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
-	if (self.window.rootViewController == _mapViewController)
-	{
-		[_mapViewController viewDidAppear:NO];
-	}
+//	// Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+//	if (self.window.rootViewController == _mapViewController)
+//	{
+//		[_mapViewController viewDidAppear:NO];
+//	}
 	
 	[[[DataModel sharedInstance] coreConnector] checkStatusAndOnEnabled:^(QLContextConnectorPermissions *permissions)
 	 {
@@ -148,7 +155,7 @@
 
 - (void)bypassFacebook
 {
-	self.window.rootViewController = _mapViewController;
+	self.window.rootViewController = _navController;
 	
 	[[DataModel sharedInstance] setAuthorized:YES];
 	[[DataModel sharedInstance] runStartUpSequence];
@@ -179,7 +186,7 @@ void uncaughtExceptionHandler(NSException *exception)
     [defaults setObject:[_facebook accessToken] forKey:@"FBAccessTokenKey"];
     [defaults setObject:[_facebook expirationDate] forKey:@"FBExpirationDateKey"];
     [defaults synchronize]; 
-    self.window.rootViewController = _mapViewController;
+    self.window.rootViewController = _navController;
 	
 	[[DataModel sharedInstance] setAuthorized:YES];
 	[[DataModel sharedInstance] runStartUpSequence];

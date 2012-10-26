@@ -9,8 +9,10 @@
 #import "DetailViewController.h"
 #import "RadiiResultDTO.h"
 #import "LocationDetailsDTO.h"
+#import "ServiceAdapter.h"
+#import "DataModel.h"
 
-@interface DetailViewController ()
+@interface DetailViewController (PrivateUtilities)
 
 @end
 
@@ -87,9 +89,30 @@
 	[_activityIndicator stopAnimating];
 }
 
-- (IBAction)cancel
+@end
+
+@implementation DetailViewController (PrivateUtilities)
+
+- (void)_startDownloadingDetails
 {
-    [self.presentingViewController dismissModalViewControllerAnimated:YES];
+		_downloadingDetails = YES;
+	
+    DetailViewController *strongSelf = self;
+    
+		[ServiceAdapter getLocationDetails:_data
+									userId:[[DataModel sharedInstance] apiId]
+								   success:^(LocationDetailsDTO *details)
+		 {
+			 if (strongSelf)
+				 self.locationDetails = details;
+		 }
+								   failure:^(NSError *error)
+		 {
+             //			 [[[UIAlertView alloc] initWithTitle:@"Network Error" message:@"Problem getting details for location" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+             if (strongSelf)
+                 [strongSelf failedToLoadDetails];
+		 }];
 }
+
 
 @end

@@ -15,7 +15,9 @@
 @class LoginViewController;
 @class MapViewController;
 @interface AppDelegate : UIResponder <UIApplicationDelegate, FBRequestDelegate, FBSessionDelegate> 
-{	
+{
+    UINavigationController *_navController;
+    
 	LoginViewController *_loginViewController;
 	Facebook *_facebook;
 	MapViewController *_mapViewController;
