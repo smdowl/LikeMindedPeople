@@ -40,6 +40,8 @@
 	
 	UIImage *buttonSelected = [[UIImage imageNamed:@"button3.png"] stretchableImageWithLeftCapWidth:10 topCapHeight:0];
 	[self setBackgroundImage:buttonSelected forState:UIControlStateSelected];
+    
+    self.titleLabel.textColor = [UIColor orangeColor];
 }
 
 @end

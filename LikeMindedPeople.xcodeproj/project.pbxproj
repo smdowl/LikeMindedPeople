@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2848EC7F163C4C3D005D1BD1 /* RadiiSection.m in Sources */ = {isa = PBXBuildFile; fileRef = 2848EC7E163C4C3D005D1BD1 /* RadiiSection.m */; };
+		2848EC83163EE86A005D1BD1 /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2848EC81163EE869005D1BD1 /* SettingsViewController.m */; };
+		2848EC84163EE86A005D1BD1 /* SettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2848EC82163EE86A005D1BD1 /* SettingsViewController.xib */; };
 		28866F571608E3E100D3FAAB /* foursquare@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 28866F561608E3E100D3FAAB /* foursquare@2x.png */; };
 		288A0EF0160986DF00FACA59 /* libFlurry.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 288A0EEF160986DF00FACA59 /* libFlurry.a */; };
 		288A0EF3160BF7E600FACA59 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 288A0EF2160BF7E500FACA59 /* CFNetwork.framework */; };
@@ -151,6 +154,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2848EC7D163C4C3D005D1BD1 /* RadiiSection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RadiiSection.h; path = Classes/RadiiSection.h; sourceTree = "<group>"; };
+		2848EC7E163C4C3D005D1BD1 /* RadiiSection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RadiiSection.m; path = Classes/RadiiSection.m; sourceTree = "<group>"; };
+		2848EC80163EE868005D1BD1 /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SettingsViewController.h; path = Classes/SettingsViewController.h; sourceTree = "<group>"; };
+		2848EC81163EE869005D1BD1 /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SettingsViewController.m; path = Classes/SettingsViewController.m; sourceTree = "<group>"; };
+		2848EC82163EE86A005D1BD1 /* SettingsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = SettingsViewController.xib; path = Classes/SettingsViewController.xib; sourceTree = "<group>"; };
 		28866F561608E3E100D3FAAB /* foursquare@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "foursquare@2x.png"; sourceTree = "<group>"; };
 		288A0EEE160986DF00FACA59 /* Flurry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flurry.h; sourceTree = "<group>"; };
 		288A0EEF160986DF00FACA59 /* libFlurry.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFlurry.a; sourceTree = "<group>"; };
@@ -670,6 +678,9 @@
 				28B46655163023070084C9A9 /* DetailViewController.h */,
 				28B46656163023070084C9A9 /* DetailViewController.m */,
 				28B46657163023070084C9A9 /* DetailViewController.xib */,
+				2848EC80163EE868005D1BD1 /* SettingsViewController.h */,
+				2848EC81163EE869005D1BD1 /* SettingsViewController.m */,
+				2848EC82163EE86A005D1BD1 /* SettingsViewController.xib */,
 				92EBF32E15C5992D0085C47E /* TDBadgedCell.h */,
 				92EBF32F15C5992E0085C47E /* TDBadgedCell.m */,
 				92DF6EED15E7EEA300C05641 /* RadiiTableViewCell.h */,
@@ -679,6 +690,8 @@
 				921E91D515CC3D360033C8B1 /* SideBar.m */,
 				92DF6EEA15E53A6000C05641 /* RadiiButton.h */,
 				92DF6EEB15E53A6000C05641 /* RadiiButton.m */,
+				2848EC7D163C4C3D005D1BD1 /* RadiiSection.h */,
+				2848EC7E163C4C3D005D1BD1 /* RadiiSection.m */,
 			);
 			name = UI;
 			sourceTree = "<group>";
@@ -986,6 +999,7 @@
 				28B4664A162E25640084C9A9 /* DataModels.bundle in Resources */,
 				28B4664C162E25640084C9A9 /* rules.txt in Resources */,
 				28B46659163023070084C9A9 /* DetailViewController.xib in Resources */,
+				2848EC84163EE86A005D1BD1 /* SettingsViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1066,6 +1080,8 @@
 				92DF6EEC15E53A6100C05641 /* RadiiButton.m in Sources */,
 				92DF6EEF15E7EEA400C05641 /* RadiiTableViewCell.m in Sources */,
 				28B46658163023070084C9A9 /* DetailViewController.m in Sources */,
+				2848EC7F163C4C3D005D1BD1 /* RadiiSection.m in Sources */,
+				2848EC83163EE86A005D1BD1 /* SettingsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1184,7 +1200,7 @@
 					"\"$(SRCROOT)/LikeMindedPeople/facebook-ios-sdk\"",
 					"\"$(SRCROOT)/LikeMindedPeople/Flurry\"",
 				);
-				PRODUCT_NAME = LikeMindedPeople;
+				PRODUCT_NAME = Radii;
 				SKIP_INSTALL = NO;
 				WRAPPER_EXTENSION = app;
 			};
@@ -1214,7 +1230,7 @@
 					"\"$(SRCROOT)/LikeMindedPeople/facebook-ios-sdk\"",
 					"\"$(SRCROOT)/LikeMindedPeople/Flurry\"",
 				);
-				PRODUCT_NAME = LikeMindedPeople;
+				PRODUCT_NAME = Radii;
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "2AE181BE-3D91-4542-84F4-33C2FD6071FE";
 				SKIP_INSTALL = NO;
 				WRAPPER_EXTENSION = app;

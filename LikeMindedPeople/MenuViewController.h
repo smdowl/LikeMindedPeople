@@ -10,12 +10,15 @@
 
 @interface MenuViewController : UIViewController <UIWebViewDelegate>
 {
-	UIWebView *_menuView;
+    // Url provided by foursqaure for the menu
 	NSString *_menuURLString;
+    
+    // We use this webview to contain the url provied by foursquare
+	UIWebView *_menuView;
 }
 
-@property (nonatomic,strong) IBOutlet UIWebView *menuView;
 @property (nonatomic,strong) NSString *menuURLString;
+@property (nonatomic,strong) UIWebView *menuView;
 
 - (IBAction)hideMenu;
 

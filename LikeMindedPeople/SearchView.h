@@ -19,11 +19,7 @@
 
 - (void)deselectPin;
 
-- (void)getDirectionsToLocation:(RadiiResultDTO *)location;
-
 - (void)slideView:(BOOL)upwards;
-
-- (void)showMenu:(NSString *)urlString;
 
 @end
 

@@ -11,6 +11,7 @@
 #import "LocationDetailsDTO.h"
 #import "ServiceAdapter.h"
 #import "DataModel.h"
+#import "MenuViewController.h"
 
 @interface DetailViewController (PrivateUtilities)
 
@@ -58,9 +59,7 @@
 	
 	// TODO: actually do this
 	_interestsLabel.text = @"";
-	
-	_menuButton.hidden = YES;
-	
+		
 	_loadingDetailsView.hidden = NO;
 	[_activityIndicator startAnimating];
 }
@@ -74,10 +73,7 @@
     [_activityIndicator stopAnimating];
     
     _locationDetails = locationDetails;
-    
-    if (locationDetails.menuURL)
-        _menuButton.hidden = NO;
-    
+        
     _presentUsersLabel.text = [NSString stringWithFormat:@"%i", locationDetails.currentPeopleCount];
     //		_ratingLabel.text = [NSString stringWithFormat:@"%0.0f%%", locationDetails.rating*100];
     //	}
@@ -87,6 +83,48 @@
 {
 	_loadingDetailsView.hidden = YES;
 	[_activityIndicator stopAnimating];
+}
+
+#pragma mark -
+#pragma mark IBActions
+
+- (IBAction)rateUp:(id)sender
+{
+    
+}
+
+- (IBAction)rateDown:(id)sender
+{
+    
+}
+
+- (IBAction)share:(id)sender
+{
+    
+}
+
+- (IBAction)callBusiness:(id)sender
+{
+    
+}
+
+- (IBAction)directionsBusiness:(id)sender
+{
+    
+}
+
+- (IBAction)menuBusiness:(id)sender
+{
+    MenuViewController *menuController = [[MenuViewController alloc] initWithNibName:nil bundle:nil];
+    // If the location details have been set then use the url defined there. Otherwise, just pass nil so that the meny can present the no menu screen.
+    menuController.menuURLString = _locationDetails ? _locationDetails.menuURL : nil;
+    [self presentModalViewController:menuController animated:YES];
+    
+    // Animate the scroll view back to its original position to avoid a UI glitch
+    [UIView animateWithDuration:1 animations:^()
+    {
+        _containerView.contentOffset = CGPointZero;
+    }];
 }
 
 @end

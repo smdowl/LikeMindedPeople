@@ -13,8 +13,6 @@
 @end
 
 @implementation MenuViewController
-@synthesize menuView = _menuView;
-@synthesize menuURLString = _menuURLString;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {

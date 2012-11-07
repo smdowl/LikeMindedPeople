@@ -36,6 +36,7 @@
 				CGPathAddLineToPoint(path, nil, origin.x, origin.y);
 		}
 		_mapKitPath = CGPathCreateCopy(path);
+        CGPathRelease(path);
 	}
 	
 	return self;

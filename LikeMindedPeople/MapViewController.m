@@ -13,9 +13,9 @@
 #import "RadiiTableViewCell.h"
 #import "SearchBar.h"
 #import "RadiiResultDTO.h"
+#import "SettingsViewController.h"
 #import "DetailViewController.h"
 #import "SideBar.h"
-#import "DirectionsPathDTO.h"
 #import "MenuViewController.h"
 #import "LocationDetailsDTO.h"
 
@@ -56,6 +56,10 @@
 
 - (void)_animateToMapVisibility:(MapVisible)visibility;
 
+- (void)_showSettingsPage:(id)sender;
+
+- (void)_centerMap;
+
 @end
 
 @implementation MapViewController
@@ -67,6 +71,7 @@
 {
     [super viewDidLoad];
 	
+    // Load the search view from a nib, storing it in the _searchView iVar
 	[[NSBundle mainBundle] loadNibNamed:@"SearchView" owner:self options:nil];
 	
 	// Fit the frame in the gap between the map and the bottom of the view with the bar panel overlapping the map
@@ -78,31 +83,22 @@
 	[self.view insertSubview:_searchView belowSubview:_searchingView];
 	_searchView.delegate = self;
     
+    // Add the pinch gesture to the map so that when the user zooms in and the map is only half visible it goes full screen
 	UIPinchGestureRecognizer *pinchRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinchGesture:)];
 	
-	// Need to set us as the delgate because of the map views own gesture reconizers
+	// Need to set the delgate because of the map views own gesture reconizers which require us to allow multiple gesture recognizers
 	pinchRecognizer.delegate = self;
-    [_mapView addGestureRecognizer:pinchRecognizer];
-    _mapView.userTrackingMode = MKUserTrackingModeNone;
+    // TODO: re-enabled the pinch gesure recognizer. at the moment it is making the user disappear
+//    [_mapView addGestureRecognizer:pinchRecognizer];
+    
+//    _mapView.userTrackingMode = MKUserTrackingModeNone;
+    _mapView.userTrackingMode = MKUserTrackingModeFollow;
 	_mapView.delegate = self;
 	_mapView.showsUserLocation = YES;
-	
-	[_keyboardCancelButton addTarget:self action:@selector(_hideKeyboard) forControlEvents:UIControlEventTouchUpInside];
-	[_keyboardCancelButton removeFromSuperview];
     
 	_searchView.searchResultsView.delegate = self;
 	_searchView.searchResultsView.dataSource = self;
-		
-	// Recognizing gestures on the left side of the screen
-	UIPanGestureRecognizer *leftSwipeGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(_inFromLeft:)];
-	[_slideInLeft addGestureRecognizer:leftSwipeGestureRecognizer];
-	
-	// Recognizing gestures on the right side of the screen
-	UIPanGestureRecognizer *rightSwipeGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(_inFromRight:)];
-	[_slideInRight addGestureRecognizer:rightSwipeGestureRecognizer];
-	
-    //	[_searchView.detailView.backButton addTarget:_searchView action:@selector(hideDetailView) forControlEvents:UIControlEventTouchUpInside];
-	
+			
 	// TODO: Maybe take this out
 	[[DataModel sharedInstance] addLocationListener:self];
 	
@@ -113,48 +109,18 @@
 	_storedResults = [NSMutableArray array];
     
     _mapVisible = fullScreen;
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
     
-    // Add the buttons to the navigation bar
-    //    UIButton *settingsButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    //    [settingsButton setImage:[UIImage imageNamed:@"settings.png"] forState:UIControlStateNormal];
-    
+    // Add the settings button to the navigation bar
     UIImage *settingsImage = [UIImage imageNamed:@"settings.png"];
-    UIBarButtonItem *settingsButton = [[UIBarButtonItem alloc] initWithImage:settingsImage style:UIBarButtonItemStylePlain target:self action:@selector(debug:)];
+    UIBarButtonItem *settingsButton = [[UIBarButtonItem alloc] initWithImage:settingsImage style:UIBarButtonItemStylePlain target:self action:@selector(_showSettingsPage:)];
     self.navigationItem.leftBarButtonItem = settingsButton;
     
-    UIBarButtonItem* rightButton = [[UIBarButtonItem alloc] initWithTitle:@"Test" style:UIBarButtonItemStyleBordered target:self action:@selector(showDetailView)];
+    // Add a "test" button for debugging
+    UIBarButtonItem* rightButton = [[UIBarButtonItem alloc] initWithTitle:@"Center" style:UIBarButtonItemStyleBordered target:self action:@selector(_centerMap)];
     rightButton.tintColor = [UIColor darkGrayColor];
     self.navigationItem.rightBarButtonItem = rightButton;
     
-    // Adjust the position of the map view to ensure that it is at the origin of the view
-    CGRect mapFrame = _mapView.frame;
-    mapFrame.origin.y = 0;
-    _mapView.frame = mapFrame;
-    
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"headerlogoandbg.png"]];
-    
-    CGRect imageFrame = imageView.frame;
-    imageFrame.size = self.navigationController.navigationBar.frame.size;
-    imageView.frame = imageFrame;
-    
-//    self.navigationItem.titleView = imageView;
-    
-    [self _animateToMapVisibility:_mapVisible];
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-	[super viewDidAppear:animated];
-    
-	// Set the searchBarPanel to recieve keyboard notifications
-	
-	
-	[[NSNotificationCenter defaultCenter] addObserver:self
+    [[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(keyboardWillShow:)
 												 name:UIKeyboardWillShowNotification
 											   object:nil];
@@ -163,34 +129,50 @@
 											 selector:@selector(keyboardWillHide:)
 												 name:UIKeyboardWillHideNotification
 											   object:nil];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    // Sometimes a pin is left selected so deselect it
+    [self deselectPin];
+    
+    // Adjust the position of the map view to ensure that it is at the origin of the view. Not really sure why it isn't if you don't do this
+    CGRect mapFrame = _mapView.frame;
+    mapFrame.origin.y = 0;
+    _mapView.frame = mapFrame;
+    
+    [self _animateToMapVisibility:_mapVisible];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+	[super viewDidAppear:animated];
     
 	DataModel *dataModel = [DataModel sharedInstance];
+    
+    // Check whether the gimbal SDK has been enabled
 	[dataModel.coreConnector checkStatusAndOnEnabled:^(QLContextConnectorPermissions *connectorPermissions) {
-        
+        // If so, just continue as usual
     } disabled:^(NSError *err) {
+        // If we haven't already asked for permission once then present the permissions view controller
 		if (!_askedForPermission)
 		{
 			[dataModel.coreConnector enableFromViewController:self success:nil failure:nil];
+            _askedForPermission = YES;
 		}
 		else
 		{
 			[[[UIAlertView alloc] initWithTitle:@"Permissions" message:@"Without enabling the Gimbal SDK we can't recommend places that match your personality" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
 			[dataModel.coreConnector enableFromViewController:self success:nil failure:nil];
 		}
-		
-		_askedForPermission = YES;
     }];
-	
+    
 	if ([CLLocationManager authorizationStatus] != kCLAuthorizationStatusAuthorized)
-	{
 		[self _setMapVisible:NO];
-		
-        //		_locationManager.delegate = self;
-	}
 	else
-	{
 		[self _setMapVisible:YES];
-	}
 	
 	[[DataModel sharedInstance] updateGeofenceRefreshLocation];
 	
@@ -205,30 +187,16 @@
 {
 	[super viewWillDisappear:animated];
 	
-    // Stop the SearchBarPanel recieving notifications
-	[[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
-- (void)viewDidDisappear:(BOOL)animated
-{
-	[super viewDidDisappear:animated];
-		
+    // Stop the MapViewController recieving notifications
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)viewDidUnload
 {
     [super viewDidUnload];
-	
-    _mapView.showsUserLocation = NO;
-    
+	    
     _mapView = nil;
 	_searchView = nil;
-}
-
-- (IBAction)enableLocationServices
-{
-	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"prefs://"]];
 }
 
 #pragma mark -
@@ -236,16 +204,23 @@
 
 - (void)beginSearchForPlacesWithName:(NSString *)name type:(NSString *)type
 {
+    
 	if (name.length || type.length)
 	{
-		[_mapView removeOverlay:_directionsLine];
-		_directionsLine = nil;
-		
 		[_storedResults removeAllObjects];
 		
-        //		[_searchConnection getGoogleObjectsWithQuery:searchText andMapRegion:[_mapView region] andNumberOfResults:20 addressesOnly:YES andReferer:@"http://WWW.radii.com"];
-        //		[ServiceAdapter getGoogleSearchResultsForUser:[[DataModel sharedInstance] userId] atLocation:_mapView.centerCoordinate withName:name withType:type success:^(NSArray *results)
-		[ServiceAdapter getFourSquareSearchResultsForUser:[[DataModel sharedInstance] apiId] atLocation:_mapView.centerCoordinate withQuery:name ? name : type success:^(NSArray *results)
+        _searchingView.hidden = NO;
+		[_indicatorView startAnimating];
+		
+		if (_mapVisible == fullScreen)
+			[self _animateToMapVisibility:halfScreen];
+        
+        CLLocationCoordinate2D coord = _userLocation.coordinate;
+//        _mapView.centerCoordinate
+        
+        [_mapView setCenterCoordinate:_userLocation.coordinate];
+        
+		[ServiceAdapter getFourSquareSearchResultsForUser:[[DataModel sharedInstance] apiId] atLocation:coord withQuery:name ? name : type success:^(NSArray *results)
 		 {
 			 ResultType resultType;
 			 if (!type)
@@ -271,8 +246,8 @@
 				 
 				 NSMutableArray *newResults = [NSMutableArray arrayWithArray:results];
 				 
-                 // If the user hasn't done a specific search only include the relavent places
-                 // (I have disabled this for now but we will probably want to come up with a way to include some functionality like this)
+                 // If the user hasn't done a specific search only include the relevant places
+                 // TODO: I have disabled this for now but we will probably want to come up with a way to include some functionality like this
 				 if (resultType != other)
 				 {
 					 NSMutableArray *resultsToRemove = [NSMutableArray array];
@@ -290,17 +265,15 @@
 				 // Add the repackaged results as annotations
 				 [_mapView addAnnotations:_searchResults];
 				 
+                 // This is done to try and ensure the users location doesn't disappear
 				 if (_userLocation)
-				 {
 					 [_mapView addAnnotation:_userLocation];
-				 }
 				 
 				 [_searchView setData:_searchResults];
 			 }
 		 }
                                                   failure:^(NSError *error)
 		 {
-             //			 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error finding place - Try again" message:nil delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
 			 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Problem connecting to server" message:@"Please check internet connection and try again" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
 			 [alert show];
 			 
@@ -309,13 +282,7 @@
 			 
 			 // Deselect whatever row was selected when the error occured
 			 [_searchView selectButton:-1];
-		 }
-		 ];
-		_searchingView.hidden = NO;
-		[_indicatorView startAnimating];
-		
-		if (_mapVisible == fullScreen)
-			[self _animateToMapVisibility:halfScreen];
+		 }];
 	}
 	else
 	{
@@ -352,181 +319,6 @@
     MapVisible newMapVisible = _mapVisible + change;
     
     [self _animateToMapVisibility:newMapVisible];
-}
-
-- (void)showMenu:(NSString *)urlString
-{
-	MenuViewController *menuController = [[MenuViewController alloc] initWithNibName:nil bundle:nil];
-	menuController.menuURLString = urlString;
-	
-	[self presentModalViewController:menuController animated:YES];
-}
-
-- (void)getDirectionsToLocation:(RadiiResultDTO *)location
-{
-	[ServiceAdapter getDirectionsFromLocation:_mapView.userLocation.coordinate toLocation:location.coordinate onSuccess:^(NSDictionary *result)
-	 {
-		 [self _removeAndStoreAllOtherResults:location];
-		 
-		 NSLog(@"%@", result);
-		 NSLog(@"keys: %@", [[result objectForKey:@"routes"] objectAtIndex:0]);
-		 NSDictionary *route = [[result objectForKey:@"routes"] objectAtIndex:0];
-		 
-		 NSDictionary *leg = [[route objectForKey:@"legs"] objectAtIndex:0];
-		 NSString *distance = [[leg objectForKey:@"distance"] objectForKey:@"text"];
-		 NSString *duration = [[leg objectForKey:@"duration"] objectForKey:@"text"];
-         
-		 NSDictionary *directionsDictionary = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:distance,duration,nil]
-																		  forKeys:[NSArray arrayWithObjects:@"distance", @"duration", nil]];
-//		 _searchView.detailView.directionsDictionary = directionsDictionary;
-		 
-		 NSString *polylineString = [[route objectForKey:@"overview_polyline"] objectForKey:@"points"];
-		 NSArray *path = [MapViewController decodePolylineOfGoogleMaps:polylineString];
-		 NSLog(@"%@", path);
-		 
-         //		 DirectionsPathDTO *directionPath = [[DirectionsPathDTO alloc] initWithPath:path];
-		 CLLocationCoordinate2D locations[path.count];
-		 
-		 CGPoint minLatLong = CGPointMake(MAXFLOAT,MAXFLOAT);
-		 CGPoint maxLatLong = CGPointMake(-MAXFLOAT,-MAXFLOAT);
-		 
-		 for (int i=0; i<path.count; i++)
-         {
-             NSValue *pathValue = [path objectAtIndex:i];
-             
-             CLLocationCoordinate2D location;
-             location.latitude = pathValue.CGPointValue.x;
-             location.longitude = pathValue.CGPointValue.y;
-             
-             if (location.latitude < minLatLong.x)
-                 minLatLong.x = location.latitude;
-             if (location.longitude < minLatLong.y)
-                 minLatLong.y = location.longitude;
-             
-             if (location.latitude > maxLatLong.x)
-                 maxLatLong.x = location.latitude;
-             if (location.longitude > maxLatLong.y)
-                 maxLatLong.y = location.longitude;
-             
-             locations[i] = location;
-         }
-		 
-		 [_mapView removeOverlay:_directionsLine];
-		 _directionsLine = [MKPolyline polylineWithCoordinates:locations count:path.count];
-		 [_mapView addOverlay:_directionsLine];
-		 
-		 MKCoordinateRegion region;
-		 region.span.latitudeDelta = ROUTE_BOUNDING_MULTIPLIER * (maxLatLong.x - minLatLong.x);
-		 region.span.longitudeDelta = ROUTE_BOUNDING_MULTIPLIER * (maxLatLong.y - minLatLong.y);
-		 region.center = CLLocationCoordinate2DMake(minLatLong.x + region.span.latitudeDelta/(2 * ROUTE_BOUNDING_MULTIPLIER), minLatLong.y + region.span.longitudeDelta / (2 * ROUTE_BOUNDING_MULTIPLIER));
-		 
-		 [_mapView setRegion:region animated:YES];
-		 [_mapView setNeedsDisplay];
-	 }
-									  failure:^(NSError *error)
-	 {
-		 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Bad internet connection" message:NSStringFromSelector(_cmd) delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
-		 [alertView show];
-	 }];
-}
-
-/**
- * Decode polyline of google maps.
- *
- * @param encodedPolyline: Polyline encoded of google maps.
- * @return An array that contain all coordinates.
- */
-+ (NSArray *)decodePolylineOfGoogleMaps:(NSString *)encodedPolyline {
-    
-    NSUInteger length = [encodedPolyline length];
-    NSInteger index = 0;
-    NSMutableArray *points = [NSMutableArray array];
-    CGFloat lat = 0.0f;
-    CGFloat lng = 0.0f;
-    
-    while (index < length)
-	{
-        
-        // Temorary variable to hold each ASCII byte.
-        int b = 0;
-        
-        // The encoded polyline consists of a latitude value followed by a
-        // longitude value. They should always come in pair. Read the
-        // latitude value first.
-        int shift = 0;
-        int result = 0;
-        
-        do {
-            
-            // If index exceded lenght of encoding, finish 'chunk'
-            if (index >= length) {
-                
-                b = 0;
-                
-            } else {
-				
-                // The '[encodedPolyline characterAtIndex:index++]' statement resturns the ASCII
-                // code for the characted at index. Subtract 63 to get the original
-                // value. (63 was added to ensure proper ASCII characters are displayed
-                // in the encoded plyline string, wich id 'human' readable)
-                b = [encodedPolyline characterAtIndex:index++] - 63;
-                
-            }
-            
-            // AND the bits of the byte with 0x1f to get the original 5-bit 'chunk'.
-            // Then left shift the bits by the required amount, wich increases
-            // by 5 bits each time.
-            // OR the value into results, wich sums up the individual 5-bit chunks
-            // into the original value. Since the 5-bit chunks were reserved in
-            // order during encoding, reading them in this way ensures proper
-            // summation.
-            result |= (b & 0x1f) << shift;
-            shift += 5;
-            
-        } while (b >= 0x20); // Continue while the read byte is >= 0x20 since the last 'chunk'
-		// was nor OR'd with 0x20 during the conversion process. (Signals the end).
-		
-        // check if negative, and convert. (All negative values have the last bit set)
-        CGFloat dlat = (result & 1) ? ~(result >> 1) : (result >> 1);
-        
-        //Compute actual latitude since value is offset from previous value.
-        lat += dlat;
-        
-        // The next value will correspond to the longitude for this point.
-        shift = 0;
-        result = 0;
-        
-        do {
-            
-            // If index exceded lenght of encoding, finish 'chunk'
-            if (index >= length) {
-                
-                b = 0;
-                
-            } else {
-				
-                b = [encodedPolyline characterAtIndex:index++] - 63;
-                
-            }
-            result |= (b & 0x1f) << shift;
-            shift += 5;
-            
-        } while (b >= 0x20);
-        
-        CGFloat dlng = (result & 1) ? ~(result >> 1) : (result >> 1);
-        lng += dlng;
-        
-        // The actual latitude and longitude values were multiplied by
-        // 1e5 before encoding so that they could be converted to a 32-bit
-        //integer representation. (With a decimal accuracy of 5 places)
-        // Convert back to original value.
-        //        [points addObject:[NSString stringWithFormat:@"%f", (lat * 1e-5)]];
-        //        [points addObject:[NSString stringWithFormat:@"%f", (lng * 1e-5)]];
-        [points addObject:[NSValue valueWithCGPoint:CGPointMake((lat * 1e-5),(lng * 1e-5))]];
-    }
-    
-    return points;
-    
 }
 
 #pragma mark -
@@ -582,10 +374,10 @@
 	CLLocationCoordinate2D annotationCoordinate = annotationView.annotation.coordinate;
 	
 	// Check to see if that map contains the annotation
-	if ((annotationCoordinate.latitude > northWestCorner.latitude &&
+	if (annotationCoordinate.latitude > northWestCorner.latitude &&
          annotationCoordinate.longitude < northWestCorner.longitude &&
          annotationCoordinate.latitude > southEastCorner.latitude &&
-         annotationCoordinate.longitude > southEastCorner.longitude))
+         annotationCoordinate.longitude > southEastCorner.longitude)
 	{
 		region.center = CLLocationCoordinate2DMake((center.latitude + annotationCoordinate.latitude)/2, (center.longitude + annotationCoordinate.longitude)/2);
 		region.span = MKCoordinateSpanMake(fabsf(annotationCoordinate.latitude - _userLocation.coordinate.latitude), fabsf(annotationCoordinate.longitude - _userLocation.coordinate.longitude));
@@ -597,35 +389,15 @@
 	
 	id<MKAnnotation> annotation = annotationView.annotation;
 	if ([annotation isKindOfClass:[RadiiResultDTO class]])
-	{
-		// Stop the timer from hiding the view
-		[_detailViewTimer invalidate];
-		
+	{		
 		RadiiResultDTO *radiiResult = (RadiiResultDTO *)annotation;
-		
-//		if (!_searchView.detailView.isShowing)
-//		{
-//			if (_mapVisible == fullScreen)
-//			{
-//				if (!_searchView.detailView.isShowing)
-//					[_searchView showDetailView];
-//				
-//				// After adding the detail view, remove the targets and then add self
-//				[_searchView.detailView.backButton removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
-//				[_searchView.detailView.backButton addTarget:self action:@selector(toggleFullScreen:) forControlEvents:UIControlEventTouchUpInside];
-//				CGAffineTransform rotation = CGAffineTransformMakeRotation(M_PI_2);
-//				[_searchView.detailView.backButton setTransform:rotation];
-//			}
-//			else
-//			{
-				NSIndexPath *selectedIndex = [NSIndexPath indexPathForRow:[_searchResults indexOfObject:radiiResult] inSection:0];
-				
-				// Move the table view if it is on screen
-				[_searchView.searchResultsView selectRowAtIndexPath:selectedIndex
-														   animated:YES
-													 scrollPosition:UITableViewScrollPositionMiddle];
-//			}
-//		}
+        
+        NSIndexPath *selectedIndex = [NSIndexPath indexPathForRow:[_searchResults indexOfObject:radiiResult] inSection:0];
+        
+        // Move the table view if it is on screen
+        [_searchView.searchResultsView selectRowAtIndexPath:selectedIndex
+                                                   animated:YES
+                                             scrollPosition:UITableViewScrollPositionMiddle];
     		
 		id<MKAnnotation> annotation = annotationView.annotation;
 		if ([annotation isKindOfClass:[RadiiResultDTO class]])
@@ -646,17 +418,13 @@
 					break;
 				default:
 					annotationView.image = [UIImage imageNamed:@"shop2.png"];
-					break;
-			}
+                break;}
 		}
 	}
 }
 
 - (void)mapView:(MKMapView *)mapView didDeselectAnnotationView:(MKAnnotationView *)annotationView
-{
-	[_mapView removeOverlay:_directionsLine];
-	_directionsLine = nil;
-	
+{	
 	[self _restoreResults];
 	
 	id<MKAnnotation> annotation = annotationView.annotation;
@@ -725,30 +493,31 @@
 		annotationView.centerOffset = CGPointMake(0,-[annotationView.image size].height / 2);
         
         //		annotationView.centerOffset = CGPointMake(0,-annotationView.image.size.height);
-		
-		return annotationView;
 	}
     //	else if ([annotation isKindOfClass:[MKUserLocation class]])
-	else if (annotation == _mapView.userLocation)
+//	else if (annotation == _mapView.userLocation)
+    else
 	{
-		MKPinAnnotationView *annotationView = (MKPinAnnotationView *)[_mapView dequeueReusableAnnotationViewWithIdentifier:@"mePin"];
+//		MKPinAnnotationView *annotationView = (MKPinAnnotationView *)[_mapView dequeueReusableAnnotationViewWithIdentifier:@"mePin"];
+//        
+//		if (!annotationView)
+//		{
+//			annotationView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"mePin"];
+//			annotationView.animatesDrop = NO;
+//			annotationView.canShowCallout = NO;
+//		}
+//		else
+//		{
+//			annotationView.annotation = annotation;
+//		}
+//		
+//		// TODO: use the type of the result to decide on the image for the annotationView
+//		annotationView.image = [UIImage imageNamed:@"me_pin.png"];
         
-		if (!annotationView)
-		{
-			annotationView = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"mePin"];
-			annotationView.animatesDrop = NO;
-			annotationView.canShowCallout = NO;
-		}
-		else
-		{
-			annotationView.annotation = annotation;
-		}
-		
-		// TODO: use the type of the result to decide on the image for the annotationView
-		annotationView.image = [UIImage imageNamed:@"me_pin.png"];
+        annotationView = nil;
 	}
-	
-	return annotationView;
+    
+    return annotationView;
 }
 
 - (MKOverlayView *)mapView:(MKMapView *)mapView viewForOverlay:(id<MKOverlay>)overlay
@@ -771,14 +540,6 @@
 		}
 		return region;
 	}
-    //	else if ([overlay isKindOfClass:[DirectionsPathDTO class]])
-    //	{
-    //		DirectionsPathDTO *directionsPath = (DirectionsPathDTO *)overlay;
-    //		MKOverlayPathView *pathView = [[MKOverlayPathView alloc] initWithOverlay:overlay];
-    //		pathView.path = directionsPath.mapKitPath;
-    //		pathView.strokeColor = [UIColor blackColor];
-    //		return pathView;
-    //	}
 	else if ([overlay isKindOfClass:[MKPolyline class]])
 	{
 		MKPolyline *polyline = (MKPolyline *)overlay;
@@ -827,7 +588,8 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath;
 {
 	TDBadgedCell *cell = (TDBadgedCell *)[tableView dequeueReusableCellWithIdentifier:@"cell"];
-	if (!cell)
+	
+    if (!cell)
 	{
 		cell = [[TDBadgedCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:@"cell"];
 		cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -888,13 +650,14 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
 	[tableView deselectRowAtIndexPath:indexPath animated:YES];
-	
-	for (id<MKAnnotation> annotation in _mapView.annotations)
-	{
-		if ([annotation isEqual:[_searchResults objectAtIndex:indexPath.row]])
-			[_mapView selectAnnotation:annotation animated:YES];
-	}
-       
+
+	// To select the pin for the given item. I don't think this makes sense
+//	for (id<MKAnnotation> annotation in _mapView.annotations)
+//	{
+//		if ([annotation isEqual:[_searchResults objectAtIndex:indexPath.row]])
+//			[_mapView selectAnnotation:annotation animated:YES];
+//	}
+    
     DetailViewController *detailController = [[DetailViewController alloc] initWithNibName:@"DetailViewController" bundle:nil];
 	[self.navigationController pushViewController:detailController animated:YES];
 	detailController.data = [_searchResults objectAtIndex:indexPath.row];
@@ -935,9 +698,6 @@
 								   NSArray *annotations = [_mapView annotations];
 								   [_mapView removeAnnotations:annotations];
 								   [_mapView addAnnotations:annotations];
-								   
-								   if (_directionsLine)
-									   [_mapView addOverlay:_directionsLine];
 							   });
 				
 				_mapView.showsUserLocation = NO;
@@ -968,6 +728,9 @@
 	searchViewFrame.origin.y = viewSize.height - keyboardSize.height - _searchView.searchBar.frame.size.height;
 	_searchView.frame = searchViewFrame;
     
+    _keyboardCancelButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    _keyboardCancelButton.frame = self.view.frame;
+    [_keyboardCancelButton addTarget:self action:@selector(_hideKeyboard) forControlEvents:UIControlEventTouchUpInside];
 	[self.view insertSubview:_keyboardCancelButton belowSubview:_searchView];
 }
 
@@ -981,118 +744,11 @@
 	_searchView.frame = searchViewFrame;
     
 	[_keyboardCancelButton removeFromSuperview];
-}
-
-- (void)_inFromLeft:(UIPanGestureRecognizer *)recognizer
-{
-	CGFloat xPosition = [recognizer translationInView:self.view].x;
-	CGRect coveringFrame;
-	
-	UIGestureRecognizerState state = recognizer.state;
-	if (state == UIGestureRecognizerStateBegan)
-	{
-		// Create an invisible button to cancel the overlay
-		_slideInCancelButton = [UIButton buttonWithType:UIButtonTypeCustom];
-		_slideInCancelButton.frame = self.view.bounds;
-		_slideInCancelButton.backgroundColor = [UIColor darkGrayColor];
-		_slideInCancelButton.alpha = 0;
-		[_slideInCancelButton addTarget:self action:@selector(_outToLeft:) forControlEvents:UIControlEventTouchUpInside];
-		[self.view addSubview:_slideInCancelButton];
-		
-		// Create the covering view
-		_leftSideBar = [[SideBar alloc] initWithFrame:CGRectMake(xPosition - SIDE_BAR_WIDTH,0,SIDE_BAR_WIDTH,self.view.frame.size.height)];
-		
-		UISwipeGestureRecognizer *swipeRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(_outToLeft:)];
-		swipeRecognizer.direction = UISwipeGestureRecognizerDirectionLeft;
-		[_leftSideBar addGestureRecognizer:swipeRecognizer];
-		
-		[self.view addSubview:_leftSideBar];
-		
-	}
-	else if (state == UIGestureRecognizerStateChanged)
-	{
-		// Only move the view to, at most, its width
-		if (xPosition <= SIDE_BAR_WIDTH)
-		{
-			CGFloat buttonAlpha = xPosition / SIDE_BAR_WIDTH * MAX_BUTTON_ALPHA;
-			_slideInCancelButton.alpha = buttonAlpha;
-			
-			coveringFrame = _leftSideBar.frame;
-			coveringFrame.origin.x = xPosition - SIDE_BAR_WIDTH;
-			_leftSideBar.frame = coveringFrame;
-		}
-	}
-	else if (state == UIGestureRecognizerStateEnded)
-	{
-		void (^onComplete)(BOOL finished);
-		CGFloat buttonAlpha;
-		
-		// Track the ending velocity to decide if the sidebar was "thrown" back
-		CGPoint endingVelocity = [recognizer velocityInView:self.view];
-		
-		// If the view is at least half out, animate the rest.
-		// Otherwise, animate it back out.
-		if (xPosition >	SIDE_BAR_WIDTH / 4 && endingVelocity.x > 0.0)
-		{
-			coveringFrame = CGRectMake(0, 0, SIDE_BAR_WIDTH, self.view.frame.size.height);
-			buttonAlpha = MAX_BUTTON_ALPHA;
-			onComplete = ^(BOOL finished)
-			{
-				// Set up anything we want on the view after it has finished moving
-			};
-		}
-		else
-		{
-			coveringFrame = CGRectMake(-SIDE_BAR_WIDTH, 0, SIDE_BAR_WIDTH, self.view.frame.size.height);
-			buttonAlpha = 0.0;
-			
-			onComplete = ^(BOOL finished)
-			{
-				[_leftSideBar removeFromSuperview];
-				_leftSideBar = nil;
-				
-				[_slideInCancelButton removeFromSuperview];
-				_slideInCancelButton = nil;
-			};
-		}
-        
-		// Animate for both in and out
-		[UIView animateWithDuration:0.2 animations:^()
-		 {
-			 _leftSideBar.frame = coveringFrame;
-			 _slideInCancelButton.alpha = buttonAlpha;
-		 }
-						 completion:onComplete];
-	}
-}
-
-// Might want to do this with a swipe gestore or another pan
-- (void)_outToLeft:(id)sender
-{
-	[UIView animateWithDuration:0.3 animations:^()
-	 {
-		 _leftSideBar.frame = 	CGRectMake(-SIDE_BAR_WIDTH, 0, SIDE_BAR_WIDTH, self.view.frame.size.height);;
-		 _slideInCancelButton.alpha = 0.0;
-	 }
-					 completion:^(BOOL finished)
-	 {
-		 [_leftSideBar removeFromSuperview];
-		 [_slideInCancelButton removeFromSuperview];
-	 }];
-}
-
-- (void)_inFromRight:(UIPanGestureRecognizer *)recognizer
-{
-	
+    _keyboardCancelButton = nil;
 }
 
 #pragma mark -
-#pragma mark Test methods
-
-- (IBAction)debug:(id)sender
-{
-	[[[DataModel sharedInstance] coreConnector] showPermissionsFromViewController:self];
-}
+#pragma mark IBActions
 
 - (IBAction)printCurrentCenter
 {
@@ -1125,10 +781,7 @@
 - (IBAction)displayGeofences
 {
 	for (id<MKOverlay> overlay in [_mapView overlays])
-	{
-		if (overlay != _directionsLine)
 			[_mapView removeOverlay:overlay];
-	}
 	
 	if (!_showingGeofences)
 	{
@@ -1164,18 +817,9 @@
     [self.navigationController pushViewController:detailController animated:YES];
 }
 
-- (void)dealloc
+- (IBAction)enableLocationServices
 {
-	_mapView = nil;
-	_searchView = nil;
-	
-	_searchingView = nil;
-	_indicatorView = nil;
-	
-	_keyboardCancelButton = nil;
-	
-	_slideInLeft = nil;
-	_slideInRight = nil;
+	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"prefs://"]];
 }
 
 @end
@@ -1241,6 +885,11 @@
 		[_mapView addAnnotation:annotation];
 }
 
+- (void)_centerMap
+{
+    [_mapView setCenterCoordinate:_userLocation.coordinate];
+}
+
 
 - (void)_animateToMapVisibility:(MapVisible)mapVisibility
 {
@@ -1261,23 +910,10 @@
             break;
     }
     
-    CGFloat backButtonRotation = mapVisibility == fullScreen ? M_PI_2 : 0;
-    
-    // Remove all targets from the back button
-//    [_searchView.detailView.backButton removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
-    
-    // Either set it to remove from screen on return to normal view
-    
-    // TODO: At the moment this is no use, need to work out how to implement better
-//    if (mapVisibility == fullScreen)
-//    {
-//        [_searchView.detailView.backButton addTarget:self action:@selector(toggleFullScreen:) forControlEvents:UIControlEventTouchUpInside];
-//    }
-//    else
-//    {
-//        [_searchView.detailView.backButton addTarget:_searchView action:@selector(hideDetailView) forControlEvents:UIControlEventTouchUpInside];
-//    }
-    
+    // If going to hidden then deselect the pin if one is selected because it is confusing
+    if (mapVisibility == mapHidden)
+        [self deselectPin];
+        
     [UIView animateWithDuration:0.2 animations:^()
      {
          CGRect mapFrame = _mapView.frame;
@@ -1288,9 +924,6 @@
          searchViewFrame.origin.y = searchViewOrigin;
          searchViewFrame.size.height = self.view.frame.size.height - searchViewOrigin;
          _searchView.frame = searchViewFrame;
-                           
-         CGAffineTransform rotation = CGAffineTransformMakeRotation(backButtonRotation);
-//         [_searchView.detailView.backButton setTransform:rotation];
      }
                      completion:^(BOOL finished)
      {
@@ -1314,6 +947,18 @@
          //		 }
          
      }];
+}
+
+- (void)_showSettingsPage:(id)sender
+{
+    // To show the settings page we first want to create a navigation controller to contain it. This means that when the gimbal SDK is shown it will seem natural
+    
+    SettingsViewController *settingsController = [[SettingsViewController alloc] initWithNibName:nil bundle:nil];
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:settingsController];
+    
+    navController.navigationBar.tintColor = [UIColor lightGrayColor];
+    
+    [self.navigationController presentModalViewController:navController animated:YES];
 }
 
 @end
