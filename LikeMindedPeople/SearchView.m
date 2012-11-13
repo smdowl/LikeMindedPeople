@@ -81,13 +81,15 @@
 #pragma mark External Methods
  -(CGFloat)panelHeight
 {
-	return _searchBar ? _searchBar.frame.size.height + _searchBarPanel.frame.size.height : _searchBarPanel.frame.size.height;
-	
+    // Previously also included the search bar if it had been added (ie someone was searching) this was causing a UI glitch in another case and I can't remember what the advantage of it was.
+//	return _searchBar ? _searchBar.frame.size.height + _searchBarPanel.frame.size.height : _searchBarPanel.frame.size.height;
+    
+    return _searchBarPanel.frame.size.height;
 }
 
 - (void)selectButton:(NSUInteger)buttonIndex
 {		
-	// Dese;ect the previous button unless its the same button again
+	// Deselect the previous button unless its the same button again
 	if (_selectedIndex != -1 && _selectedIndex != buttonIndex)
 	{
 		UIButton *previousButton = [_buttonsArray objectAtIndex:_selectedIndex];
@@ -186,6 +188,7 @@
 	NSString *searchText = textField.text;
 	[_delegate beginSearchForPlacesWithName:searchText type:nil];
 	_previousSearch = searchText;
+    [self _hideSearchBar];
 	[textField resignFirstResponder];
 	
 	return YES;
@@ -206,7 +209,7 @@
 		
 	// Make the SearchView larger and add a UIView in the extra space which clips to its bounds then animate the bar in
 	CGRect searchViewFrame = self.frame;
-	searchViewFrame.origin.y -= _searchBar.frame.size.height;
+	searchViewFrame.origin.y += _searchBar.frame.size.height;
 	searchViewFrame.size.height += _searchBar.frame.size.height;
 	self.frame = searchViewFrame;
 	
@@ -217,6 +220,10 @@
 	CGRect searchBarFrame = _searchBar.frame;
 	searchBarFrame.origin.y += _searchBar.frame.size.height;
 	_searchBar.frame = searchBarFrame;
+    
+	CGRect searchBarPanelFrame = _searchBarPanel.frame;
+	searchBarPanelFrame.origin.y += _searchBar.frame.size.height;
+	_searchBarPanel.frame = searchBarPanelFrame;
 	
 	[_searchBarContainerView addSubview:_searchBar];
 	
@@ -235,7 +242,7 @@
 	[UIView animateWithDuration:0.2 animations:^()
 	 {
 		 CGRect searchViewFrame = self.frame;
-		 searchViewFrame.origin.y += _searchBar.frame.size.height;
+		 searchViewFrame.origin.y -= _searchBar.frame.size.height;
 		 searchViewFrame.size.height -= _searchBar.frame.size.height;
 		 self.frame = searchViewFrame;
 		 
@@ -246,6 +253,11 @@
 		 CGRect searchBarFrame = _searchBar.frame;
 		 searchBarFrame.origin.y += _searchBar.frame.size.height;
 		 _searchBar.frame = searchBarFrame;
+         
+         CGRect searchBarPanelFrame = _searchBarPanel.frame;
+         searchBarPanelFrame.origin.y -= _searchBar.frame.size.height;
+         _searchBarPanel.frame = searchBarPanelFrame;
+         
 	 } 
 					 completion:^(BOOL finished)
 	 {	
