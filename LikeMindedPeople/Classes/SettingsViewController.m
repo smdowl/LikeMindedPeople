@@ -8,6 +8,7 @@
 
 #import "SettingsViewController.h"
 #import "DataModel.h"
+#import "RDRadiiManager.h"
 
 @interface SettingsViewController ()
 
@@ -15,41 +16,53 @@
 
 @implementation SettingsViewController
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Custom initialization
-    }
-    return self;
-}
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     UIBarButtonItem *cancelButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self.navigationController.presentingViewController action:@selector(dismissModalViewControllerAnimated:)];
     
     self.navigationItem.leftBarButtonItem = cancelButton;
-
-    // This is to set the title text to a color other than default white
-//    UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 100, 40)];
-//    titleLabel.backgroundColor = [UIColor clearColor];
-//    titleLabel.text = @"Settings";
-//    titleLabel.textAlignment = UITextAlignmentCenter;
-//    titleLabel.textColor = [UIColor blackColor];
-//    self.navigationItem.titleView = titleLabel;
     self.navigationItem.title = @"Settings";
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 - (IBAction)showGimbalSettings:(id)sender
 {
     [[[DataModel sharedInstance] coreConnector] showPermissionsFromViewController:self];
+}
+
+- (IBAction)sendEmail:(id)sender
+{
+    if ([MFMailComposeViewController canSendMail])
+    {
+        MFMailComposeViewController *mailer = [[MFMailComposeViewController alloc] init];
+        mailer.mailComposeDelegate = self;
+        [mailer setSubject:@"User feedback"];
+        NSArray *toRecipients = [NSArray arrayWithObjects:@"radiiapp@gmail.com", nil];
+        [mailer setToRecipients:toRecipients];
+//        [mailer setMessageBody:emailBody isHTML:NO];
+        mailer.modalPresentationStyle = UIModalPresentationPageSheet; // in order to work on iPads
+        [self presentModalViewController:mailer animated:YES];
+        return;
+    }
+    else
+    {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Failure"
+                                                        message:@"Your device doesn't support the composer sheet"
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles: nil];
+        [alert show];
+    }
+}
+
+- (void)mailComposeController:(MFMailComposeViewController*)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError*)error
+{
+    [self dismissModalViewControllerAnimated:YES];
+}
+
+- (IBAction)rateAppButtonPunched:(id)sender
+{
+    [RD_MANAGER rateAppInStore];
 }
 
 @end
