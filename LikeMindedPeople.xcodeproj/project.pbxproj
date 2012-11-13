@@ -141,6 +141,9 @@
 		D313641815C4E7300071BED3 /* AFURLConnectionOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = D313640C15C4E72F0071BED3 /* AFURLConnectionOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		D313641915C4E7300071BED3 /* AFXMLRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = D313640E15C4E72F0071BED3 /* AFXMLRequestOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		D313641A15C4E7300071BED3 /* UIImageView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = D313641015C4E72F0071BED3 /* UIImageView+AFNetworking.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		D4C906501652745C00C6BDD0 /* WPReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = D4C9064F1652745C00C6BDD0 /* WPReachability.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		D4C906551652754600C6BDD0 /* RDRadiiManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D4C906541652754600C6BDD0 /* RDRadiiManager.m */; };
+		D4C906571652835C00C6BDD0 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4C906561652835C00C6BDD0 /* MessageUI.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -359,6 +362,12 @@
 		D313640E15C4E72F0071BED3 /* AFXMLRequestOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFXMLRequestOperation.m; sourceTree = "<group>"; };
 		D313640F15C4E72F0071BED3 /* UIImageView+AFNetworking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+AFNetworking.h"; sourceTree = "<group>"; };
 		D313641015C4E72F0071BED3 /* UIImageView+AFNetworking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+AFNetworking.m"; sourceTree = "<group>"; };
+		D4C9064E1652745C00C6BDD0 /* WPReachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WPReachability.h; sourceTree = "<group>"; };
+		D4C9064F1652745C00C6BDD0 /* WPReachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WPReachability.m; sourceTree = "<group>"; };
+		D4C90652165274F900C6BDD0 /* SynthesizeSingleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SynthesizeSingleton.h; sourceTree = "<group>"; };
+		D4C906531652754600C6BDD0 /* RDRadiiManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RDRadiiManager.h; sourceTree = "<group>"; };
+		D4C906541652754600C6BDD0 /* RDRadiiManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RDRadiiManager.m; sourceTree = "<group>"; };
+		D4C906561652835C00C6BDD0 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -366,6 +375,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D4C906571652835C00C6BDD0 /* MessageUI.framework in Frameworks */,
 				288A0EF5160BF9E300FACA59 /* SystemConfiguration.framework in Frameworks */,
 				288A0EF3160BF7E600FACA59 /* CFNetwork.framework in Frameworks */,
 				925AE7B315C430F2008840D9 /* UIKit.framework in Frameworks */,
@@ -714,6 +724,7 @@
 		92FBED3915C3A85F000D1AE3 = {
 			isa = PBXGroup;
 			children = (
+				D4C906561652835C00C6BDD0 /* MessageUI.framework */,
 				92FBED4E15C3A85F000D1AE3 /* LikeMindedPeople */,
 				92FBED6615C3A85F000D1AE3 /* LikeMindedPeopleTests */,
 				92FBED4715C3A85F000D1AE3 /* Frameworks */,
@@ -733,6 +744,7 @@
 		92FBED4715C3A85F000D1AE3 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D31363A915C494510071BED3 /* facebook-ios-sdk */,
 				28B4661D162E25640084C9A9 /* context-beta-ios-sdk */,
 				288A0EF4160BF9E300FACA59 /* SystemConfiguration.framework */,
 				288A0EF2160BF7E500FACA59 /* CFNetwork.framework */,
@@ -755,12 +767,8 @@
 				92FBED5715C3A85F000D1AE3 /* AppDelegate.h */,
 				92FBED5815C3A85F000D1AE3 /* AppDelegate.m */,
 				92EC3E4715C7AF910025E56C /* UI */,
+				D4C90651165274BD00C6BDD0 /* Manager */,
 				92EC3E4815C7AFB10025E56C /* Backend */,
-				92EBF30315C593FB0085C47E /* JSON */,
-				D31363FB15C4E72F0071BED3 /* AFNetworking */,
-				D31363A915C494510071BED3 /* facebook-ios-sdk */,
-				D31363BC15C494590071BED3 /* facebook-hack */,
-				288A0EED160986DF00FACA59 /* Flurry */,
 				92FBED4F15C3A85F000D1AE3 /* Supporting Files */,
 			);
 			path = LikeMindedPeople;
@@ -769,6 +777,12 @@
 		92FBED4F15C3A85F000D1AE3 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				D4C90652165274F900C6BDD0 /* SynthesizeSingleton.h */,
+				D31363FB15C4E72F0071BED3 /* AFNetworking */,
+				D31363BC15C494590071BED3 /* facebook-hack */,
+				288A0EED160986DF00FACA59 /* Flurry */,
+				92EBF30315C593FB0085C47E /* JSON */,
+				D4C9064D1652744F00C6BDD0 /* Reachability */,
 				92EFB4EB15E9DB7D001A9149 /* Icon.png */,
 				929CD87315EB434A00474B19 /* Default@2x.png */,
 				9272ED1215EDDAF60083EFF3 /* Default.png */,
@@ -821,7 +835,8 @@
 				D31363B715C494510071BED3 /* SBJsonParser.h */,
 				D31363B815C494510071BED3 /* SBJsonWriter.h */,
 			);
-			path = "facebook-ios-sdk";
+			name = "facebook-ios-sdk";
+			path = "LikeMindedPeople/facebook-ios-sdk";
 			sourceTree = "<group>";
 		};
 		D31363BC15C494590071BED3 /* facebook-hack */ = {
@@ -861,6 +876,24 @@
 				D313641015C4E72F0071BED3 /* UIImageView+AFNetworking.m */,
 			);
 			path = AFNetworking;
+			sourceTree = "<group>";
+		};
+		D4C9064D1652744F00C6BDD0 /* Reachability */ = {
+			isa = PBXGroup;
+			children = (
+				D4C9064E1652745C00C6BDD0 /* WPReachability.h */,
+				D4C9064F1652745C00C6BDD0 /* WPReachability.m */,
+			);
+			name = Reachability;
+			sourceTree = "<group>";
+		};
+		D4C90651165274BD00C6BDD0 /* Manager */ = {
+			isa = PBXGroup;
+			children = (
+				D4C906531652754600C6BDD0 /* RDRadiiManager.h */,
+				D4C906541652754600C6BDD0 /* RDRadiiManager.m */,
+			);
+			name = Manager;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1082,6 +1115,8 @@
 				28B46658163023070084C9A9 /* DetailViewController.m in Sources */,
 				2848EC7F163C4C3D005D1BD1 /* RadiiSection.m in Sources */,
 				2848EC83163EE86A005D1BD1 /* SettingsViewController.m in Sources */,
+				D4C906501652745C00C6BDD0 /* WPReachability.m in Sources */,
+				D4C906551652754600C6BDD0 /* RDRadiiManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1179,8 +1214,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "Shaun Dowling";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Shaun Dowling (T55NFAFBA2)";
 				DYLIB_COMPATIBILITY_VERSION = admin;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1210,7 +1243,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Shaun Dowling (T55NFAFBA2)";
 				DYLIB_COMPATIBILITY_VERSION = admin;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1231,7 +1263,6 @@
 					"\"$(SRCROOT)/LikeMindedPeople/Flurry\"",
 				);
 				PRODUCT_NAME = Radii;
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "2AE181BE-3D91-4542-84F4-33C2FD6071FE";
 				SKIP_INSTALL = NO;
 				WRAPPER_EXTENSION = app;
 			};
