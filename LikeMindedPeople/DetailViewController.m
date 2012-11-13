@@ -56,7 +56,7 @@
 	_presentUsersLabel.text = @"-";
     //	_ratingLabel.text = @"-";
 	_ratingLabel.text = [NSString stringWithFormat:@"%0.0f%%", 100*data.rating];
-	
+	#warning TODO
 	// TODO: actually do this
 	_interestsLabel.text = @"";
 		
@@ -66,6 +66,7 @@
 
 - (void)setLocationDetails:(LocationDetailsDTO *)locationDetails
 {
+    #warning TODO
 	// TODO: Took this out for want of a better system for telling if the details apply to this page or not
     //	if ([locationDetails.name isEqualToString:_data.businessTitle])
     //	{
@@ -105,12 +106,43 @@
 
 - (IBAction)callBusiness:(id)sender
 {
+    UIAlertView * alertView;
     
+    NSString *currentModel = [[UIDevice currentDevice] model];
+    if (![currentModel isEqualToString:@"iPhone"])
+    {
+        alertView = [[UIAlertView alloc] initWithTitle:nil
+                                                message:NSLocalizedString(@"_detailView_phonecall_iPad_message", @"")
+                                               delegate:nil
+                                      cancelButtonTitle:NSLocalizedString(@"_alertView_ok", @"")
+                                      otherButtonTitles:nil];
+        [alertView show];
+        return;
+    }
+    
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"tel://+33980980986"]];
+
 }
 
 - (IBAction)directionsBusiness:(id)sender
 {
+    CLLocationCoordinate2D destination = CLLocationCoordinate2DMake(self.data.searchLocation.latitude, self.data.searchLocation.longitude);
+
+    Class itemClass = [MKMapItem class];
+    if (itemClass && [itemClass respondsToSelector:@selector(openMapsWithItems:launchOptions:)]) {
+        MKMapItem *currentLocation = [MKMapItem mapItemForCurrentLocation];
+        MKMapItem *toLocation = [[MKMapItem alloc] initWithPlacemark:[[MKPlacemark alloc] initWithCoordinate:destination addressDictionary:nil]];
+        toLocation.name = @"Destination";
+        [MKMapItem openMapsWithItems:[NSArray arrayWithObjects:currentLocation, toLocation, nil]
+                       launchOptions:[NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:MKLaunchOptionsDirectionsModeDriving, [NSNumber numberWithBool:YES], nil]
+                                                                 forKeys:[NSArray arrayWithObjects:MKLaunchOptionsDirectionsModeKey, MKLaunchOptionsShowsTrafficKey, nil]]];
+        return;
+    }
     
+    NSMutableString *mapURL = [NSMutableString stringWithString:@"http://maps.google.com/maps?"];
+    [mapURL appendFormat:@"saddr=Current Location"];
+    [mapURL appendFormat:@"&daddr=%f,%f", destination.latitude, destination.longitude];
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[mapURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
 }
 
 - (IBAction)menuBusiness:(id)sender
@@ -125,6 +157,14 @@
     {
         _containerView.contentOffset = CGPointZero;
     }];
+}
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+	if (alertView.tag == 666 && buttonIndex == 1)
+	{
+		[[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"tel://+33980980986"]];
+	}
 }
 
 @end
@@ -151,6 +191,5 @@
                  [strongSelf failedToLoadDetails];
 		 }];
 }
-
 
 @end

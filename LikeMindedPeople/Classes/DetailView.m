@@ -36,6 +36,7 @@
 //	_ratingLabel.text = @"-";
 	_ratingLabel.text = [NSString stringWithFormat:@"%0.0f%%", 100*data.rating];
 	
+    #warning TODO
 	// TODO: actually do this
 	_interestsLabel.text = @"";
 	
@@ -61,6 +62,7 @@
 
 - (void)setLocationDetails:(LocationDetailsDTO *)locationDetails
 {
+    #warning TODO
 	// TODO: Took this out for want of a better system for telling if the details apply to this page or not
 //	if ([locationDetails.name isEqualToString:_data.businessTitle])
 //	{

@@ -1,0 +1,12 @@
+/* 
+  Localizable.strings
+  LikeMindedPeople
+
+  Created by Lucas Coelho on 11/13/12.
+
+*/
+
+"_alertView_ok" = "OK";
+"_alertView_cancel" = "Cancel";
+
+"_detailView_phonecall_iPad_message" = "You cannot call using this device";

@@ -42,6 +42,7 @@
 
 @implementation ServiceAdapter
 
+#warning TODO
 // TODO: Use data from facebook
 + (void)uploadUserProfile:(NSDictionary *)profile userDetails:(NSDictionary *)userDetails success:(void (^)(id))success failure:(void (^)(NSError *))failure
 {
@@ -64,6 +65,7 @@
     [d setObject:dloc forKey:@"location"];
     
     [d setObject:userId forKey:@"api_id"];
+    #warning TODO
     // TODO: Get radius somehow
     
     

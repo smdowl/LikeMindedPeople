@@ -210,7 +210,7 @@ void uncaughtExceptionHandler(NSException *exception)
         [defaults removeObjectForKey:@"FBExpirationDateKey"];
         [defaults synchronize];
     }
-	
+#warning TODO
 	// TODO: Why display something else?
 //    [_loginViewController presentModalViewController:_loginViewController.fbLogin animated:NO];
 }

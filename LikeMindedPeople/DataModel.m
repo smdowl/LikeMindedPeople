@@ -29,6 +29,7 @@
 
 #define REFRESH_BOUNDARY_KEY @"Refresh Boundary"
 
+#warning TODO
 // TODO: work out behaiour when there is no internet. As it is now the request will just time out after about 10 seconds
 // TODO: at the moment loading and unloading private locations takes a long time due to all the server interaction that is required. Try and find a faster way.
 
@@ -309,7 +310,7 @@ static DataModel *_sharedInstance = nil;
 					 return;
 				 
 				 DataModel *strongSelf = weakSelf;
-				 
+#warning TODO
 				 // TODO: Want to handle the situation where the data model is already updating
 				 //				 if (strongSelf->_updatingPlaces)
 				 //				 {
@@ -393,13 +394,14 @@ static DataModel *_sharedInstance = nil;
 
 #pragma mark -
 #pragma mark Geofence listening
-
+#warning TODO
 // TODO: Need extra thought here to ensure that the correct geofence is removed from list
 - (void)didGetPlaceEvent:(QLPlaceEvent *)event
 {	
 	@synchronized(self)
 	{
 		__weak DataModel *weakSelf = self;
+        #warning TODO
 		// TODO: remove this
 		[self _getPrivateFencesOnCompletion:^(NSArray *fences)
 		 {	
@@ -483,6 +485,7 @@ static DataModel *_sharedInstance = nil;
 			 }
 		 }];
 	}
+    #warning TODO
 	// TODO: Server, set current location
 }
 
@@ -824,6 +827,7 @@ static DataModel *_sharedInstance = nil;
 		 } 
 								   failure:^(NSError *err)
 		 {
+             #warning TODO
 			 // TODO: failing a lot here. Need to cut down the number of database calls i think (persistatn storage?)
 			 // Take one off the front and put it at the back to try it again
 			 NSLog(@"ERROR: %@", err);

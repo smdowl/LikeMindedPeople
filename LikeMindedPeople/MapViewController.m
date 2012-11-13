@@ -36,33 +36,27 @@
 #define HIGH_CORRELATION_GREEN 0.875
 #define HIGH_CORRELATION_BLUE 0.433
 
-// What ratio of the map should the results cover
 #define MAP_HIDDEN_RATIO ((float)3/5)
 
 @interface MapViewController (PrivateUtilities)
 
 - (void)_removeAllNonUserAnnotations;
 - (void)_hideKeyboard;
-
 //- (void)_inFromLeft:(UIPanGestureRecognizer *)recognizer;
 //- (void)_inFromRight:(UIPanGestureRecognizer *)recognizer;
-
-- (void)_setMapVisible:(BOOL)visible; // Either show or hide the map (at the moment dependent on whether location services has been enabled)
-
+- (void)_setMapVisible:(BOOL)visible;
 - (void)_removeAndStoreAllOtherResults:(RadiiResultDTO *)resultToKeep;
-- (void)_restoreResults;	// Add the radii results that were removed back to the map
-
+- (void)_restoreResults;
 //- (void)_startDownloadingDetailsForView:(DetailViewController *)detailView;
-
 - (void)_animateToMapVisibility:(MapVisible)visibility;
-
 - (void)_showSettingsPage:(id)sender;
-
 - (void)_centerMap;
+- (UIImage *)_getImageStringForAnnotationWithType:(NSInteger)type;
 
 @end
 
 @implementation MapViewController
+
 
 #pragma mark -
 #pragma mark View lifecycle
@@ -71,10 +65,8 @@
 {
     [super viewDidLoad];
 	
-    // Load the search view from a nib, storing it in the _searchView iVar
 	[[NSBundle mainBundle] loadNibNamed:@"SearchView" owner:self options:nil];
 	
-	// Fit the frame in the gap between the map and the bottom of the view with the bar panel overlapping the map
 	CGRect searchViewFrame = _searchView.frame;
 	searchViewFrame.origin.y = CGRectGetMaxY(_mapView.frame) - _searchView.searchBarPanel.frame.size.height;
 	searchViewFrame.size.height = self.view.frame.size.height - searchViewFrame.origin.y;
@@ -86,8 +78,8 @@
     // Add the pinch gesture to the map so that when the user zooms in and the map is only half visible it goes full screen
 	UIPinchGestureRecognizer *pinchRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinchGesture:)];
 	
-	// Need to set the delgate because of the map views own gesture reconizers which require us to allow multiple gesture recognizers
 	pinchRecognizer.delegate = self;
+    #warning TODO
     // TODO: re-enabled the pinch gesure recognizer. at the moment it is making the user disappear
 //    [_mapView addGestureRecognizer:pinchRecognizer];
     
@@ -98,7 +90,7 @@
     
 	_searchView.searchResultsView.delegate = self;
 	_searchView.searchResultsView.dataSource = self;
-			
+	#warning TODO
 	// TODO: Maybe take this out
 	[[DataModel sharedInstance] addLocationListener:self];
 	
@@ -186,9 +178,7 @@
 - (void)viewWillDisappear:(BOOL)animated
 {
 	[super viewWillDisappear:animated];
-	
-    // Stop the MapViewController recieving notifications
-	[[NSNotificationCenter defaultCenter] removeObserver:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)viewDidUnload
@@ -235,18 +225,17 @@
 			 _searchingView.hidden = YES;
 			 [_indicatorView stopAnimating];
 			 
-			 if ([results count] == 0)
-			 {
+			 if ([results count] == 0) {
 				 [self _removeAllNonUserAnnotations];
 			 }
 			 else
 			 {
-				 // Replace all the annotations with new ones
 				 [self _removeAllNonUserAnnotations];
 				 
 				 NSMutableArray *newResults = [NSMutableArray arrayWithArray:results];
 				 
                  // If the user hasn't done a specific search only include the relevant places
+                 #warning TODO
                  // TODO: I have disabled this for now but we will probably want to come up with a way to include some functionality like this
 				 if (resultType != other)
 				 {
@@ -262,7 +251,6 @@
 				 
 				 _searchResults = newResults;
 				 
-				 // Add the repackaged results as annotations
 				 [_mapView addAnnotations:_searchResults];
 				 
                  // This is done to try and ensure the users location doesn't disappear
@@ -351,6 +339,7 @@
 
 - (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated
 {
+    #warning TODO
 	// TODO: trying to stop the user from disappearing. Not 100% sure if this helps
 	if (_userLocation)
 		[_mapView addAnnotation:_userLocation];
@@ -418,7 +407,8 @@
 					break;
 				default:
 					annotationView.image = [UIImage imageNamed:@"shop2.png"];
-                break;}
+                break;
+            }
 		}
 	}
 }
@@ -431,24 +421,7 @@
 	if ([annotation isKindOfClass:[RadiiResultDTO class]])
 	{
 		RadiiResultDTO *radiiResult = (RadiiResultDTO *)annotation;
-		switch (radiiResult.type)
-		{
-			case food:
-				annotationView.image = [UIImage imageNamed:@"food_pin.png"];
-				break;
-			case cafe:
-				annotationView.image = [UIImage imageNamed:@"cafe_pin.png"];
-				break;
-			case bar:
-				annotationView.image = [UIImage imageNamed:@"bars_pin.png"];
-				break;
-			case club:
-				annotationView.image = [UIImage imageNamed:@"club_pin.png"];
-				break;
-			default:
-				annotationView.image = [UIImage imageNamed:@"shop_pin.png"];
-				break;
-		}
+        annotationView.image = [self _getImageStringForAnnotationWithType:radiiResult.type];
 	}
 	
 	[_searchView.searchResultsView deselectRowAtIndexPath:[_searchView.searchResultsView indexPathForSelectedRow] animated:YES];
@@ -462,33 +435,14 @@
 		RadiiResultDTO *radiiResult = (RadiiResultDTO *)annotation;
 		annotationView = [_mapView dequeueReusableAnnotationViewWithIdentifier:@"radiiPin"];
 		
-		if (!annotationView)
-		{
+		if (!annotationView) {
 			annotationView = [[MKAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"radiiPin"];
 		}
-		else
-		{
+		else {
 			annotationView.annotation = annotation;
 		}
 		
-		switch (radiiResult.type)
-		{
-			case food:
-				annotationView.image = [UIImage imageNamed:@"food_pin.png"];
-				break;
-			case cafe:
-				annotationView.image = [UIImage imageNamed:@"cafe_pin.png"];
-				break;
-			case bar:
-				annotationView.image = [UIImage imageNamed:@"bars_pin.png"];
-				break;
-			case club:
-				annotationView.image = [UIImage imageNamed:@"club_pin.png"];
-				break;
-			default:
-				annotationView.image = [UIImage imageNamed:@"shop_pin.png"];
-				break;
-		}
+        annotationView.image = [self _getImageStringForAnnotationWithType:radiiResult.type];
 		
 		annotationView.centerOffset = CGPointMake(0,-[annotationView.image size].height / 2);
         
@@ -510,7 +464,8 @@
 //		{
 //			annotationView.annotation = annotation;
 //		}
-//		
+//
+        #warning TODO
 //		// TODO: use the type of the result to decide on the image for the annotationView
 //		annotationView.image = [UIImage imageNamed:@"me_pin.png"];
         
@@ -540,25 +495,24 @@
 		}
 		return region;
 	}
-	else if ([overlay isKindOfClass:[MKPolyline class]])
+    
+    MKPolylineView *polylineView = nil;
+	if ([overlay isKindOfClass:[MKPolyline class]])
 	{
 		MKPolyline *polyline = (MKPolyline *)overlay;
-		MKPolylineView *polylineView = [[MKPolylineView alloc] initWithPolyline:polyline];
+		polylineView = [[MKPolylineView alloc] initWithPolyline:polyline];
 		
-		UIColor *orangeColor = [UIColor colorWithRed:0.984375 green:0.5625 blue:0.0859375 alpha:0.9];
+        //		UIColor *orangeColor = [UIColor colorWithRed:0.984375 green:0.5625 blue:0.0859375 alpha:0.9];
         //		polylineView.strokeColor = orangeColor;
         //		polylineView.fillColor = orangeColor;
 		UIColor *blue = [UIColor colorWithRed:0.27734375 green:0.11328125 blue:1.0 alpha:0.8];
 		polylineView.strokeColor = blue;
 		polylineView.fillColor = blue;
 		polylineView.lineWidth = 4;
-		return polylineView;
 	}
-	else
-	{
-		return nil;
-	}
+    return polylineView;
 }
+
 #pragma mark -
 #pragma mark CLLocationManagerDelegate
 
@@ -665,6 +619,7 @@
 
 #pragma mark -
 #pragma mark UITableViewDataSource
+
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
 	return 1;
@@ -954,26 +909,40 @@
          
          _mapVisible = mapVisibility;
          
-         // Had this in because the users locations seemed to disappear sometimes
-         //		 if (![[_mapView annotations] containsObject:_userLocation])
-         //		 {
-         //			 _mapView.showsUserLocation = NO;
-         //			 _mapView.showsUserLocation = YES;
-         //		 }
-         
      }];
 }
 
 - (void)_showSettingsPage:(id)sender
-{
-    // To show the settings page we first want to create a navigation controller to contain it. This means that when the gimbal SDK is shown it will seem natural
-    
+{    
     SettingsViewController *settingsController = [[SettingsViewController alloc] initWithNibName:nil bundle:nil];
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:settingsController];
     
     navController.navigationBar.tintColor = [UIColor lightGrayColor];
     
     [self.navigationController presentModalViewController:navController animated:YES];
+}
+
+- (UIImage *)_getImageStringForAnnotationWithType:(NSInteger)type
+{
+    switch (type)
+    {
+        case food:
+            return [UIImage imageNamed:@"food_pin.png"];
+            break;
+        case cafe:
+            return [UIImage imageNamed:@"cafe_pin.png"];
+            break;
+        case bar:
+            return [UIImage imageNamed:@"bars_pin.png"];
+            break;
+        case club:
+            return [UIImage imageNamed:@"club_pin.png"];
+            break;
+        default:
+            return [UIImage imageNamed:@"shop_pin.png"];
+            break;
+    }
+
 }
 
 @end
