@@ -144,6 +144,7 @@
 		D4C906501652745C00C6BDD0 /* WPReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = D4C9064F1652745C00C6BDD0 /* WPReachability.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		D4C906551652754600C6BDD0 /* RDRadiiManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D4C906541652754600C6BDD0 /* RDRadiiManager.m */; };
 		D4C906571652835C00C6BDD0 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4C906561652835C00C6BDD0 /* MessageUI.framework */; };
+		D4C906951652AB5300C6BDD0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = D4C906941652AB5300C6BDD0 /* Localizable.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -368,6 +369,7 @@
 		D4C906531652754600C6BDD0 /* RDRadiiManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RDRadiiManager.h; sourceTree = "<group>"; };
 		D4C906541652754600C6BDD0 /* RDRadiiManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RDRadiiManager.m; sourceTree = "<group>"; };
 		D4C906561652835C00C6BDD0 /* MessageUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MessageUI.framework; path = System/Library/Frameworks/MessageUI.framework; sourceTree = SDKROOT; };
+		D4C906941652AB5300C6BDD0 /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -529,6 +531,7 @@
 				92A19A7B15D2504500B28279 /* Pins */,
 				9282BF1E15D0E28A0065984F /* Backgrounds */,
 				9282BF1F15D0E2AE0065984F /* Buttons */,
+				D4C906941652AB5300C6BDD0 /* Localizable.strings */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -1033,6 +1036,7 @@
 				28B4664C162E25640084C9A9 /* rules.txt in Resources */,
 				28B46659163023070084C9A9 /* DetailViewController.xib in Resources */,
 				2848EC84163EE86A005D1BD1 /* SettingsViewController.xib in Resources */,
+				D4C906951652AB5300C6BDD0 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

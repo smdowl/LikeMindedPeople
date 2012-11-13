@@ -7,7 +7,6 @@
 //
 
 #import "RDRadiiManager.h"
-#import "RDRadiiProvider.h"
 #import "SynthesizeSingleton.h"
 #import "WPReachability.h"
 
@@ -26,7 +25,12 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(RDRadiiManager);
 #else
 	NSError * error = [self testReachability];
 	if (error) {
-        //TODO: alertview no connection
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Network error"
+                                                        message:@"Check your Internet connection"
+                                                       delegate:nil
+                                              cancelButtonTitle:@"OK"
+                                              otherButtonTitles: nil];
+        [alert show];
 		return;
 	}
 
