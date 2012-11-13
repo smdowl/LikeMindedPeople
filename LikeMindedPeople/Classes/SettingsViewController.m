@@ -23,6 +23,19 @@
     
     self.navigationItem.leftBarButtonItem = cancelButton;
     self.navigationItem.title = @"Settings";
+    NSDictionary *navbarTitleTextAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
+                                               [UIColor clearColor], UITextAttributeTextColor,
+                                               [UIColor clearColor], UITextAttributeTextShadowColor,
+                                               nil];
+    
+    self.navigationController.navigationBar.titleTextAttributes = navbarTitleTextAttributes;
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"navBarBackground.png"]];
+    [self.navigationController.navigationBar setBackgroundImage:imageView.image forBarMetrics:UIBarMetricsDefault];
 }
 
 - (IBAction)showGimbalSettings:(id)sender

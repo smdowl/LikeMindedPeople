@@ -102,10 +102,12 @@
     
     _mapVisible = fullScreen;
     
-    // Add the settings button to the navigation bar
-    UIImage *settingsImage = [UIImage imageNamed:@"settings.png"];
-    UIBarButtonItem *settingsButton = [[UIBarButtonItem alloc] initWithImage:settingsImage style:UIBarButtonItemStylePlain target:self action:@selector(_showSettingsPage:)];
-    self.navigationItem.leftBarButtonItem = settingsButton;
+    UIButton *settingsButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [settingsButton setImage:[UIImage imageNamed:@"settingsbutton.png"] forState:UIControlStateNormal];
+    [settingsButton addTarget:self action:@selector(_showSettingsPage:) forControlEvents:UIControlEventTouchUpInside];
+    [settingsButton setFrame:CGRectMake(20, 0, 29, 29)];
+
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:settingsButton];
     
     // Add a "test" button for debugging
     UIBarButtonItem* rightButton = [[UIBarButtonItem alloc] initWithTitle:@"Center" style:UIBarButtonItemStyleBordered target:self action:@selector(_centerMap)];

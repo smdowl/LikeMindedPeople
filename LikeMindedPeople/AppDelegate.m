@@ -63,18 +63,10 @@
     _navController = [[UINavigationController alloc] initWithRootViewController:_mapViewController];
     _navController.navigationBar.tintColor = [UIColor whiteColor];
     
-    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"headerlogoandbg.png"]];
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"navBarBackground.png"]];
     
-    CGRect imageFrame = imageView.frame;
-    imageFrame.size = _navController.navigationBar.frame.size;
-    imageView.frame = imageFrame;
-    
-    // This causes problems when presenting new view controllers
     [_navController.navigationBar setBackgroundImage:imageView.image forBarMetrics:UIBarMetricsDefault];
     
-    
-    // FB Integration fb123987074412482
-//    _facebook = [[Facebook alloc] initWithAppId:@"123987074412482" andDelegate:self];
     _facebook = [[Facebook alloc] initWithAppId:@"276594672455627" andDelegate:self];	
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -93,13 +85,10 @@
 	else
 	{
 		[_facebook requestWithGraphPath:@"me" andDelegate:self];
-//		self.window.rootViewController = _mapViewController;
         self.window.rootViewController = _navController;
 	}
 	
     [self.window makeKeyAndVisible];
-
-//	[[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleBlackOpaque];
     
 	return YES;
 }

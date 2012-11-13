@@ -12,6 +12,7 @@
 #import "ServiceAdapter.h"
 #import "DataModel.h"
 #import "MenuViewController.h"
+#import "RDFacebookManager.h"
 
 @interface DetailViewController (PrivateUtilities)
 
@@ -101,7 +102,7 @@
 
 - (IBAction)share:(id)sender
 {
-    
+    [FACEBOOK_MANAGER postToWallWithTitle:@"Titulo teste" AndMessage:@"message teste" AndPicture:@"teste"];
 }
 
 - (IBAction)callBusiness:(id)sender
