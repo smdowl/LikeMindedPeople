@@ -305,7 +305,7 @@
 		92EFB50315EA0BF0001A9149 /* cafebtn2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "cafebtn2@2x.png"; sourceTree = "<group>"; };
 		92F0038515C46A7D00BE46C5 /* DataModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataModel.h; sourceTree = "<group>"; };
 		92F0038615C46A7D00BE46C5 /* DataModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DataModel.m; sourceTree = "<group>"; };
-		92FBED4415C3A85F000D1AE3 /* LikeMindedPeople.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LikeMindedPeople.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		92FBED4415C3A85F000D1AE3 /* Radii.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Radii.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		92FBED5015C3A85F000D1AE3 /* LikeMindedPeople-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "LikeMindedPeople-Info.plist"; sourceTree = "<group>"; };
 		92FBED5215C3A85F000D1AE3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		92FBED5415C3A85F000D1AE3 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -724,7 +724,7 @@
 		92FBED4515C3A85F000D1AE3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				92FBED4415C3A85F000D1AE3 /* LikeMindedPeople.app */,
+				92FBED4415C3A85F000D1AE3 /* Radii.app */,
 				92FBED5F15C3A85F000D1AE3 /* LikeMindedPeopleTests.octest */,
 			);
 			name = Products;
@@ -880,7 +880,7 @@
 			);
 			name = LikeMindedPeople;
 			productName = LikeMindedPeople;
-			productReference = 92FBED4415C3A85F000D1AE3 /* LikeMindedPeople.app */;
+			productReference = 92FBED4415C3A85F000D1AE3 /* Radii.app */;
 			productType = "com.apple.product-type.application";
 		};
 		92FBED5E15C3A85F000D1AE3 /* LikeMindedPeopleTests */ = {
