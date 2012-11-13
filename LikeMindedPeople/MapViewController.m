@@ -204,8 +204,8 @@
         _searchingView.hidden = NO;
 		[_indicatorView startAnimating];
 		
-		if (_mapVisible == fullScreen)
-			[self _animateToMapVisibility:halfScreen];
+//		if (_mapVisible == fullScreen)
+//			[self _animateToMapVisibility:halfScreen];
         
         CLLocationCoordinate2D coord = _userLocation.coordinate;
 //        _mapView.centerCoordinate
@@ -271,7 +271,7 @@
 			 [_indicatorView stopAnimating];
 			 
 			 // Deselect whatever row was selected when the error occured
-			 [_searchView selectButton:-1];
+//			 [_searchView selectButton:-1];
 		 }];
 	}
 	else
@@ -680,15 +680,27 @@
 	CGSize viewSize = self.view.frame.size;
 	CGSize keyboardSize = [[[notification userInfo] objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
 	
-	[UIView beginAnimations:nil context:nil];
-	CGRect searchViewFrame = _searchView.frame;
-	searchViewFrame.origin.y = viewSize.height - keyboardSize.height - _searchView.searchBar.frame.size.height;
-	_searchView.frame = searchViewFrame;
+    CGRect searchViewFrame;
+    // Reposition the searchView depending on what mode it is in
+    if (_mapVisible != mapHidden)
+    {
+        searchViewFrame = _searchView.frame;
+        searchViewFrame.origin.y = viewSize.height - keyboardSize.height - _searchView.searchBar.frame.size.height;
+    }
+    else
+    {
+        searchViewFrame = _searchView.frame;
+        searchViewFrame.origin.y = 0;
+    }
+    
+    [UIView beginAnimations:nil context:nil];
+    _searchView.frame = searchViewFrame;
+    [UIView commitAnimations];
     
     _keyboardCancelButton = [UIButton buttonWithType:UIButtonTypeCustom];
     _keyboardCancelButton.frame = self.view.frame;
     [_keyboardCancelButton addTarget:self action:@selector(_hideKeyboard) forControlEvents:UIControlEventTouchUpInside];
-	[self.view insertSubview:_keyboardCancelButton belowSubview:_searchView];
+    [self.view insertSubview:_keyboardCancelButton belowSubview:_searchView];
 }
 
 - (void)keyboardWillHide:(NSNotification *)notification
@@ -700,8 +712,11 @@
 	searchViewFrame.origin.y = _mapVisible == fullScreen ? viewSize.height - [_searchView panelHeight] : viewSize.height - _searchView.frame.size.height;
 	_searchView.frame = searchViewFrame;
     
-	[_keyboardCancelButton removeFromSuperview];
-    _keyboardCancelButton = nil;
+    if (_keyboardCancelButton)
+    {
+        [_keyboardCancelButton removeFromSuperview];
+        _keyboardCancelButton = nil;
+    }
 }
 
 #pragma mark -
