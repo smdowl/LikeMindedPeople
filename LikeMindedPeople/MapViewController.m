@@ -109,10 +109,12 @@
 
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:settingsButton];
     
-    // Add a "test" button for debugging
-    UIBarButtonItem* rightButton = [[UIBarButtonItem alloc] initWithTitle:@"Center" style:UIBarButtonItemStyleBordered target:self action:@selector(_centerMap)];
-    rightButton.tintColor = [UIColor darkGrayColor];
-    self.navigationItem.rightBarButtonItem = rightButton;
+    
+    UIButton * centerButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [centerButton setImage:[UIImage imageNamed:@"centerbutton.png"] forState:UIControlStateNormal];
+    [centerButton addTarget:self action:@selector(_centerMap) forControlEvents:UIControlEventTouchUpInside];
+    [centerButton setFrame:CGRectMake(0, 0, 29, 29)];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:centerButton];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
 											 selector:@selector(keyboardWillShow:)
