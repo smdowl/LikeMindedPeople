@@ -140,6 +140,14 @@
     _mapView.frame = mapFrame;
     
     [self _animateToMapVisibility:_mapVisible];
+    
+    NSDictionary *navbarTitleTextAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
+                                               [UIColor clearColor], UITextAttributeTextColor,
+                                               [UIColor clearColor], UITextAttributeTextShadowColor,
+                                               nil];
+    
+    self.navigationController.navigationBar.titleTextAttributes = navbarTitleTextAttributes;
+
 }
 
 - (void)viewDidAppear:(BOOL)animated
