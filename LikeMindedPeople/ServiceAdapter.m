@@ -254,7 +254,7 @@
 								 failure:failure];
 }
 
-+ (void)getFourSquareSearchResultsForUser:(NSString *)userId atLocation:(CLLocationCoordinate2D)location withQuery:(NSString *)query success:(void (^)(NSArray *))success failure:(void (^)(NSError *))failure
++ (void)getFourSquareSearchResultsForUser:(NSString *)userId atLocation:(CLLocationCoordinate2D)location withQuery:(NSString *)query type:(NSString *)type success:(void (^)(NSArray *))success failure:(void (^)(NSError *))failure
 {
 	NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
 	[dictionary setValue:userId forKey:@"api_id"];
@@ -265,7 +265,11 @@
 //	
 //	[dictionary setObject:type ? type : @"" forKey:@"type"];
 	
-	[dictionary setValue:query forKey:@"query"];
+    if (query)
+        [dictionary setValue:query forKey:@"query"];
+
+    if (type)
+        [dictionary setValue:type forKey:@"section"];
 	
 	if (!userId)
 	{
@@ -294,6 +298,7 @@
              
              NSNumber *rating = [resultDictionary objectForKey:RATING_KEY];
 			 result.rating = rating ? [rating floatValue] : 0;
+             
              
 #if FAKE_SEARCH
              // If we want nice results then flip a coin to decide for each result if we want to fake it
