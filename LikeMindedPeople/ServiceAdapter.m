@@ -42,8 +42,6 @@
 
 @implementation ServiceAdapter
 
-#warning TODO
-// TODO: Use data from facebook
 + (void)uploadUserProfile:(NSDictionary *)profile userDetails:(NSDictionary *)userDetails success:(void (^)(id))success failure:(void (^)(NSError *))failure
 {
     NSMutableDictionary *d = [[NSMutableDictionary alloc] init];
@@ -255,99 +253,6 @@
 	 }
 								 failure:failure];
 }
-//
-//+ (void)getGoogleSearchResultsForUser:(NSString *)userId atLocation:(CLLocationCoordinate2D)location withName:(NSString *)name withType:(NSString *)type success:(void (^)(NSArray *))success failure:(void (^)(NSError *))failure
-//{
-//#if !FAKE_SEARCH
-//		NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-//		[dictionary setObject:[NSString stringWithFormat:@"%f",location.latitude] forKey:@"latitude"];
-//		[dictionary setObject:[NSString stringWithFormat:@"%f",location.longitude] forKey:@"longitude"];
-//		
-//		[dictionary setObject:name ? name : @"" forKey:@"name"];
-//		
-//		[dictionary setObject:type ? type : @"" forKey:@"type"];
-//		if (!userId)
-//		{
-//			// Should never happen but if it does just break out
-//			return;
-//		}
-//		[ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"google_locations/%@.json",userId] httpMethod:@"POST" postPrefixString:@"location_google=" dataObj:dictionary success:^(id results)
-//		 {
-//			 // Here we must build the Geofence objects from the returned dictionary
-//			 NSMutableArray *resultsArray = [NSMutableArray array];
-//			 for (NSDictionary *resultDictionary in results)
-//			 {
-//				 
-//				 RadiiResultDTO *result = [[RadiiResultDTO alloc] init];
-//				 result.businessTitle = [resultDictionary objectForKey:BUSINESS_TITLE_KEY];
-//				 
-//				 NSNumber *rating = [resultDictionary objectForKey:RATING_KEY];
-//				 result.rating = rating ? [rating floatValue] : 0;
-//				 
-//				 NSString *peopleCount = [resultDictionary objectForKey:PEOPLE_COUNT_KEY];
-//				 result.peopleCount = peopleCount ? [peopleCount floatValue] : 0;
-//				 
-//				 NSString *description = [resultDictionary objectForKey:DESCRIPTION_KEY];
-//				 result.details = description;
-//				 
-//				 CLLocationCoordinate2D location;
-//				 NSNumber *longitude = [resultDictionary objectForKey:@"longitude"];
-//				 location.longitude = [longitude floatValue];
-//				 
-//				 NSNumber *latitude = [resultDictionary objectForKey:@"latitude"];
-//				 location.latitude = [latitude floatValue];
-//				 result.searchLocation = location;
-//				 
-//				 [resultsArray addObject:result];
-//			 }
-//			 
-//			 success(resultsArray);
-//		 }];
-//#else
-//		NSMutableArray *resultsArray = [NSMutableArray array];
-//		for (int i=0; i<10; i++)
-//		{
-//			RadiiResultDTO *result = [[RadiiResultDTO alloc] init];
-//			result.businessTitle = [NSString stringWithFormat:@"%@ %i", name ? name : type, i];
-//			
-//			result.rating = 0.01*(arc4random() % 100);
-//			
-//			result.peopleCount = random() % 20;
-//			
-//			CGFloat range = 0.01;
-//			
-//			CLLocationCoordinate2D newLocation;
-//			newLocation.longitude = location.longitude + -range + 2 * range * 0.01 * (arc4random() % 100);
-//			newLocation.latitude = location.latitude + -range + 2 * range * 0.01 * (arc4random() % 100);
-//			
-//			result.searchLocation = newLocation;
-//			
-//			if ([type isEqualToString:@"bar"])
-//			{
-//				result.type = bar;
-//			}
-//			else if ([type isEqualToString:@"cafe"])
-//			{
-//				result.type = cafe;
-//			}
-//			else if ([type isEqualToString:@"club"])
-//			{
-//				result.type = club;
-//			}
-//			else if ([type isEqualToString:@"food"])
-//			{
-//				result.type = food;
-//			}
-//			else
-//			{
-//				result.type = arc4random() % 4;
-//			}
-//			
-//			[resultsArray addObject:result];
-//		}
-//		success(resultsArray);   
-//#endif
-//}
 
 + (void)getFourSquareSearchResultsForUser:(NSString *)userId atLocation:(CLLocationCoordinate2D)location withQuery:(NSString *)query success:(void (^)(NSArray *))success failure:(void (^)(NSError *))failure
 {
