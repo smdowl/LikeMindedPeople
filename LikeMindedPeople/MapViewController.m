@@ -21,6 +21,7 @@
 
 #define RESIZE_BUTTTON_PADDING 5
 #define MAX_BUTTON_ALPHA 0.4
+#define MAX_RATING 10.0
 
 #define SIDE_BAR_WIDTH 180
 
@@ -221,7 +222,7 @@
         
         [_mapView setCenterCoordinate:_userLocation.coordinate];
         
-		[ServiceAdapter getFourSquareSearchResultsForUser:[[DataModel sharedInstance] apiId] atLocation:coord withQuery:name ? name : type success:^(NSArray *results)
+		[ServiceAdapter getFourSquareSearchResultsForUser:[[DataModel sharedInstance] apiId] atLocation:coord withQuery:name type:type success:^(NSArray *results)
 		 {
 			 ResultType resultType;
 			 if (!type)
@@ -566,18 +567,20 @@
 	
 	cell.textLabel.text = radiiResult.businessTitle;
 	cell.textLabel.font = [UIFont systemFontOfSize:14];
-	cell.detailTextLabel.text = radiiResult.peopleHistoryCount ? [NSString stringWithFormat:@"%i %@", radiiResult.peopleHistoryCount, radiiResult.peopleHistoryCount > 1 ? @"ratings" : @"rating"] : @"Be the first one here";
+	cell.detailTextLabel.text = radiiResult.peopleHistoryCount ? [NSString stringWithFormat:@"%i %@", radiiResult.peopleHistoryCount, radiiResult.peopleHistoryCount > 1 ? @"visits" : @"visit"] : @"Be the first one here";
 	
-	if (radiiResult.peopleHistoryCount)
+	if (radiiResult.rating > 0)
 	{
 		
-		NSString *badgeString = [NSString stringWithFormat:@"%.0f%@",radiiResult.rating*100,@"%"];
+		NSString *badgeString = [NSString stringWithFormat:@"%.2f",radiiResult.rating];
 		
 		cell.badgeString = badgeString;
+        
+        CGFloat ratingFraction = radiiResult.rating/MAX_RATING;
 		
-		cell.badgeColor = [UIColor colorWithRed:radiiResult.rating * HIGH_CORRELATION_RED + (1 - radiiResult.rating) * LOW_CORRELATION_RED
-										  green:radiiResult.rating * HIGH_CORRELATION_GREEN + (1 - radiiResult.rating) * LOW_CORRELATION_GREEN
-										   blue:radiiResult.rating * HIGH_CORRELATION_BLUE + (1 - radiiResult.rating) * LOW_CORRELATION_BLUE
+		cell.badgeColor = [UIColor colorWithRed:ratingFraction * HIGH_CORRELATION_RED + (1 - ratingFraction) * LOW_CORRELATION_RED
+										  green:ratingFraction * HIGH_CORRELATION_GREEN + (1 - ratingFraction) * LOW_CORRELATION_GREEN
+										   blue:ratingFraction * HIGH_CORRELATION_BLUE + (1 - ratingFraction) * LOW_CORRELATION_BLUE
 										  alpha:1.0];
 	}
 	else

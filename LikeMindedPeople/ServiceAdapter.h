@@ -29,7 +29,7 @@
 + (void)getDirectionsFromLocation:(CLLocationCoordinate2D)from toLocation:(CLLocationCoordinate2D)to onSuccess:(void(^)(NSDictionary *))success failure:(void (^)(NSError *))failure;
 
 //+ (void)getGoogleSearchResultsForUser:(NSString *)userId atLocation:(CLLocationCoordinate2D)location withName:(NSString *)name withType:(NSString *)type success:(void (^)(NSArray *))success failure:(void (^)(NSError *))failure;
-+ (void)getFourSquareSearchResultsForUser:(NSString *)userId atLocation:(CLLocationCoordinate2D)location withQuery:(NSString *)query success:(void (^)(NSArray *))success failure:(void (^)(NSError *))failure;
++ (void)getFourSquareSearchResultsForUser:(NSString *)userId atLocation:(CLLocationCoordinate2D)location withQuery:(NSString *)query type:(NSString *)type success:(void (^)(NSArray *))success failure:(void (^)(NSError *))failure;
 
 // Testing methods
 + (void)getAllUsersWithSuccess:(void (^)(id))success;
