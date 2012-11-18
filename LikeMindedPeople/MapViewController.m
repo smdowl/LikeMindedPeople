@@ -103,15 +103,14 @@
     _mapVisible = fullScreen;
     
     UIButton *settingsButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [settingsButton setImage:[UIImage imageNamed:@"settingsbutton.png"] forState:UIControlStateNormal];
+    [settingsButton setImage:[UIImage imageNamed:@"settingsButton.png"] forState:UIControlStateNormal];
     [settingsButton addTarget:self action:@selector(_showSettingsPage:) forControlEvents:UIControlEventTouchUpInside];
     [settingsButton setFrame:CGRectMake(20, 0, 29, 29)];
 
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:settingsButton];
     
-    
     UIButton * centerButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [centerButton setImage:[UIImage imageNamed:@"centerbutton.png"] forState:UIControlStateNormal];
+    [centerButton setImage:[UIImage imageNamed:@"centerButton.png"] forState:UIControlStateNormal];
     [centerButton addTarget:self action:@selector(_centerMap) forControlEvents:UIControlEventTouchUpInside];
     [centerButton setFrame:CGRectMake(0, 0, 29, 29)];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithCustomView:centerButton];
