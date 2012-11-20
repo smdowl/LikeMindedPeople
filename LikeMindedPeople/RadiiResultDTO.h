@@ -20,6 +20,7 @@ typedef enum
 
 @interface RadiiResultDTO : NSObject <MKAnnotation>
 {
+    NSNumber *_businessId;
 	NSString *_businessTitle;
 	NSString *_details;
 	ResultType _type;
@@ -34,6 +35,7 @@ typedef enum
 	NSUInteger _historicalPeopleCount;
 }
 
+@property (nonatomic, strong) NSNumber *businessId;
 @property (nonatomic, strong) NSString *businessTitle;
 @property (nonatomic, strong) NSString *details;
 @property (nonatomic) ResultType type;

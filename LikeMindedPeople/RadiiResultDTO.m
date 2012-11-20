@@ -9,16 +9,6 @@
 #import "RadiiResultDTO.h"
 
 @implementation RadiiResultDTO
-@synthesize businessTitle = _businessTitle;
-@synthesize details = _details;
-@synthesize type = _type;
-
-@synthesize rating = _rating;
-@synthesize peopleHistoryCount = _peopleHistoryCount;
-@synthesize peopleNowCount = _peopleNowCount;
-@synthesize relatedInterests = _relatedInterests;
-
-@synthesize searchLocation = _searchLocation;
 
 - (CLLocationCoordinate2D)coordinate
 {
@@ -27,7 +17,7 @@
 
 - (NSString *)description
 {
-	return [NSString stringWithFormat:@"%@, %@. %0.2f total people:%i people here now:%i interests:%@ (%f,%f)", _businessTitle, _details, _rating, _peopleHistoryCount, _peopleNowCount, _relatedInterests, _searchLocation.latitude, _searchLocation.longitude];
+	return [NSString stringWithFormat:@"%@: %@, %@. %0.2f total people:%i people here now:%i interests:%@ (%f,%f)", _businessId, _businessTitle, _details, _rating, _peopleHistoryCount, _peopleNowCount, _relatedInterests, _searchLocation.latitude, _searchLocation.longitude];
 }
 
 @end

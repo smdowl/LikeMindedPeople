@@ -8,7 +8,6 @@
 
 #import "SearchView.h"
 #import "SearchBar.h"
-#import "DetailView.h"
 #import "LocationDetailsDTO.h"
 
 @interface SearchView (PrivateUtilities)

@@ -29,10 +29,8 @@
 		924E00DC15E35B7500A28593 /* cancel.png in Resources */ = {isa = PBXBuildFile; fileRef = 924E00DB15E35B7500A28593 /* cancel.png */; };
 		924EC8B315E1782100C2834F /* MenuViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 924EC8B115E1782000C2834F /* MenuViewController.m */; };
 		924EC8B415E1782100C2834F /* MenuViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 924EC8B215E1782000C2834F /* MenuViewController.xib */; };
-		924FB9B715CAEAEF00E9E7C3 /* DetailView.m in Sources */ = {isa = PBXBuildFile; fileRef = 924FB9B615CAEAEF00E9E7C3 /* DetailView.m */; };
 		9253044315D643CF00BC7FEF /* cancelpress.png in Resources */ = {isa = PBXBuildFile; fileRef = 9253044115D643CF00BC7FEF /* cancelpress.png */; };
 		9253044715D7006000BC7FEF /* SearchView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9253044615D7006000BC7FEF /* SearchView.xib */; };
-		9253044915D7007E00BC7FEF /* DetailView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9253044815D7007E00BC7FEF /* DetailView.xib */; };
 		9253044C15D73D6900BC7FEF /* SearchBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9253044B15D73D6800BC7FEF /* SearchBar.xib */; };
 		925AE7B315C430F2008840D9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7AC15C430F2008840D9 /* UIKit.framework */; };
 		925AE7B415C430F2008840D9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 925AE7AD15C430F2008840D9 /* Foundation.framework */; };
@@ -189,11 +187,8 @@
 		924EC8B015E1781F00C2834F /* MenuViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MenuViewController.h; sourceTree = "<group>"; };
 		924EC8B115E1782000C2834F /* MenuViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MenuViewController.m; sourceTree = "<group>"; };
 		924EC8B215E1782000C2834F /* MenuViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MenuViewController.xib; sourceTree = "<group>"; };
-		924FB9B515CAEAEF00E9E7C3 /* DetailView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DetailView.h; path = Classes/DetailView.h; sourceTree = "<group>"; };
-		924FB9B615CAEAEF00E9E7C3 /* DetailView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DetailView.m; path = Classes/DetailView.m; sourceTree = "<group>"; };
 		9253044115D643CF00BC7FEF /* cancelpress.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cancelpress.png; sourceTree = "<group>"; };
 		9253044615D7006000BC7FEF /* SearchView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SearchView.xib; sourceTree = "<group>"; };
-		9253044815D7007E00BC7FEF /* DetailView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DetailView.xib; sourceTree = "<group>"; };
 		9253044B15D73D6800BC7FEF /* SearchBar.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = SearchBar.xib; path = Classes/SearchBar.xib; sourceTree = "<group>"; };
 		925AE7AC15C430F2008840D9 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		925AE7AD15C430F2008840D9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -697,9 +692,6 @@
 				924EC8B015E1781F00C2834F /* MenuViewController.h */,
 				924EC8B115E1782000C2834F /* MenuViewController.m */,
 				924EC8B215E1782000C2834F /* MenuViewController.xib */,
-				924FB9B515CAEAEF00E9E7C3 /* DetailView.h */,
-				924FB9B615CAEAEF00E9E7C3 /* DetailView.m */,
-				9253044815D7007E00BC7FEF /* DetailView.xib */,
 				28B46655163023070084C9A9 /* DetailViewController.h */,
 				28B46656163023070084C9A9 /* DetailViewController.m */,
 				28B46657163023070084C9A9 /* DetailViewController.xib */,
@@ -1001,7 +993,6 @@
 				9263F4A515D62FF400B9B4A5 /* loginlogo@2x.png in Resources */,
 				9253044315D643CF00BC7FEF /* cancelpress.png in Resources */,
 				9253044715D7006000BC7FEF /* SearchView.xib in Resources */,
-				9253044915D7007E00BC7FEF /* DetailView.xib in Resources */,
 				9253044C15D73D6900BC7FEF /* SearchBar.xib in Resources */,
 				924EC8B415E1782100C2834F /* MenuViewController.xib in Resources */,
 				924E00D615E35B2100A28593 /* searchbackground.png in Resources */,
@@ -1122,7 +1113,6 @@
 				92EC3E4015C7A5DB0025E56C /* MapViewController.m in Sources */,
 				9290AE8615C837B800E91D61 /* SearchBar.m in Sources */,
 				9290AE8A15C84C1600E91D61 /* SearchView.m in Sources */,
-				924FB9B715CAEAEF00E9E7C3 /* DetailView.m in Sources */,
 				926FEAF915CB99510053FD1D /* RadiiResultDTO.m in Sources */,
 				921E91D615CC3D360033C8B1 /* SideBar.m in Sources */,
 				92DC197C15DE0C2800C7455E /* DirectionsPathDTO.m in Sources */,

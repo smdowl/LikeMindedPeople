@@ -110,7 +110,7 @@
 	[d setObject:[NSString stringWithFormat:@"%f",radius]  forKey:@"filter"];
 	[d setObject:userId ? userId : @"" forKey:@"api_id"];
 	
-	[ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"filter_locations.json"] httpMethod:@"POST" postPrefixString:@"location_filter=" dataObj:d success:^(NSArray *results)
+	[ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"filter_locations"] httpMethod:@"POST" postPrefixString:@"location_filter=" dataObj:d success:^(NSArray *results)
 	 {
 		 NSMutableArray *geofences = [NSMutableArray array];
 		 for (NSDictionary *geofenceDictionary in results)
@@ -176,7 +176,7 @@
 	[locationDictionary setObject:[NSString stringWithFormat:@"%f",location.coordinate.longitude] forKey:@"longitude"];
 	[locationDictionary setObject:location.businessTitle forKey:@"query"];
 	
-	[ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"venue_details.json"] httpMethod:@"POST" postPrefixString:@"venue_query=" dataObj:locationDictionary success:^(NSDictionary *result)
+	[ServiceAdapter _callServiceWithPath:[NSString stringWithFormat:@"venue_details"] httpMethod:@"POST" postPrefixString:@"venue_query=" dataObj:locationDictionary success:^(NSDictionary *result)
 	 {
 		 LocationDetailsDTO *details = [[LocationDetailsDTO alloc] init];
 		 details.name = [result objectForKey:@"name"];
@@ -285,6 +285,7 @@
 		 {
 			 
 			 RadiiResultDTO *result = [[RadiiResultDTO alloc] init];
+             result.businessId = [NSNumber numberWithInt:[[resultDictionary objectForKey:@"id"] intValue]];
 			 result.businessTitle = [resultDictionary objectForKey:BUSINESS_TITLE_KEY];
              
 			 NSString *peopleHistoryCount = [resultDictionary objectForKey:PEOPLE_HISTORY_COUNT_KEY];
