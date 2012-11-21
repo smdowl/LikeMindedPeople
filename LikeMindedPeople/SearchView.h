@@ -34,7 +34,6 @@
 	
 	UIButton *_searchButton;
 	SearchBar *_searchBar;
-	UIView *_searchBarContainerView;
 	NSString *_previousSearch;
 	
 	UIView *_searchBarPanel;

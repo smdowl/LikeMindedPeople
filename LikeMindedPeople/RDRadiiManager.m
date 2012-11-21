@@ -11,12 +11,13 @@
 #import "WPReachability.h"
 
 
-#define kAppID @"503679675"
+#define kAppleAppID @"503679675"
 
 
 @implementation RDRadiiManager
 
 SYNTHESIZE_SINGLETON_FOR_CLASS(RDRadiiManager);
+
 
 - (void)rateAppInStore
 {
@@ -36,7 +37,7 @@ SYNTHESIZE_SINGLETON_FOR_CLASS(RDRadiiManager);
 
     NSString * templateReviewURL = [NSString stringWithFormat:@"%@",@"itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=APP_ID"];
 
-	NSString *reviewURL = [templateReviewURL stringByReplacingOccurrencesOfString:@"APP_ID" withString:[NSString stringWithFormat:@"%@", kAppID]];
+	NSString *reviewURL = [templateReviewURL stringByReplacingOccurrencesOfString:@"APP_ID" withString:[NSString stringWithFormat:@"%@", kAppleAppID]];
     
 	[[UIApplication sharedApplication] openURL:[NSURL URLWithString:reviewURL]];
 #endif

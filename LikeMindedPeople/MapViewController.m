@@ -53,6 +53,9 @@
 - (void)_showSettingsPage:(id)sender;
 - (void)_centerMap;
 - (UIImage *)_getImageStringForAnnotationWithType:(NSInteger)type;
+- (void)_startActivityIndicator;
+- (void)_stopActivityIndicator;
+
 
 @end
 
@@ -74,6 +77,7 @@
 	_searchView.frame = searchViewFrame;
     
 	[self.view insertSubview:_searchView belowSubview:_searchingView];
+    _searchingView.userInteractionEnabled = NO;
 	_searchView.delegate = self;
     
     // Add the pinch gesture to the map so that when the user zooms in and the map is only half visible it goes full screen
@@ -102,6 +106,8 @@
 	_storedResults = [NSMutableArray array];
     
     _mapVisible = fullScreen;
+    
+    self.navigationController.navigationBar.tintColor = [UIColor lightGrayColor];
     
     UIButton *settingsButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [settingsButton setImage:[UIImage imageNamed:@"settingsButton.png"] forState:UIControlStateNormal];
@@ -206,17 +212,12 @@
 
 - (void)beginSearchForPlacesWithName:(NSString *)name type:(NSString *)type
 {
-    
 	if (name.length || type.length)
 	{
 		[_storedResults removeAllObjects];
 		
-        _searchingView.hidden = NO;
-		[_indicatorView startAnimating];
-		
-//		if (_mapVisible == fullScreen)
-//			[self _animateToMapVisibility:halfScreen];
-        
+        [self _startActivityIndicator];
+		        
         CLLocationCoordinate2D coord = _userLocation.coordinate;
 //        _mapView.centerCoordinate
         
@@ -234,8 +235,7 @@
 			 else if ([type isEqualToString:@"nightclub"])
 				 resultType = club;
              
-			 _searchingView.hidden = YES;
-			 [_indicatorView stopAnimating];
+             [self _stopActivityIndicator];
 			 
 			 if ([results count] == 0) {
 				 [self _removeAllNonUserAnnotations];
@@ -277,8 +277,7 @@
 			 UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Problem connecting to server" message:@"Please check internet connection and try again" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
 			 [alert show];
 			 
-			 _searchingView.hidden = YES;
-			 [_indicatorView stopAnimating];
+             [self _stopActivityIndicator];
 			 
 			 // Deselect whatever row was selected when the error occured
 //			 [_searchView selectButton:-1];
@@ -692,43 +691,18 @@
 	CGSize viewSize = self.view.frame.size;
 	CGSize keyboardSize = [[[notification userInfo] objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
 	
-    CGRect searchViewFrame;
-    // Reposition the searchView depending on what mode it is in
-    if (_mapVisible != mapHidden)
-    {
-        searchViewFrame = _searchView.frame;
-        searchViewFrame.origin.y = viewSize.height - keyboardSize.height - _searchView.searchBar.frame.size.height;
-    }
-    else
-    {
-        searchViewFrame = _searchView.frame;
-        searchViewFrame.origin.y = 0;
-    }
-    
-    [UIView beginAnimations:nil context:nil];
-    _searchView.frame = searchViewFrame;
-    [UIView commitAnimations];
-    
-    _keyboardCancelButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    _keyboardCancelButton.frame = self.view.frame;
-    [_keyboardCancelButton addTarget:self action:@selector(_hideKeyboard) forControlEvents:UIControlEventTouchUpInside];
-    [self.view insertSubview:_keyboardCancelButton belowSubview:_searchView];
+    CGFloat originY = _mapVisible != mapHidden ? viewSize.height - keyboardSize.height - _searchView.searchBar.frame.size.height : 0;
+
+    _searchView.frame = CGRectMake(_searchView.frame.origin.x, originY, _searchView.frame.size.width, _searchView.frame.size.height);
 }
 
 - (void)keyboardWillHide:(NSNotification *)notification
 {
 	CGSize viewSize = self.view.frame.size;
 	
-	[UIView beginAnimations:nil context:nil];
-	CGRect searchViewFrame = _searchView.frame;
-	searchViewFrame.origin.y = _mapVisible == fullScreen ? viewSize.height - [_searchView panelHeight] : viewSize.height - _searchView.frame.size.height;
-	_searchView.frame = searchViewFrame;
-    
-    if (_keyboardCancelButton)
-    {
-        [_keyboardCancelButton removeFromSuperview];
-        _keyboardCancelButton = nil;
-    }
+    CGFloat originY = _mapVisible == fullScreen ? viewSize.height - [_searchView panelHeight] : viewSize.height - _searchView.frame.size.height;
+
+    _searchView.frame = CGRectMake(_searchView.frame.origin.x, originY, _searchView.frame.size.width, _searchView.frame.size.height);;
 }
 
 #pragma mark -
@@ -957,6 +931,20 @@
             break;
     }
 
+}
+
+- (void)_startActivityIndicator
+{
+    _searchingView.hidden = NO;
+    [_indicatorView startAnimating];
+    _searchView.userInteractionEnabled = NO;
+}
+
+- (void)_stopActivityIndicator
+{
+    _searchingView.hidden = YES;
+    [_indicatorView stopAnimating];
+    _searchView.userInteractionEnabled = YES;
 }
 
 @end
