@@ -78,7 +78,8 @@
 
 #pragma mark -
 #pragma mark External Methods
- -(CGFloat)panelHeight
+
+- (CGFloat)panelHeight
 {
     // Previously also included the search bar if it had been added (ie someone was searching) this was causing a UI glitch in another case and I can't remember what the advantage of it was.
 //	return _searchBar ? _searchBar.frame.size.height + _searchBarPanel.frame.size.height : _searchBarPanel.frame.size.height;
@@ -122,16 +123,13 @@
 		
 		selectedButton.selected = YES;
 		
-		// If this button is the search button, show the text field
 		if (_selectedIndex == 0)
+        {
 			[self _showSearchBar];
-		
-		// Don't want to search if the search was selected until the keyboard return is pressed
-		if (_selectedIndex != 0)
-		{
-			NSString *searchKey = [_searchKeys objectAtIndex:_selectedIndex];
-			[_delegate beginSearchForPlacesWithName:nil type:searchKey];
-		}
+            return;
+        }
+        NSString *searchKey = [_searchKeys objectAtIndex:_selectedIndex];
+        [_delegate beginSearchForPlacesWithName:nil type:searchKey];
 	}
 }
 
@@ -151,17 +149,6 @@
 	[_searchResultsView reloadData];
 }
 
-//- (void)setFrame:(CGRect)frame
-//{
-//    super.frame = frame;
-//    
-//    CGRect searchResultsFrame = _searchResultsView.frame;
-//    searchResultsFrame.size.height = frame.size.height - _searchBarPanel.frame.size.height;
-//    _searchResultsView.frame = searchResultsFrame;
-////    _noResultsView.superview.frame = searchResultsFrame;
-//    _noResultsView.frame = searchResultsFrame;
-//    
-//}
 
 #pragma mark -
 #pragma mark IBActions
@@ -189,7 +176,6 @@
 	_previousSearch = searchText;
     [self _hideSearchBar];
 	[textField resignFirstResponder];
-	
 	return YES;
 }
 
@@ -206,16 +192,9 @@
 	if (_previousSearch)
 		_searchBar.searchBox.text = _previousSearch;
 		
-	// Make the SearchView larger and add a UIView in the extra space which clips to its bounds then animate the bar in
-	CGRect searchViewFrame = self.frame;
-	searchViewFrame.origin.y += _searchBar.frame.size.height;
-	searchViewFrame.size.height += _searchBar.frame.size.height;
-	self.frame = searchViewFrame;
-	
-	_searchBarContainerView = [[UIView alloc] initWithFrame:CGRectMake(0,0,self.frame.size.width,_searchBar.frame.size.height)];
-	_searchBarContainerView.clipsToBounds = YES;
-	[self addSubview:_searchBarContainerView];
-	
+	// Make the SearchView larger and add a UIView in the extra space which clips to its bounds then animate the bar in    
+	self.frame = CGRectMake(_searchBar.frame.origin.x, _searchBar.frame.origin.y + _searchBar.frame.size.height, _searchBar.frame.size.width, _searchBar.frame.size.height + _searchBar.frame.size.height);;
+		
 	CGRect searchBarFrame = _searchBar.frame;
 	searchBarFrame.origin.y += _searchBar.frame.size.height;
 	_searchBar.frame = searchBarFrame;
@@ -224,51 +203,32 @@
 	searchBarPanelFrame.origin.y += _searchBar.frame.size.height;
 	_searchBarPanel.frame = searchBarPanelFrame;
 	
-	[_searchBarContainerView addSubview:_searchBar];
+	[self addSubview:_searchBar];
 	
-	[UIView beginAnimations:nil context:nil];
-	
-	searchBarFrame.origin.y -= _searchBar.frame.size.height;
-	_searchBar.frame = searchBarFrame;
-	
-	[UIView commitAnimations];
-	
-	[_searchBar becomeFirstResponder];
+    CGRect newFrame = CGRectMake(searchBarFrame.origin.x, searchBarFrame.origin.y - _searchBar.frame.size.height, searchBarFrame.size.width, searchBarFrame.size.height);
+    _searchBar.frame = newFrame;
+    
+    [_searchBar becomeFirstResponder];
 }
 
 - (void)_hideSearchBar
-{				
-	[UIView animateWithDuration:0.2 animations:^()
-	 {
-		 CGRect searchViewFrame = self.frame;
-		 searchViewFrame.origin.y -= _searchBar.frame.size.height;
-		 searchViewFrame.size.height -= _searchBar.frame.size.height;
-		 self.frame = searchViewFrame;
-		 
-		 CGRect containerFrame = _searchBarContainerView.frame;
-		 containerFrame.origin.y -= _searchBarContainerView.frame.size.height;
-		 _searchBarContainerView.frame = containerFrame;
-		 
-		 CGRect searchBarFrame = _searchBar.frame;
-		 searchBarFrame.origin.y += _searchBar.frame.size.height;
-		 _searchBar.frame = searchBarFrame;
-         
-         CGRect searchBarPanelFrame = _searchBarPanel.frame;
-         searchBarPanelFrame.origin.y -= _searchBar.frame.size.height;
-         _searchBarPanel.frame = searchBarPanelFrame;
-         
-	 } 
-					 completion:^(BOOL finished)
-	 {	
-		 [_searchBar removeFromSuperview];
-		 _searchBar = nil;
-		 
-		 [_searchBarContainerView removeFromSuperview];
-		 _searchBarContainerView = nil;
-		 
-	 }];
-	
-
+{	
+    CGRect searchViewFrame = self.frame;
+    searchViewFrame.origin.y -= _searchBar.frame.size.height;
+    searchViewFrame.size.height -= _searchBar.frame.size.height;
+    self.frame = searchViewFrame;
+        
+    CGRect searchBarFrame = _searchBar.frame;
+    searchBarFrame.origin.y += _searchBar.frame.size.height;
+    _searchBar.frame = searchBarFrame;
+    
+    CGRect searchBarPanelFrame = _searchBarPanel.frame;
+    searchBarPanelFrame.origin.y -= _searchBar.frame.size.height;
+    _searchBarPanel.frame = searchBarPanelFrame;
+    
+    [_searchBar removeFromSuperview];
+    _searchBar = nil;
+    _selectedIndex = -1;
 }
 
 - (void)_barSwiped:(UISwipeGestureRecognizer *)recognizer

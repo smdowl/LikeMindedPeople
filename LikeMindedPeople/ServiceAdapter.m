@@ -414,7 +414,6 @@
 					 success:(void (^)(id))success
 					 failure:(void (^)(NSError *))failure
 {
-	
     // Create JSON string
     NSError* error = nil;
     id json = [NSJSONSerialization dataWithJSONObject:dataObj
@@ -472,6 +471,7 @@
 														failure(error);
 														//[errFuncs callWithErrorCode:@"DefaultError" errorMessage:errorMsg];
 													}];
+//    [RD_PROVIDER.operationQueue addOperation:operation];
     [operation start];
     
 }
@@ -484,7 +484,5 @@
 		 
 	 }];
 }
-
-
 
 @end

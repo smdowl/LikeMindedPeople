@@ -29,6 +29,7 @@
 	_fbButton.layer.shadowRadius = 2;
 	_fbButton.layer.shadowOffset = CGSizeMake(2.0, 2.0);
 	_fbButton.layer.masksToBounds = NO;
+    self.navigationController.navigationBar.tintColor = [UIColor lightGrayColor];
 }
 
 -(void)authorizeFacebook
