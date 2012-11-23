@@ -411,7 +411,6 @@
 										<string key="NSFrame">{{200, 185}, {100, 30}}</string>
 										<reference key="NSSuperview" ref="716580116"/>
 										<reference key="NSWindow"/>
-										<reference key="NSNextKeyView"/>
 										<string key="NSReuseIdentifierKey">_NS:9</string>
 										<bool key="IBUIOpaque">NO</bool>
 										<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
@@ -542,6 +541,14 @@
 						<reference key="destination" ref="771156521"/>
 					</object>
 					<int key="connectionID">925</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">phoneNumberLabel</string>
+						<reference key="source" ref="372490531"/>
+						<reference key="destination" ref="473908018"/>
+					</object>
+					<int key="connectionID">926</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchEventConnection" key="connection">
@@ -2523,7 +2530,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">925</int>
+			<int key="maxID">926</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
