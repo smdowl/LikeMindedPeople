@@ -15,7 +15,7 @@
 #import "RDFacebookManager.h"
 
 @interface DetailViewController (PrivateUtilities)
-
+- (void)_startDownloadingDetails;
 @end
 
 @implementation DetailViewController
@@ -56,18 +56,21 @@
     //	_presentUsersLabel.text = [NSString stringWithFormat:@"%i", data.peopleCount];
 	_presentUsersLabel.text = @"-";
     //	_ratingLabel.text = @"-";
-	_ratingLabel.text = [NSString stringWithFormat:@"%0.0f%%", 100*data.rating];
-	#warning TODO
+	_ratingLabel.text = [NSString stringWithFormat:@"%0.2f", data.rating];
+#warning TODO
 	// TODO: actually do this
 	_interestsLabel.text = @"";
-		
+    
 	_loadingDetailsView.hidden = NO;
+    
+    [self _startDownloadingDetails];
+    
 	[_activityIndicator startAnimating];
 }
 
 - (void)setLocationDetails:(LocationDetailsDTO *)locationDetails
 {
-    #warning TODO
+#warning TODO
 	// TODO: Took this out for want of a better system for telling if the details apply to this page or not
     //	if ([locationDetails.name isEqualToString:_data.businessTitle])
     //	{
@@ -75,7 +78,9 @@
     [_activityIndicator stopAnimating];
     
     _locationDetails = locationDetails;
-        
+    
+    _addressView.text = _locationDetails.address;
+    
     _presentUsersLabel.text = [NSString stringWithFormat:@"%i", locationDetails.currentPeopleCount];
     //		_ratingLabel.text = [NSString stringWithFormat:@"%0.0f%%", locationDetails.rating*100];
     //	}
@@ -92,12 +97,12 @@
 
 - (IBAction)rateUp:(id)sender
 {
-    
+    [ServiceAdapter ratePlace:_data user:@"1" up:true];
 }
 
 - (IBAction)rateDown:(id)sender
 {
-    
+    [ServiceAdapter ratePlace:_data user:@"1" up:false];
 }
 
 - (IBAction)share:(id)sender
@@ -113,22 +118,22 @@
     if (![currentModel isEqualToString:@"iPhone"])
     {
         alertView = [[UIAlertView alloc] initWithTitle:nil
-                                                message:NSLocalizedString(@"_detailView_phonecall_iPad_message", @"")
-                                               delegate:nil
-                                      cancelButtonTitle:NSLocalizedString(@"_alertView_ok", @"")
-                                      otherButtonTitles:nil];
+                                               message:NSLocalizedString(@"_detailView_phonecall_iPad_message", @"")
+                                              delegate:nil
+                                     cancelButtonTitle:NSLocalizedString(@"_alertView_ok", @"")
+                                     otherButtonTitles:nil];
         [alertView show];
         return;
     }
     
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"tel://+33980980986"]];
-
+    
 }
 
 - (IBAction)directionsBusiness:(id)sender
 {
     CLLocationCoordinate2D destination = CLLocationCoordinate2DMake(self.data.searchLocation.latitude, self.data.searchLocation.longitude);
-
+    
     Class itemClass = [MKMapItem class];
     if (itemClass && [itemClass respondsToSelector:@selector(openMapsWithItems:launchOptions:)]) {
         MKMapItem *currentLocation = [MKMapItem mapItemForCurrentLocation];
@@ -155,9 +160,9 @@
     
     // Animate the scroll view back to its original position to avoid a UI glitch
     [UIView animateWithDuration:1 animations:^()
-    {
-        _containerView.contentOffset = CGPointZero;
-    }];
+     {
+         _containerView.contentOffset = CGPointZero;
+     }];
 }
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
@@ -174,23 +179,23 @@
 
 - (void)_startDownloadingDetails
 {
-		_downloadingDetails = YES;
+    _downloadingDetails = YES;
 	
     DetailViewController *strongSelf = self;
     
-		[ServiceAdapter getLocationDetails:_data
-									userId:[[DataModel sharedInstance] apiId]
-								   success:^(LocationDetailsDTO *details)
-		 {
-			 if (strongSelf)
-				 self.locationDetails = details;
-		 }
-								   failure:^(NSError *error)
-		 {
-             //			 [[[UIAlertView alloc] initWithTitle:@"Network Error" message:@"Problem getting details for location" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
-             if (strongSelf)
-                 [strongSelf failedToLoadDetails];
-		 }];
+    [ServiceAdapter getLocationDetails:_data
+                                userId:[[DataModel sharedInstance] apiId]
+                               success:^(LocationDetailsDTO *details)
+     {
+         if (strongSelf)
+             self.locationDetails = details;
+     }
+                               failure:^(NSError *error)
+     {
+         //			 [[[UIAlertView alloc] initWithTitle:@"Network Error" message:@"Problem getting details for location" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] show];
+         if (strongSelf)
+             [strongSelf failedToLoadDetails];
+     }];
 }
 
 @end

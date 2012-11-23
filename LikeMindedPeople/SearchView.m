@@ -57,7 +57,7 @@
 	[_clubButton setImage:[UIImage imageNamed:@"clubsbtn3.png"] forState:UIControlStateSelected];
 	[_foodButton setImage:[UIImage imageNamed:@"foodbtn3.png"] forState:UIControlStateSelected];
 	
-	_searchKeys = [NSArray arrayWithObjects:@"", @"bar", @"cafe", @"nightclub", @"food", nil];
+	_searchKeys = [NSArray arrayWithObjects:@"", @"drinks", @"coffee", @"nightclub", @"food", nil];
 		
 	_selectedIndex = -1;
 	

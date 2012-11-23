@@ -181,7 +181,12 @@
 		 LocationDetailsDTO *details = [[LocationDetailsDTO alloc] init];
 		 details.name = [result objectForKey:@"name"];
 		 details.description = [result objectForKey:@"description"];
+         
+         details.currentPeopleCount = [[result objectForKey:@"people_now_count"] unsignedIntValue];
+         details.rating = [[result objectForKey:@"rating"] floatValue];
 		 
+         details.address = [result objectForKey:@"address"];
+         
 		 NSMutableArray *categories = [NSMutableArray array];
 		 for (NSDictionary *category in [result objectForKey:@"categories"])
 		 {
@@ -200,16 +205,10 @@
 		 details.categories = categories;
 		 
 		 NSString *menuString = [result objectForKey:@"menu"];
-		 details.menuURL = ![menuString isKindOfClass:[NSNull class]] ? [menuString isEqualToString:@"<null>"] ? nil : menuString : nil;
+		 details.menuURL = menuString;
 		 
-		 details.currentPeopleCount = [[result objectForKey:@"people_now_count"] unsignedIntValue];
-         if (!details.currentPeopleCount)
-         {
-             details.currentPeopleCount = arc4random() % 25;
-         }
-		 details.rating = [[result objectForKey:@"rating"] floatValue];
-		 
-		 NSLog(@"%@", details);
+         
+         
 		 success(details);
 	 }
 								 failure:failure];
@@ -260,7 +259,7 @@
 	[dictionary setValue:userId forKey:@"api_id"];
 	[dictionary setObject:[NSString stringWithFormat:@"%f",location.latitude] forKey:@"latitude"];
 	[dictionary setObject:[NSString stringWithFormat:@"%f",location.longitude] forKey:@"longitude"];
-	[dictionary setValue:[NSNumber numberWithInt:50] forKey:@"limit"];
+	[dictionary setValue:[NSNumber numberWithInt:5] forKey:@"limit"];
 //	[dictionary setObject:name ? name : @"" forKey:@"name"];
 //	
 //	[dictionary setObject:type ? type : @"" forKey:@"type"];
@@ -371,6 +370,23 @@
 								 failure:failure];    
 }
 
++ (void)ratePlace:(RadiiResultDTO *)place user:(NSString *)userId up:(BOOL)up
+{
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+	[dictionary setValue:userId forKey:@"api_id"];
+	[dictionary setObject:[NSString stringWithFormat:@"%@",place.businessId] forKey:@"business_id"];
+	[dictionary setValue:[NSNumber numberWithBool:up] forKey:@"rated_up"];
+    
+    [ServiceAdapter _callServiceWithPath:@"rate" httpMethod:@"POST" postPrefixString:@"rate_query=" dataObj:dictionary success:^(id results)
+	 {
+             
+     }
+                                 failure:^(NSError *err)
+     {
+         NSLog(@"%@", err);
+     }];
+}
+
 + (void)getDirectionsFromLocation:(CLLocationCoordinate2D)from toLocation:(CLLocationCoordinate2D)to onSuccess:(void(^)(NSDictionary *))success failure:(void (^)(NSError *))failure
 {
 	NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"%@origin=%f,%f&destination=%f,%f&sensor=true&mode=walking",GOOGLE_DIRECTIONS_URL,from.latitude,from.longitude,to.latitude,to.longitude]];
@@ -386,6 +402,7 @@
     }];
     [operation start];
 }
+
 
 #pragma mark -
 #pragma mark Private Methods
@@ -451,7 +468,7 @@
 													} 
 													failure:^(NSURLRequest *request , NSHTTPURLResponse *response , NSError *error , id JSON ) {
 														NSString *errorMsg = [NSString stringWithFormat:@"ServiceAdapter.callService error: %@", error];
-														NSLog(@"%@",errorMsg);
+														NSLog(@"ERROR: %@",[JSON objectForKey:@"message"]);
 														failure(error);
 														//[errFuncs callWithErrorCode:@"DefaultError" errorMessage:errorMsg];
 													}];

@@ -31,6 +31,8 @@
 //+ (void)getGoogleSearchResultsForUser:(NSString *)userId atLocation:(CLLocationCoordinate2D)location withName:(NSString *)name withType:(NSString *)type success:(void (^)(NSArray *))success failure:(void (^)(NSError *))failure;
 + (void)getFourSquareSearchResultsForUser:(NSString *)userId atLocation:(CLLocationCoordinate2D)location withQuery:(NSString *)query type:(NSString *)type success:(void (^)(NSArray *))success failure:(void (^)(NSError *))failure;
 
++ (void)ratePlace:(RadiiResultDTO *)place user:(NSString *)userId up:(BOOL)up;
+
 // Testing methods
 + (void)getAllUsersWithSuccess:(void (^)(id))success;
 

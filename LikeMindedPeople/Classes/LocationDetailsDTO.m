@@ -9,13 +9,6 @@
 #import "LocationDetailsDTO.h"
 
 @implementation LocationDetailsDTO
-@synthesize name = _name;
-@synthesize description = _description;
-@synthesize categories = _categories;
-@synthesize hours = _hours;
-@synthesize menuURL = _menuURL;
-@synthesize currentPeopleCount = _currentPeopleCount;
-@synthesize rating = _rating;
 
 - (NSString *)description
 {

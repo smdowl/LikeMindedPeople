@@ -12,8 +12,9 @@
 @interface LocationDetailsDTO : NSObject
 {
 	NSString *_name;
-	NSString *_description;
-	
+	NSString *_description;	
+    NSString *_address;
+    
 	NSArray *_cateogories;
 	
 	HoursDTO *_hours;
@@ -27,6 +28,7 @@
 
 @property (nonatomic,strong) NSString *name;
 @property (nonatomic,strong) NSString *description;
+@property (nonatomic,strong) NSString *address;
 
 @property (nonatomic,strong) NSArray *categories;
 
