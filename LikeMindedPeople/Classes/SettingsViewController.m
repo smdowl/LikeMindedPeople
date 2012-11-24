@@ -7,11 +7,12 @@
 //
 
 #import "SettingsViewController.h"
+#import "AppDelegate.h"
 #import "DataModel.h"
 #import "RDRadiiManager.h"
 
 @interface SettingsViewController ()
-
+- (IBAction)logout;
 @end
 
 @implementation SettingsViewController
@@ -36,6 +37,16 @@
     [super viewWillAppear:animated];
     UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"navBarBackground.png"]];
     [self.navigationController.navigationBar setBackgroundImage:imageView.image forBarMetrics:UIBarMetricsDefault];
+}
+
+- (IBAction)logout
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Log out"
+                                                    message:@"Are you sure you want to log out?"
+                                                   delegate:self
+                                          cancelButtonTitle:@"Cancel"
+                                          otherButtonTitles: @"Yes",nil];
+    [alert show];
 }
 
 - (IBAction)showGimbalSettings:(id)sender
@@ -74,6 +85,18 @@
 - (IBAction)rateAppButtonPunched:(id)sender
 {
     [RD_MANAGER rateAppInStore];
+}
+
+#pragma mark -
+#pragma mark UIAlertViewDelegate
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex == 1)
+    {
+        [[DataModel sharedInstance] deleteUserInfo];
+        [(AppDelegate *)[[UIApplication sharedApplication] delegate] returnToLoginScreen];
+    }
 }
 
 @end
