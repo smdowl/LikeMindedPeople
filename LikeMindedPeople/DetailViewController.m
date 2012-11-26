@@ -13,6 +13,7 @@
 #import "DataModel.h"
 #import "MenuViewController.h"
 #import "RDFacebookManager.h"
+#import "CategoryDTO.h"
 
 @interface DetailViewController (PrivateUtilities)
 - (void)_startDownloadingDetails;
@@ -33,6 +34,7 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg.png"]];
 }
 
 - (void)didReceiveMemoryWarning
@@ -84,6 +86,8 @@
     _presentUsersLabel.text = [NSString stringWithFormat:@"%i", locationDetails.currentPeopleCount];
     
     _phoneNumberLabel.text = locationDetails.phoneNumber;
+    CategoryDTO *category = [locationDetails.categories objectAtIndex:0];
+    _subcategoryLabel.text = category.name;
     
     //		_ratingLabel.text = [NSString stringWithFormat:@"%0.0f%%", locationDetails.rating*100];
     //	}
