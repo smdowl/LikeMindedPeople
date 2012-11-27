@@ -13,7 +13,6 @@
 @interface SearchView (PrivateUtilities)
 - (void)_showSearchBar;
 - (void)_hideSearchBar;
-
 - (void)_barSwiped:(UISwipeGestureRecognizer *)recognizer;
 
 @end
@@ -191,41 +190,14 @@
 	_searchBar.searchBox.delegate = self;
 	if (_previousSearch)
 		_searchBar.searchBox.text = _previousSearch;
-		
-	// Make the SearchView larger and add a UIView in the extra space which clips to its bounds then animate the bar in    
-	self.frame = CGRectMake(_searchBar.frame.origin.x, _searchBar.frame.origin.y + _searchBar.frame.size.height, _searchBar.frame.size.width, _searchBar.frame.size.height + _searchBar.frame.size.height);;
-		
-	CGRect searchBarFrame = _searchBar.frame;
-	searchBarFrame.origin.y += _searchBar.frame.size.height;
-	_searchBar.frame = searchBarFrame;
-    
-	CGRect searchBarPanelFrame = _searchBarPanel.frame;
-	searchBarPanelFrame.origin.y += _searchBar.frame.size.height;
-	_searchBarPanel.frame = searchBarPanelFrame;
-	
+			
 	[self addSubview:_searchBar];
-	
-    CGRect newFrame = CGRectMake(searchBarFrame.origin.x, searchBarFrame.origin.y - _searchBar.frame.size.height, searchBarFrame.size.width, searchBarFrame.size.height);
-    _searchBar.frame = newFrame;
-    
+	    
     [_searchBar becomeFirstResponder];
 }
 
 - (void)_hideSearchBar
 {	
-    CGRect searchViewFrame = self.frame;
-    searchViewFrame.origin.y -= _searchBar.frame.size.height;
-    searchViewFrame.size.height -= _searchBar.frame.size.height;
-    self.frame = searchViewFrame;
-        
-    CGRect searchBarFrame = _searchBar.frame;
-    searchBarFrame.origin.y += _searchBar.frame.size.height;
-    _searchBar.frame = searchBarFrame;
-    
-    CGRect searchBarPanelFrame = _searchBarPanel.frame;
-    searchBarPanelFrame.origin.y -= _searchBar.frame.size.height;
-    _searchBarPanel.frame = searchBarPanelFrame;
-    
     [_searchBar removeFromSuperview];
     _searchBar = nil;
     _selectedIndex = -1;

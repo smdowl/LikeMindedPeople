@@ -76,8 +76,8 @@
 	searchViewFrame.size.height = self.view.frame.size.height - searchViewFrame.origin.y;
 	_searchView.frame = searchViewFrame;
     
-	[self.view insertSubview:_searchView belowSubview:_searchingView];
-    _searchingView.userInteractionEnabled = NO;
+	[self.view insertSubview:_searchView belowSubview:_activityBackgroundView];
+    _activityBackgroundView.userInteractionEnabled = NO;
 	_searchView.delegate = self;
     
     // Add the pinch gesture to the map so that when the user zooms in and the map is only half visible it goes full screen
@@ -287,6 +287,7 @@
 	{
 		[self _removeAllNonUserAnnotations];
 	}
+    [self _animateToMapVisibility:halfScreen];
 }
 
 - (void)clearResults
@@ -700,8 +701,7 @@
 {
 	CGSize viewSize = self.view.frame.size;
 	
-    CGFloat originY = _mapVisible == fullScreen ? viewSize.height - [_searchView panelHeight] : viewSize.height - _searchView.frame.size.height;
-
+    CGFloat originY = viewSize.height - _searchView.frame.size.height;
     _searchView.frame = CGRectMake(_searchView.frame.origin.x, originY, _searchView.frame.size.width, _searchView.frame.size.height);;
 }
 
@@ -935,14 +935,14 @@
 
 - (void)_startActivityIndicator
 {
-    _searchingView.hidden = NO;
+    _activityBackgroundView.hidden = NO;
     [_indicatorView startAnimating];
     _searchView.userInteractionEnabled = NO;
 }
 
 - (void)_stopActivityIndicator
 {
-    _searchingView.hidden = YES;
+    _activityBackgroundView.hidden = YES;
     [_indicatorView stopAnimating];
     _searchView.userInteractionEnabled = YES;
 }

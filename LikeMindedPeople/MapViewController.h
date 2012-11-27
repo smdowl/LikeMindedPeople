@@ -25,7 +25,7 @@ typedef enum
     
 	SearchView *_searchView;
 	
-	UIView *_searchingView; // A view to show the phone is busy
+	UIView *_activityBackgroundView; // A view to show the phone is busy
 	UIActivityIndicatorView *_indicatorView;
     
 	UIButton *_keyboardCancelButton;
@@ -58,7 +58,7 @@ typedef enum
 @property (nonatomic, strong) IBOutlet MKMapView *mapView;
 @property (nonatomic, strong) IBOutlet SearchView *searchView;
 
-@property (nonatomic, strong) IBOutlet UIView *searchingView;
+@property (nonatomic, strong) IBOutlet UIView *activityBackgroundView;
 @property (nonatomic, strong) IBOutlet UIActivityIndicatorView *indicatorView;
 
 @property (nonatomic, strong) IBOutlet UIView *locationDisabledView;
