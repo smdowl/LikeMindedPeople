@@ -150,6 +150,18 @@
 	[[DataModel sharedInstance] runStartUpSequence];
 }
 
+- (void)returnToLoginScreen
+{
+    [[_mapViewController navigationController] popToRootViewControllerAnimated:NO];
+    
+    _facebook = [[Facebook alloc] initWithAppId:@"276594672455627" andDelegate:self];
+    [_facebook logout];
+    
+    _loginViewController = [[LoginViewController alloc] initWithNibName:nil bundle:nil];
+    _loginViewController.facebook = _facebook;
+    self.window.rootViewController = _loginViewController;
+}
+
 #pragma matk -
 #pragma mark Flurry Analytics
 

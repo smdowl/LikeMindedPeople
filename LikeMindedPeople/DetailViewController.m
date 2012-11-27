@@ -13,6 +13,7 @@
 #import "DataModel.h"
 #import "MenuViewController.h"
 #import "RDFacebookManager.h"
+#import "CategoryDTO.h"
 
 @interface DetailViewController (PrivateUtilities)
 - (void)_startDownloadingDetails;
@@ -33,6 +34,7 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg.png"]];
 }
 
 - (void)didReceiveMemoryWarning
@@ -82,6 +84,11 @@
     _addressView.text = _locationDetails.address;
     
     _presentUsersLabel.text = [NSString stringWithFormat:@"%i", locationDetails.currentPeopleCount];
+    
+    _phoneNumberLabel.text = locationDetails.phoneNumber;
+    CategoryDTO *category = [locationDetails.categories objectAtIndex:0];
+    _subcategoryLabel.text = category.name;
+    
     //		_ratingLabel.text = [NSString stringWithFormat:@"%0.0f%%", locationDetails.rating*100];
     //	}
 }
@@ -113,7 +120,7 @@
 - (IBAction)callBusiness:(id)sender
 {
     UIAlertView * alertView;
-    
+        
     NSString *currentModel = [[UIDevice currentDevice] model];
     if (![currentModel isEqualToString:@"iPhone"])
     {
@@ -126,7 +133,20 @@
         return;
     }
     
-    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"tel://+33980980986"]];
+    if (_locationDetails.phoneNumber)
+    {
+        NSString *callString = [NSString stringWithFormat:@"tel://%@", _locationDetails.phoneNumber];
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:callString]];
+    }
+    else
+    {
+        alertView = [[UIAlertView alloc] initWithTitle:nil
+                                               message:@"No phone number available"
+                                              delegate:nil
+                                     cancelButtonTitle:NSLocalizedString(@"_alertView_ok", @"")
+                                     otherButtonTitles:nil];
+        [alertView show];
+    }
     
 }
 

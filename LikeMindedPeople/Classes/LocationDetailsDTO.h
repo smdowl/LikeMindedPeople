@@ -14,6 +14,7 @@
 	NSString *_name;
 	NSString *_description;	
     NSString *_address;
+	NSString *_phoneNumber;
     
 	NSArray *_cateogories;
 	
@@ -22,13 +23,14 @@
 	NSString *_menuURL;
 	
 	NSUInteger _currentPeopleCount;
-	
+    
 	CGFloat _rating;
 }
 
 @property (nonatomic,strong) NSString *name;
 @property (nonatomic,strong) NSString *description;
 @property (nonatomic,strong) NSString *address;
+@property (nonatomic,strong) NSString *phoneNumber;
 
 @property (nonatomic,strong) NSArray *categories;
 

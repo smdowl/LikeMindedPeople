@@ -21,6 +21,11 @@
     if (self)
     {
         [self _roundCorners];
+        
+        [self.layer setShadowOffset:CGSizeMake(0.0, 5.0)];
+        [self.layer setShadowOpacity:0.8];
+        [self.layer setShadowRadius:2.0];
+        [self.layer setShadowColor:[UIColor blackColor].CGColor];
     }
     return self;
 }

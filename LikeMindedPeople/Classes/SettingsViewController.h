@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import <MessageUI/MessageUI.h>
 
-@interface SettingsViewController : UIViewController <MFMailComposeViewControllerDelegate>
+@interface SettingsViewController : UIViewController <MFMailComposeViewControllerDelegate, UIAlertViewDelegate>
 
 - (IBAction)showGimbalSettings:(id)sender;
 

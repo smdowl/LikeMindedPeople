@@ -28,5 +28,6 @@
 @property (nonatomic, retain) Facebook *facebook;
 
 - (void)bypassFacebook;
+- (void)returnToLoginScreen;
 
 @end

@@ -392,6 +392,19 @@ static DataModel *_sharedInstance = nil;
 	[NSKeyedArchiver archiveRootObject:_geofenceRefreshLocation toFile:[self _geofenceRefreshLocationStoragePath]];
 }
 
+- (void)deleteUserInfo
+{
+    @synchronized(self)
+    {
+        _apiId = nil;
+        _userName = nil;
+        _userId = nil;
+        _geofenceRefreshLocation = nil;
+        
+        [self close];
+    }
+}
+
 #pragma mark -
 #pragma mark Geofence listening
 #warning TODO

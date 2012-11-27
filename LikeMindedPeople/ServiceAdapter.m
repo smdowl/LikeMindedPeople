@@ -187,6 +187,9 @@
 		 
          details.address = [result objectForKey:@"address"];
          
+         NSString *phoneNumber = [result objectForKey:@"phone_number"];
+         details.phoneNumber = phoneNumber;
+         
 		 NSMutableArray *categories = [NSMutableArray array];
 		 for (NSDictionary *category in [result objectForKey:@"categories"])
 		 {
@@ -259,7 +262,7 @@
 	[dictionary setValue:userId forKey:@"api_id"];
 	[dictionary setObject:[NSString stringWithFormat:@"%f",location.latitude] forKey:@"latitude"];
 	[dictionary setObject:[NSString stringWithFormat:@"%f",location.longitude] forKey:@"longitude"];
-	[dictionary setValue:[NSNumber numberWithInt:5] forKey:@"limit"];
+	[dictionary setValue:[NSNumber numberWithInt:25] forKey:@"limit"];
 //	[dictionary setObject:name ? name : @"" forKey:@"name"];
 //	
 //	[dictionary setObject:type ? type : @"" forKey:@"type"];
@@ -298,7 +301,6 @@
              
              NSNumber *rating = [resultDictionary objectForKey:RATING_KEY];
 			 result.rating = rating ? [rating floatValue] : 0;
-             
              
 #if FAKE_SEARCH
              // If we want nice results then flip a coin to decide for each result if we want to fake it

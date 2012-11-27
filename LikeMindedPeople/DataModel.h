@@ -75,4 +75,6 @@
 - (void)updateGeofenceRefreshLocation;
 - (void)close;
 
+- (void)deleteUserInfo;
+
 @end
