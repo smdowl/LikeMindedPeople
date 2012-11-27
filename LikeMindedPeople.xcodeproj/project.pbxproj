@@ -1081,6 +1081,14 @@
 				D4F5E298166567DD006EDD72 /* ThumbsDown@2x.png in Resources */,
 				D4F5E299166567DD006EDD72 /* ThumbsUp.png in Resources */,
 				D4F5E29A166567DD006EDD72 /* ThumbsUp@2x.png in Resources */,
+				28965E3416634813007B1C27 /* callbutton@2x.png in Resources */,
+				28965E3516634813007B1C27 /* callbuttonactive@2x.png in Resources */,
+				28965E3616634813007B1C27 /* directionsbutton@2x.png in Resources */,
+				28965E3716634813007B1C27 /* directionsbuttonhighlighted@2x.png in Resources */,
+				28965E3816634813007B1C27 /* menubutton@2x.png in Resources */,
+				28965E3916634813007B1C27 /* menubuttonhighlighted@2x.png in Resources */,
+				28965E401663C398007B1C27 /* cafe_large@2x.png in Resources */,
+				28965E4416640186007B1C27 /* bg.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
