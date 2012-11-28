@@ -54,7 +54,10 @@
     //	_presentUsersLabel.text = [NSString stringWithFormat:@"%i", data.peopleCount];
 	_presentUsersLabel.text = @"-";
     //	_ratingLabel.text = @"-";
-	_ratingLabel.text = [NSString stringWithFormat:@"%0.2f", data.rating];
+    if (data.rating != -1)
+        _ratingLabel.text = [NSString stringWithFormat:@"%0.2f", data.rating];
+    else
+        _ratingLabel.text = @"-";
 #warning TODO
 	// TODO: actually do this
 	_interestsLabel.text = @"";
