@@ -143,6 +143,8 @@
 		D313641815C4E7300071BED3 /* AFURLConnectionOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = D313640C15C4E72F0071BED3 /* AFURLConnectionOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		D313641915C4E7300071BED3 /* AFXMLRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = D313640E15C4E72F0071BED3 /* AFXMLRequestOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		D313641A15C4E7300071BED3 /* UIImageView+AFNetworking.m in Sources */ = {isa = PBXBuildFile; fileRef = D313641015C4E72F0071BED3 /* UIImageView+AFNetworking.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		D4925D8816667D340013B8EA /* SettingsArrow.png in Resources */ = {isa = PBXBuildFile; fileRef = D4925D8716667D340013B8EA /* SettingsArrow.png */; };
+		D4925D8A16667D3C0013B8EA /* SettingsArrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D4925D8916667D3C0013B8EA /* SettingsArrow@2x.png */; };
 		D4951C021654107600821A0B /* settingsButton.png in Resources */ = {isa = PBXBuildFile; fileRef = D4951BFE1654107600821A0B /* settingsButton.png */; };
 		D4951C031654107600821A0B /* centerButton.png in Resources */ = {isa = PBXBuildFile; fileRef = D4951BFF1654107600821A0B /* centerButton.png */; };
 		D4951C041654107600821A0B /* settingsButton@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = D4951C001654107600821A0B /* settingsButton@2x.png */; };
@@ -379,6 +381,8 @@
 		D313640E15C4E72F0071BED3 /* AFXMLRequestOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFXMLRequestOperation.m; sourceTree = "<group>"; };
 		D313640F15C4E72F0071BED3 /* UIImageView+AFNetworking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+AFNetworking.h"; sourceTree = "<group>"; };
 		D313641015C4E72F0071BED3 /* UIImageView+AFNetworking.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+AFNetworking.m"; sourceTree = "<group>"; };
+		D4925D8716667D340013B8EA /* SettingsArrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SettingsArrow.png; sourceTree = "<group>"; };
+		D4925D8916667D3C0013B8EA /* SettingsArrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "SettingsArrow@2x.png"; sourceTree = "<group>"; };
 		D4951BFE1654107600821A0B /* settingsButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settingsButton.png; sourceTree = "<group>"; };
 		D4951BFF1654107600821A0B /* centerButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = centerButton.png; sourceTree = "<group>"; };
 		D4951C001654107600821A0B /* settingsButton@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "settingsButton@2x.png"; sourceTree = "<group>"; };
@@ -618,6 +622,8 @@
 		9282BF1F15D0E2AE0065984F /* Buttons */ = {
 			isa = PBXGroup;
 			children = (
+				D4925D8916667D3C0013B8EA /* SettingsArrow@2x.png */,
+				D4925D8716667D340013B8EA /* SettingsArrow.png */,
 				28965E2E16634813007B1C27 /* callbutton@2x.png */,
 				28965E2F16634813007B1C27 /* callbuttonactive@2x.png */,
 				28965E3016634813007B1C27 /* directionsbutton@2x.png */,
@@ -1097,6 +1103,8 @@
 				28965E4416640186007B1C27 /* bg.png in Resources */,
 				D4F5E2A016656E85006EDD72 /* Background@2x.png in Resources */,
 				D4F5E2A316656E8D006EDD72 /* Background.png in Resources */,
+				D4925D8816667D340013B8EA /* SettingsArrow.png in Resources */,
+				D4925D8A16667D3C0013B8EA /* SettingsArrow@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
