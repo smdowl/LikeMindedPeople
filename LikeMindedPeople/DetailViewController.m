@@ -14,6 +14,8 @@
 #import "MenuViewController.h"
 #import "RDFacebookManager.h"
 #import "CategoryDTO.h"
+#import "RadiiButton.h"
+
 
 @interface DetailViewController (PrivateUtilities)
 - (void)_startDownloadingDetails;
@@ -33,15 +35,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
     self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg.png"]];
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
 
 #pragma mark -
 #pragma mark Getters and setters
@@ -105,11 +101,15 @@
 - (IBAction)rateUp:(id)sender
 {
     [ServiceAdapter ratePlace:_data user:@"1" up:true];
+    [self.thumbsUpButton setSelected:YES];
+    [self.thumbsDownButton setSelected:NO];
 }
 
 - (IBAction)rateDown:(id)sender
 {
     [ServiceAdapter ratePlace:_data user:@"1" up:false];
+    [self.thumbsDownButton setSelected:YES];
+    [self.thumbsUpButton setSelected:NO];
 }
 
 - (IBAction)share:(id)sender

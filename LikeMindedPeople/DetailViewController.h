@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 
 @class RadiiResultDTO, LocationDetailsDTO;
+@class RadiiButton;
+
 @interface DetailViewController : UIViewController
 {
     RadiiResultDTO *_data;
@@ -57,6 +59,10 @@
 
 @property (nonatomic,strong) IBOutlet UILabel *presentUsersLabel;
 @property (nonatomic,strong) IBOutlet UILabel *ratingLabel;
+@property (nonatomic) IBOutlet RadiiButton * thumbsUpButton;
+@property (nonatomic) IBOutlet RadiiButton * thumbsDownButton;
+
+
 // Not yet implemented
 @property (nonatomic,strong) IBOutlet UILabel *interestsLabel;
 
