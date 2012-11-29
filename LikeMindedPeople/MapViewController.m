@@ -627,8 +627,8 @@
 //	}
     
     DetailViewController *detailController = [[DetailViewController alloc] initWithNibName:@"DetailViewController" bundle:nil];
+    detailController.data = [_searchResults objectAtIndex:indexPath.row];
 	[self.navigationController pushViewController:detailController animated:YES];
-	detailController.data = [_searchResults objectAtIndex:indexPath.row];
 }
 
 #pragma mark -

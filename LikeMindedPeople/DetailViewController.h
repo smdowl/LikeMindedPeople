@@ -50,18 +50,14 @@
 @property (nonatomic,strong) LocationDetailsDTO *locationDetails;
 
 @property (nonatomic,strong) IBOutlet UIScrollView *containerView;
-
 @property (nonatomic,strong) IBOutlet UIImageView *thumbnailImage;
-
 @property (nonatomic,strong) IBOutlet UILabel *titleLabel;
 @property (nonatomic,strong) IBOutlet UILabel *subcategoryLabel;
 @property (nonatomic,strong) IBOutlet UITextView *detailsView;
-
 @property (nonatomic,strong) IBOutlet UILabel *presentUsersLabel;
 @property (nonatomic,strong) IBOutlet UILabel *ratingLabel;
 @property (nonatomic) IBOutlet RadiiButton * thumbsUpButton;
 @property (nonatomic) IBOutlet RadiiButton * thumbsDownButton;
-
 
 // Not yet implemented
 @property (nonatomic,strong) IBOutlet UILabel *interestsLabel;

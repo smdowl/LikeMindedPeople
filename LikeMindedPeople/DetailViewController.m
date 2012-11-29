@@ -38,6 +38,27 @@
     self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg.png"]];
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    if (self.data.type == bar)
+    {
+        self.thumbnailImage.image = [UIImage imageNamed:@"detailController_bar.png"];
+        return;
+    }
+    if (self.data.type == cafe)
+    {
+        self.thumbnailImage.image = [UIImage imageNamed:@"detailController_cafe.png"];
+        return;
+    }
+    if (self.data.type == food)
+    {
+        self.thumbnailImage.image = [UIImage imageNamed:@"detailController_food.png"];
+        return;
+    }
+    self.thumbnailImage.image = [UIImage imageNamed:@"detailController_club.png"];
+}
+
 
 #pragma mark -
 #pragma mark Getters and setters
@@ -166,10 +187,30 @@
     }
     
     NSMutableString *mapURL = [NSMutableString stringWithString:@"http://maps.google.com/maps?"];
-    [mapURL appendFormat:@"saddr=Current Location"];
+    [mapURL appendFormat:@"saddr=My Location"];
     [mapURL appendFormat:@"&daddr=%f,%f", destination.latitude, destination.longitude];
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[mapURL stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
 }
+/*- (void)test
+{
+    CLLocationCoordinate2D currentLocation = [self getCurrentLocation];
+    // this uses an address for the destination.  can use lat/long, too with %f,%f format
+    NSString* address = @"123 Main St., New York, NY, 10001";
+    NSString* url = [NSString stringWithFormat: @"http://maps.google.com/maps?saddr=%f,%f&daddr=%@",
+                     currentLocation.latitude, currentLocation.longitude,
+                     [address stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
+    [[UIApplication sharedApplication] openURL: [NSURL URLWithString: url]];
+
+    
+    MKPlacemark* place = [[MKPlacemark alloc] initWithCoordinate: latlong addressDictionary: nil];
+    MKMapItem* destination = [[MKMapItem alloc] initWithPlacemark: place];
+    destination.name = @"Name Here!";
+    NSArray* items = [[NSArray alloc] initWithObjects: destination, nil];
+    NSDictionary* options = [[NSDictionary alloc] initWithObjectsAndKeys:
+                             MKLaunchOptionsDirectionsModeDriving,
+                             MKLaunchOptionsDirectionsModeKey, nil];
+    [MKMapItem openMapsWithItems: items launchOptions: options];    
+}*/
 
 - (IBAction)menuBusiness:(id)sender
 {
