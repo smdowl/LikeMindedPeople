@@ -41,6 +41,32 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    [self setupLabels];
+    [self setupThumbImage];
+}
+
+- (void)setupLabels
+{
+	_titleLabel.text = self.data.businessTitle;
+	_detailsView.text = self.data.details;
+    //	_presentUsersLabel.text = [NSString stringWithFormat:@"%i", data.peopleCount];
+	_presentUsersLabel.text = @"-";
+    //	_ratingLabel.text = @"-";
+    if (self.data.rating != -1) {
+        _ratingLabel.text = [NSString stringWithFormat:@"%0.2f", self.data.rating];
+    }
+    else {
+        _ratingLabel.text = @"-";
+    }
+#warning TODO
+	// TODO: actually do this
+	_interestsLabel.text = @"";
+    
+	_loadingDetailsView.hidden = NO;
+}
+
+- (void)setupThumbImage
+{
     if (self.data.type == bar)
     {
         self.thumbnailImage.image = [UIImage imageNamed:@"detailController_bar.png"];
@@ -69,22 +95,7 @@
 	
 	_locationDetails = nil;
     _downloadingDetails = NO;
-	
-	_titleLabel.text = data.businessTitle;
-	_detailsView.text = data.details;
-    //	_presentUsersLabel.text = [NSString stringWithFormat:@"%i", data.peopleCount];
-	_presentUsersLabel.text = @"-";
-    //	_ratingLabel.text = @"-";
-    if (data.rating != -1)
-        _ratingLabel.text = [NSString stringWithFormat:@"%0.2f", data.rating];
-    else
-        _ratingLabel.text = @"-";
-#warning TODO
-	// TODO: actually do this
-	_interestsLabel.text = @"";
-    
-	_loadingDetailsView.hidden = NO;
-    
+	    
     [self _startDownloadingDetails];
     
 	[_activityIndicator startAnimating];
